@@ -152,6 +152,8 @@ const App = () => {
         let contractBalance = await provider.getBalance(
           taskContract.address
         );
+
+        // ETH送るコントラクト
         console.log(
           "Contract balance:",
           ethers.utils.formatEther(contractBalance)
