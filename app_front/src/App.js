@@ -161,7 +161,7 @@ const App = () => {
 
         // トランザクションへの書き込み
         const options = { value: ethers.utils.parseEther(bountyValue) }
-        const taskTxn = await taskContract.createTask("0x3a0bE810754f7f7D04fCA10E2C11E93ebb5BF19e", dueValue, contentValue, options)
+        const taskTxn = await taskContract.createTask(currentAccount, dueValue, contentValue, options)
         console.log("Mining...", taskTxn.hash);
         await taskTxn.wait();
         console.log("Mined -- ", taskTxn.hash);
