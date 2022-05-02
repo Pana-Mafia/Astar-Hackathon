@@ -14,16 +14,25 @@ contract CreateTask {
     // タスクの期日がきたら、自動的に登録されている担当者に報酬を配分。支払い先はデフォでタスク作成者。アウトプットが出ていればタスク実行者に担当者を振替。
 
     // イベントを設定。フロントで新たにタスクを登録した時に発火する.今後コントラクトを新たにデプロイ、ABIを変更、フロントを変更という作業が残っている
-    event NewTask(address user, uint256 due, string content, uint256 bounty);
+    event NewTask(
+        address user,
+        uint256 due,
+        string content,
+        uint256 bounty,
+        bool done
+    );
+    event DoneTask(address user, uint256 index);
 
     struct Task {
         address user;
         uint256 due;
         string content;
         uint256 bounty;
+        bool done;
     }
     Task[] public tasks;
 
+    // タスク作成
     function createTask(
         address _user,
         uint256 _due,
@@ -32,9 +41,10 @@ contract CreateTask {
         _user = msg.sender;
         // _user.transfer(100);
         uint256 _bounty = msg.value;
-        tasks.push(Task(_user, _due, _content, _bounty));
+        bool _done = false;
+        tasks.push(Task(_user, _due, _content, _bounty, _done));
 
-        emit NewTask(_user, _due, _content, _bounty);
+        emit NewTask(_user, _due, _content, _bounty, _done);
     }
 
     // 今あるタスクを一覧する
@@ -58,5 +68,18 @@ contract CreateTask {
 
     function getAllTasks() public view returns (Task[] memory) {
         return tasks;
+    }
+
+    // タスク完了者への報酬分配
+    function sendRiward(uint256 _index) public payable {
+        // コントラクト作成者を特定
+        address payable _user = payable(msg.sender);
+        // コントラクト作成者へ、タスクのbountyと同値の報酬を送付
+        _user.transfer(tasks[_index].bounty);
+        // タスクのuserを作成者へ変更
+        // タスクを完了判定する(=構造体に完了可否データを保持)
+        emit DoneTask(_user, _index);
+        //
+        tasks[_index].done = true;
     }
 }

@@ -21,7 +21,7 @@ const App = () => {
 
 
   // コントラクトアドレス保存用
-  const contractAddress = "0xE14EA0f941c9F15dCf388cB9E47F72C1433D31AD"
+  const contractAddress = "0x38fa16b1aEf3f15F2e320D0f2a021631A93Fa45f"
 
   // ABIの参照
   const ContractABI = abi.abi;
@@ -40,7 +40,8 @@ const App = () => {
             user: task.user,
             due: task.due,
             content: task.content,
-            bounty: task.bounty
+            bounty: task.bounty,
+            done: task.done
           };
         });
         setAllTasks(tasksCleaned);
@@ -72,15 +73,16 @@ const App = () => {
   useEffect(() => {
     let taskContract;
 
-    const onNewTask = (user, due, content, bounty) => {
-      console.log("NewTask", user, due, content, bounty);
+    const onNewTask = (user, due, content, bounty, done) => {
+      console.log("NewTask", user, due, content, bounty, done);
       setAllTasks(prevState => [
         ...prevState,
         {
           user: user,
           due: due,
           content: content,
-          bounty: bounty
+          bounty: bounty,
+          done: done
         },
       ]);
     };
@@ -238,6 +240,9 @@ const App = () => {
                 <div>due: {task.due.toString()}</div>
                 <div>content: {task.content}</div>
                 <div>bounty: {task.bounty.toString()}Wei</div>
+                <div>bounty: {task.done.toString()}</div>
+                <button className="waveButton" onClick={null}>詳細</button>
+                <button className="waveButton" onClick={null}>提出</button>
               </div>)
           })
         )}
