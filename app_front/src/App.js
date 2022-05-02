@@ -167,6 +167,43 @@ const App = () => {
         console.log("Mining...", taskTxn.hash);
         await taskTxn.wait();
         console.log("Mined -- ", taskTxn.hash);
+      } else {
+        console.log("Ethereum object doesn't exist!");
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
+  // task完了
+  const done = async () => {
+    try {
+      const { ethereum } = window;
+      if (ethereum) {
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+        const taskContract = new ethers.Contract(contractAddress, ContractABI, signer);
+
+        // 完了前のコントラクトの資金量確認
+        let contractBalance = await provider.getBalance(
+          taskContract.address
+        );
+        console.log(
+          "Contract balance:",
+          ethers.utils.formatEther(contractBalance)
+        );
+
+        // トランザクションへの書き込み
+        const taskTxn = await taskContract.sendRiward(2)
+        console.log("Mining...", taskTxn.hash);
+        await taskTxn.wait();
+        console.log("Mined -- ", taskTxn.hash);
+
+        // 完了後のコントラクトの資金量確認
+        console.log(
+          "Contract balance:",
+          ethers.utils.formatEther(contractBalance)
+        );
 
       } else {
         console.log("Ethereum object doesn't exist!");
@@ -242,7 +279,7 @@ const App = () => {
                 <div>bounty: {task.bounty.toString()}Wei</div>
                 <div>bounty: {task.done.toString()}</div>
                 <button className="waveButton" onClick={null}>詳細</button>
-                <button className="waveButton" onClick={null}>提出</button>
+                <button className="waveButton" onClick={done}>提出</button>
               </div>)
           })
         )}
