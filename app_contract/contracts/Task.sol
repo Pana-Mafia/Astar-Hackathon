@@ -72,14 +72,15 @@ contract CreateTask {
 
     // タスク完了者への報酬分配
     function sendRiward(uint256 _index) public payable {
+        require(tasks[_index].done == false, "Already done.");
         // コントラクト作成者を特定
         address payable _user = payable(msg.sender);
         // コントラクト作成者へ、タスクのbountyと同値の報酬を送付
         _user.transfer(tasks[_index].bounty);
         // タスクのuserを作成者へ変更
         // タスクを完了判定する(=構造体に完了可否データを保持)
-        emit DoneTask(_user, _index);
         //
         tasks[_index].done = true;
+        emit DoneTask(_user, _index);
     }
 }
