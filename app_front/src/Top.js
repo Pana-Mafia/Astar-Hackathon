@@ -1,13 +1,28 @@
 import React, { useEffect, useState } from "react";
 // ページ遷移用
 // import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { getFirestore, onSnapshot } from "firebase/firestore"
 import { Link } from 'react-router-dom';
 import './App.css';
 import { ethers } from "ethers";
 // ABIのインポート
 import abi from './utils/CreateTask.json';
 
-const Top = () => {
+// Firebase関係
+import { addDoc, collection } from 'firebase/firestore';
+import { firebaseFirestore } from './firebase';
+const Top = (people) => {
+    // const Task = {
+    //     __type: 'task',
+    //     id: string,
+    //     userId: string,
+    //     createdAt: Date,
+    //     done: boolean,
+    //     name: string,
+    //     scheduledAt: Date | null
+    // };
+
+    // ここまでfirestore
 
     // ユーザーのウォレット保存用状態変数
     const [currentAccount, setCurrentAccount] = useState("");
@@ -24,12 +39,30 @@ const Top = () => {
     // 報酬額保存用状態変数
     const [bountyValue, setBountyValue] = useState([]);
 
+    // 検索条件
+    const [filterQuery, setFilterQuery] = useState({});
+    // ソート条件
+    const [sort, setSort] = useState({});
+
 
     // コントラクトアドレス保存用
+    // const contractAddress = "0x980a80De95bc528b6e413516F881B78F1e474F41"
+    // rinkeby保存用
     const contractAddress = "0xEcab270B6Dc488686fa3a292D526a182A516c39f"
 
     // ABIの参照
     const ContractABI = abi.abi;
+
+    // Firebase表示用
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        const usersCollectionRef = collection(firebaseFirestore, 'people');
+        console.log(usersCollectionRef);
+    }, []);
+
+
+    // 終わり
 
     const getAllTasks = async () => {
         const { ethereum } = window;
@@ -245,8 +278,10 @@ const Top = () => {
                 <div className="bio">
                     タスクを管理しよう！🔥🚀
                 </div>
+
                 <br />
-                <Link to={`/sample`}>Go To Sample</Link>
+                <Link to={`/sample`}>サンプルページはこちら</Link>
+                <Link to={`/team`}>チームの登録はこちら</Link>
                 <br />
                 {!currentAccount && (
                     <button className="waveButton" onClick={connectWallet}>
@@ -302,11 +337,11 @@ const Top = () => {
                                 <div>完了: {task.done.toString()}</div>
                                 <button className="waveButton" onClick={null}>詳細</button>
                                 <button className="waveButton" onClick={() => done(index)}>提出</button>
-                            </div>)
+                            </div >)
                     })
                 )}
-            </div>
-        </div>
+            </div >
+        </div >
     )
 };
 

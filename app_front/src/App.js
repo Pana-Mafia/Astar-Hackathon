@@ -4,7 +4,8 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // import { Link } from 'react-router-dom';
 import Top from './Top'; //作成したtop.jsを読み込んでいる
-import Sample from './Sample'; //作成したtop.jsを読み込んでいる
+import Sample from './Sample';
+import Team from './Team';
 import './App.css';
 // import { ethers } from "ethers";
 // ABIのインポート
@@ -17,6 +18,7 @@ const App = () => {
       <Routes>
         <Route exact path="/" element={<Top />} />
         <Route exact path="/sample" element={<Sample />} />
+        <Route exact path="/team" element={<Team />} />
       </Routes>
     </BrowserRouter>
   )
