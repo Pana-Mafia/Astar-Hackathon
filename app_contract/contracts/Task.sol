@@ -8,6 +8,25 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
+// contract CreateTeam {
+//     struct Team {
+//         uint256 id;
+//         address owner;
+//         string name;
+//     }
+//     Team[] public teams;
+
+//     // チーム作成
+//     function createTeam(
+//         string _name;
+//     ) public {
+//         uint _id = 0;
+//         _owner = msg.sender;
+//         teams.push(Team(_id,_owner,_name));
+//         emit NewTeam(_id,_owner,_name);
+//     }
+// }
+
 contract CreateTask {
     // タスクを構造体として登録。タスクは期限(日付)と報酬(ether)と内容(テキスト)と担当者(address)を持つ
     // ユーザーがタスクを登録するための関数を実装。

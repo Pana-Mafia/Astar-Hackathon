@@ -9,7 +9,15 @@ class Sample extends React.Component {
                 Sample!
                 <br />
                 <Link to={`/`}>Go To App</Link>
+
+
+                <br />
+                <br />
+                Sample!
+                <br />
+                <Link to={`/`}>Go To App</Link>
             </div>
+
         );
     }
 }
