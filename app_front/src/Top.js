@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 // ページ遷移用
 // import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { getFirestore, onSnapshot } from "firebase/firestore"
@@ -8,21 +8,16 @@ import { ethers } from "ethers";
 // ABIのインポート
 import abi from './utils/CreateTask.json';
 
-// Firebase関係
-import { addDoc, collection } from 'firebase/firestore';
-import { firebaseFirestore } from './firebase';
-const Top = (people) => {
-    // const Task = {
-    //     __type: 'task',
-    //     id: string,
-    //     userId: string,
-    //     createdAt: Date,
-    //     done: boolean,
-    //     name: string,
-    //     scheduledAt: Date | null
-    // };
+// モーダル
+import Modal from "react-modal";
 
-    // ここまでfirestore
+// Firebase関係
+import { doc, addDoc, collection, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { firebaseFirestore } from './firebase';
+
+
+Modal.setAppElement("#root");
+const Top = () => {
 
     // ユーザーのウォレット保存用状態変数
     const [currentAccount, setCurrentAccount] = useState("");
@@ -39,11 +34,11 @@ const Top = (people) => {
     // 報酬額保存用状態変数
     const [bountyValue, setBountyValue] = useState([]);
 
-    // 検索条件
-    const [filterQuery, setFilterQuery] = useState({});
-    // ソート条件
-    const [sort, setSort] = useState({});
+    // タスク詳細保存用状態変数
+    const [expressionValue, setExpressionValue] = useState([]);
 
+    // ID保存用状態変数
+    const [idValue, setIdValue] = useState([]);
 
     // コントラクトアドレス保存用
     // const contractAddress = "0x980a80De95bc528b6e413516F881B78F1e474F41"
@@ -58,10 +53,51 @@ const Top = (people) => {
 
     useEffect(() => {
         const usersCollectionRef = collection(firebaseFirestore, 'people');
-        console.log(usersCollectionRef);
+        // リアタイ更新
+        const unsub = onSnapshot(usersCollectionRef, (querySnapshot) => {
+            setUsers(
+                querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+            );
+        });
+        return unsub;
+
     }, []);
+    // 提出練習
+    const handleTask = async () => {
+        // event.preventDefault();
+        console.log(idValue, expressionValue);
+        const usersCollectionRef = collection(firebaseFirestore, 'task');
+        const documentRef = await addDoc(usersCollectionRef, {
+            id: idValue,
+            user: currentAccount,
+            content: contentValue,
+            due: dueValue,
+            name: expressionValue,
+        });
+        console.log(documentRef);
+    };
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const { name, userid } = event.target.elements;
+        console.log(name.value, userid.value);
+        const usersCollectionRef = collection(firebaseFirestore, 'people');
+        // クエリー
+        const q = query(usersCollectionRef, where('userid', '==', "1"));
+        console.log(q);
+        // クエリー終わり
+        const documentRef = await addDoc(usersCollectionRef, {
+            name: name.value,
+            userid: userid.value,
+        });
+        console.log(documentRef);
+    };
 
+    // 単一データ取得
+    // const userDocumentRef = doc(firebaseFirestore, 'people', 'FABaAq5aZcFywChaqCh0');
+    // getDoc(userDocumentRef).then((documentSnapshot) => {
+    //     console.log(documentSnapshot.data());
+    // });
     // 終わり
 
     const getAllTasks = async () => {
@@ -269,6 +305,9 @@ const Top = (people) => {
         checkIfWalletIsConnected();
     }, []);
 
+    // モーダル
+    const [modalIsOpen, setIsOpen] = React.useState(false);
+
     return (
         <div className="mainContainer">
             <div className="dataContainer">
@@ -283,6 +322,7 @@ const Top = (people) => {
                 <Link to={`/sample`}>サンプルページはこちら</Link>
                 <Link to={`/team`}>チームの登録はこちら</Link>
                 <br />
+
                 {!currentAccount && (
                     <button className="waveButton" onClick={connectWallet}>
                         Connect Wallet
@@ -296,7 +336,10 @@ const Top = (people) => {
                 )}
 
                 {currentAccount && (
-                    <button className="waveButton" onClick={task}>
+                    <button className="waveButton" onClick={() => {
+                        handleTask();
+                        task();
+                    }}>
                         タスクを作成する
                     </button>)}
 
@@ -323,7 +366,51 @@ const Top = (people) => {
                     value={bountyValue}
                     onChange={e => setBountyValue(e.target.value)} />)
                 }
+                <textarea name="messageArea"
+                    placeholder="タスクの番号を記入してください"
+                    type="text"
+                    id="id"
+                    value={idValue}
+                    onChange={e => setIdValue(e.target.value)} />
+                <textarea name="messageArea"
+                    placeholder="タスクの説明を記入してください"
+                    type="text"
+                    id="expression"
+                    value={expressionValue}
+                    onChange={e => setExpressionValue(e.target.value)} />
 
+                {/* firebase */}
+                <div style={{ margin: '50px' }}>
+                    <form onSubmit={handleSubmit}>
+                        <div>
+                            <label>番号</label>
+                            <input name="userid" type="text" placeholder="ID" />
+                        </div>
+                        <div>
+                            <label>タスク詳細</label>
+                            <input name="name" type="text" placeholder="タスク詳細" />
+                        </div>
+                        <div>
+                            <button>登録</button>
+                        </div>
+                    </form>
+                    {/* 表示 */}
+                    <h1>ユーザ一覧</h1>
+                    <div>
+                        {users.map((user) => (
+                            <div key={user.id}>{user.name}{user.userid}</div>
+                        ))}
+                    </div>
+                </div>
+
+
+                {/* モーダル */}
+                <div className="App">
+                    {/* <button onClick={() => setIsOpen(true)}>Open Modal</button> */}
+                    <Modal isOpen={modalIsOpen}>
+                        <button onClick={() => setIsOpen(false)}>Close Modal</button>
+                    </Modal>
+                </div>
 
                 {currentAccount && (
                     allTasks.slice(0).map((task, index) => {
@@ -335,7 +422,7 @@ const Top = (people) => {
                                 {/* <div>bounty: {task.bounty.toString()}Wei</div> */}
                                 <div>報酬: {ethers.utils.formatEther(task.bounty)}ether</div>
                                 <div>完了: {task.done.toString()}</div>
-                                <button className="waveButton" onClick={null}>詳細</button>
+                                <button className="waveButton" onClick={() => setIsOpen(true)}>詳細</button>
                                 <button className="waveButton" onClick={() => done(index)}>提出</button>
                             </div >)
                     })
