@@ -37,6 +37,9 @@ const Top = () => {
     // タスク詳細保存用状態変数
     const [expressionValue, setExpressionValue] = useState([]);
 
+    // モーダル
+    const [modalIsOpen, setIsOpen] = React.useState(false);
+
     // ID保存用状態変数
     const [idValue, setIdValue] = useState([]);
 
@@ -300,13 +303,31 @@ const Top = () => {
         }
     };
 
+    const viewTask = async (index) => {
+        console.log(index)
+        console.log(modalIsOpen)
+        setIsOpen(true)
+        return (
+            allTasks.slice(0).map((task, index) => {
+                return (
+                    <Modal isOpen={modalIsOpen}>
+                        <div key={index} style={{ backgroundColor: "#F8F8FF", marginTop: "16px", padding: "8px" }}>
+                            <div>担当者: {task.user}</div>
+                            <div>期日: {task.due.toString()}</div>
+                            <div>タスク: {task.content}</div>
+                            <div>報酬: {ethers.utils.formatEther(task.bounty)}ether</div>
+                            <div>完了: {task.done.toString()}</div>
+                            <button onClick={() => setIsOpen(false)}>Close Modal</button>
+                        </div >
+                    </Modal>)
+            })
+        )
+    };
+
 
     useEffect(() => {
         checkIfWalletIsConnected();
     }, []);
-
-    // モーダル
-    const [modalIsOpen, setIsOpen] = React.useState(false);
 
     return (
         <div className="mainContainer">
@@ -379,39 +400,6 @@ const Top = () => {
                     value={expressionValue}
                     onChange={e => setExpressionValue(e.target.value)} />
 
-                {/* firebase */}
-                <div style={{ margin: '50px' }}>
-                    <form onSubmit={handleSubmit}>
-                        <div>
-                            <label>番号</label>
-                            <input name="userid" type="text" placeholder="ID" />
-                        </div>
-                        <div>
-                            <label>タスク詳細</label>
-                            <input name="name" type="text" placeholder="タスク詳細" />
-                        </div>
-                        <div>
-                            <button>登録</button>
-                        </div>
-                    </form>
-                    {/* 表示 */}
-                    <h1>ユーザ一覧</h1>
-                    <div>
-                        {users.map((user) => (
-                            <div key={user.id}>{user.name}{user.userid}</div>
-                        ))}
-                    </div>
-                </div>
-
-
-                {/* モーダル */}
-                <div className="App">
-                    {/* <button onClick={() => setIsOpen(true)}>Open Modal</button> */}
-                    <Modal isOpen={modalIsOpen}>
-                        <button onClick={() => setIsOpen(false)}>Close Modal</button>
-                    </Modal>
-                </div>
-
                 {currentAccount && (
                     allTasks.slice(0).map((task, index) => {
                         return (
@@ -419,10 +407,23 @@ const Top = () => {
                                 <div>担当者: {task.user}</div>
                                 <div>期日: {task.due.toString()}</div>
                                 <div>タスク: {task.content}</div>
-                                {/* <div>bounty: {task.bounty.toString()}Wei</div> */}
                                 <div>報酬: {ethers.utils.formatEther(task.bounty)}ether</div>
                                 <div>完了: {task.done.toString()}</div>
-                                <button className="waveButton" onClick={() => setIsOpen(true)}>詳細</button>
+                                {/* setispenと合わせて別の関数を策定、idを渡す。このidをベースにtaskを特定して表示する関数を書く */}
+                                <button className="waveButton" onClick={() => {
+                                    setIsOpen(true);
+                                    viewTask(index);
+                                }}>詳細</button>
+                                {/* 詳細を押した際の挙動 */}
+                                <Modal isOpen={modalIsOpen}>
+                                    タスク詳細<br />
+                                    <div>担当者: {task.user}</div>
+                                    <div>期日: {task.due.toString()}</div>
+                                    <div>タスク: {task.content}</div>
+                                    <div>報酬: {ethers.utils.formatEther(task.bounty)}ether</div>
+                                    <div>完了: {task.done.toString()}</div>
+                                    <button onClick={() => setIsOpen(false)}>Close Modal</button>
+                                </Modal>
                                 <button className="waveButton" onClick={() => done(index)}>提出</button>
                             </div >)
                     })
