@@ -49,6 +49,7 @@ const Top = () => {
     // モーダル表示用インデックス・コンテンツ保存
     const [indexValue, setIndexValue] = React.useState(0);
     const [textValue, setTextValue] = React.useState(0);
+    const [selectedItem, setSelectedItem] = useState("")
 
     // 成果物一覧保存用配列
     const [allLinks, setLinks] = useState([]);
@@ -71,7 +72,7 @@ const Top = () => {
             top: 0,
             left: 0,
             backgroundColor: "rgba(0,0,0,0.85)",
-            opacity: 0.7
+            // opacity: 0.7
         },
         content: {
             color: "black",
@@ -415,121 +416,136 @@ const Top = () => {
                         Wallet Connected
                     </button>
                 )}
-
                 {currentAccount && (
                     <button className="waveButton" onClick={() => {
-                        handleTask();
-                        task();
+                        setSelectedItem("create")
                     }}>
                         タスクを作成する
                     </button>)}
 
-                {currentAccount && (<textarea name="messageArea"
-                    placeholder="タスクを記入してください"
-                    type="text"
-                    id="message"
-                    value={contentValue}
-                    onChange={e => setContentValue(e.target.value)} />)
-                }
+                {/* モーダルにするテスト */}
+                <Modal isOpen={"create" === selectedItem} style={modalStyle} onRequestClose={() => setSelectedItem("")}>
+                    <h2>
+                        タスクの作成
+                    </h2>
 
-                {currentAccount && (<textarea name="messageArea"
-                    placeholder="期日を記入してください"
-                    type="text"
-                    id="message"
-                    value={dueValue}
-                    onChange={e => setDueValue(e.target.value)} />)
-                }
+                    {currentAccount && (<textarea name="messageArea"
+                        placeholder="タスクを記入してください"
+                        type="text"
+                        id="message"
+                        value={contentValue}
+                        onChange={e => setContentValue(e.target.value)} />)
+                    }<br></br>
 
-                {currentAccount && (<textarea name="messageArea"
-                    placeholder="タスクの報酬額(eth単位)を記入してください"
-                    type="text"
-                    id="message"
-                    value={bountyValue}
-                    onChange={e => setBountyValue(e.target.value)} />)
-                }
+                    {currentAccount && (<textarea name="messageArea"
+                        placeholder="期日を記入してください"
+                        className="messageArea"
+                        type="text"
+                        id="message"
+                        value={dueValue}
+                        onChange={e => setDueValue(e.target.value)} />)
+                    }<br></br>
 
-                <textarea name="messageArea"
-                    placeholder="タスクの説明を記入してください"
-                    type="text"
-                    id="expression"
-                    value={expressionValue}
-                    onChange={e => setExpressionValue(e.target.value)} />
+                    {currentAccount && (<textarea name="messageArea"
+                        placeholder="タスクの報酬額(eth単位)を記入してください"
+                        type="text"
+                        id="message"
+                        value={bountyValue}
+                        onChange={e => setBountyValue(e.target.value)} />)
+                    }<br></br>
+
+                    <textarea name="messageArea"
+                        placeholder="タスクの説明を記入してください"
+                        type="text"
+                        id="expression"
+                        value={expressionValue}
+                        onChange={e => setExpressionValue(e.target.value)} />
+                    <br></br>
+                    {currentAccount && (
+                        <button className="waveButton" onClick={() => {
+                            handleTask();
+                            task();
+                        }}>
+                            タスクを作成する
+                        </button>)}
+                </Modal>
 
                 {currentAccount && (
                     allTasks.slice(0).map((task, index) => {
                         return (
-                            <div key={index} className="body">
-                                {/* <div>担当者: {task.user}</div>
-                                <div>期日: {task.due.toString()}</div>
-                                <div>タスク: {task.content}</div>
-                                <div>報酬: {ethers.utils.formatEther(task.bounty)}ether</div>
-                                <div>完了: {task.done.toString()}</div> */}
+                            <div key={index} className="cover">
                                 {/* setispenと合わせて別の関数を策定、idを渡す。このidをベースにtaskを特定して表示する関数を書く */}
                                 <button className="taskCard" onClick={() => {
                                     setIndexValue(index);
                                     setText(index);
                                     setOutput(index);
-                                    setIsOpen(true);
+                                    // setIsOpen(true);
+                                    setSelectedItem("task");
                                     // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
                                     output(index);
                                 }}>
-                                    <div>担当者: {task.user}</div>
-                                    <div>期日: {task.due.toString()}</div>
-                                    <div>タスク: {task.content}</div>
-                                    <div>報酬: {ethers.utils.formatEther(task.bounty)}ether</div>
-                                    <div>完了: {task.done.toString()}</div>
+                                    担当者: {task.user}<br></br>
+                                    期日: {task.due.toString()}<br></br>
+                                    タスク: {task.content}<br></br>
+                                    報酬: {ethers.utils.formatEther(task.bounty)}ether<br></br>
+                                    完了: {task.done.toString()}<br></br>
                                     {/* ボタンの中 */}
                                 </button>
                                 {/* 詳細を押した際の挙動 */}
-                                <Modal isOpen={modalIsOpen} style={modalStyle} onRequestClose={() => setIsOpen(false)}>
+                                <Modal isOpen={"task" === selectedItem} style={modalStyle} onRequestClose={() => {
+                                    setSelectedItem("");
+                                    setLinks([]);
+                                }}>
                                     <div id="overlay">
                                         {/* <div className="mainContainer">
                                         <div className="dataContainer">
                                             <div className="body"> */}
+                                        <h2>タスク詳細<br /></h2>
                                         <div className="modal">
-                                            タスク詳細<br />
-                                            <div>タスク登録者: {allTasks[indexValue].user}</div>
-                                            <div>期日: {allTasks[indexValue].due.toString()}</div>
-                                            <div>タスク: {allTasks[indexValue].content}</div>
-                                            <div>詳細説明: {textValue}</div>
-                                            <div>報酬: {ethers.utils.formatEther(allTasks[indexValue].bounty)}ether</div>
-                                            <div>完了: {allTasks[indexValue].done.toString()}</div>
+                                            タスク登録者▼<br />
+                                            <div className="card"> {allTasks[indexValue].user}</div>
+                                            期日:<br /> <div className="card">{allTasks[indexValue].due.toString()}</div>
+                                            タスク:<div className="card"> {allTasks[indexValue].content}</div>
+                                            詳細説明:<div className="card"> {textValue}</div>
+                                            報酬:<div className="card"> {ethers.utils.formatEther(allTasks[indexValue].bounty)}ether</div>
+                                            完了: <div className="card">{allTasks[indexValue].done.toString()}</div>
                                             成果物:
                                             <div>
                                                 {allLinks.map((link, i) => <div key={i} className="card">{link}</div>)}
                                             </div>
 
-                                            {/* タスク提出 */}
-                                            <textarea name="messageArea"
-                                                placeholder="成果物のリンクを添付"
-                                                type="text"
-                                                id="riward"
-                                                value={outputValue}
-                                                onChange={e => setOutputValue(e.target.value)} />
-                                            <br></br>
-                                            <button className="waveButton" onClick={() => {
-                                                output(indexValue);
-                                                console.log("id value", idValue);
-                                                addLink(idValue);
-                                            }}>成果物を提出</button>
-
-                                            {/* 報酬送付 */}
-                                            <br></br>
-                                            <textarea name="messageArea"
-                                                placeholder="報酬を送りたいアカウントのアドレスを記入してください"
-                                                type="text"
-                                                id="riward"
-                                                value={riwarderValue}
-                                                onChange={e => setRiwarderValue(e.target.value)} />
-                                            <br></br>
-                                            <button className="waveButton" onClick={() => done(index, riwarderValue)}>報酬を送付</button>
-                                            <br></br>
-                                            <br></br>
-                                            <button onClick={() => {
-                                                setIsOpen(false);
-                                                setLinks([]);
-                                            }}>Close Modal</button>
                                         </div>
+
+                                        {/* タスク提出 */}
+                                        <textarea name="messageArea"
+                                            placeholder="成果物のリンクを添付"
+                                            type="text"
+                                            id="riward"
+                                            value={outputValue}
+                                            onChange={e => setOutputValue(e.target.value)} />
+                                        <br></br>
+                                        <button className="waveButton" onClick={() => {
+                                            output(indexValue);
+                                            console.log("id value", idValue);
+                                            addLink(idValue);
+                                        }}>成果物を提出</button>
+
+                                        {/* 報酬送付 */}
+                                        <br></br>
+                                        <textarea name="messageArea"
+                                            placeholder="報酬を送りたいアカウントのアドレスを記入してください"
+                                            type="text"
+                                            id="riward"
+                                            value={riwarderValue}
+                                            onChange={e => setRiwarderValue(e.target.value)} />
+                                        <br></br>
+                                        <button className="waveButton" onClick={() => done(index, riwarderValue)}>報酬を送付</button>
+                                        <br></br>
+                                        <br></br>
+                                        <button onClick={() => {
+                                            setSelectedItem("")
+                                            setLinks([]);
+                                        }}>Close Modal</button>
                                     </div>
                                 </Modal>
                             </div >)
