@@ -1,6 +1,4 @@
 import React, { useEffect, useId, useState } from "react";
-// ページ遷移用
-// import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { getFirestore, onSnapshot } from "firebase/firestore"
 import { Link } from 'react-router-dom';
 import './App.css';
@@ -12,9 +10,9 @@ import abi from './utils/CreateTask.json';
 import Modal from "react-modal";
 
 // Firebase関係
-import { doc, addDoc, collection, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { doc, addDoc, setDoc, updateDoc, collection, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { getDatabase, ref, child, get } from "firebase/database";
 import { firebaseFirestore } from './firebase';
-
 
 Modal.setAppElement("#root");
 const Top = () => {
@@ -43,7 +41,11 @@ const Top = () => {
     // ID保存用状態変数
     const [idValue, setIdValue] = useState([]);
 
-    // コントラクトアドレス保存用
+    // モーダル表示用インデックス・コンテンツ保存
+    const [indexValue, setIndexValue] = React.useState(0);
+    const [textValue, setTextValue] = React.useState(0);
+
+    // Astarアドレス保存用
     // const contractAddress = "0x980a80De95bc528b6e413516F881B78F1e474F41"
     // rinkeby保存用
     const contractAddress = "0xEcab270B6Dc488686fa3a292D526a182A516c39f"
@@ -54,6 +56,7 @@ const Top = () => {
     // Firebase表示用
     const [users, setUsers] = useState([]);
 
+    // タスクの表示に使う
     useEffect(() => {
         const usersCollectionRef = collection(firebaseFirestore, 'people');
         // リアタイ更新
@@ -70,7 +73,7 @@ const Top = () => {
         // event.preventDefault();
         console.log(idValue, expressionValue);
         const usersCollectionRef = collection(firebaseFirestore, 'task');
-        const documentRef = await addDoc(usersCollectionRef, {
+        const documentRef = await setDoc(doc(usersCollectionRef, currentAccount), {
             id: idValue,
             user: currentAccount,
             content: contentValue,
@@ -97,10 +100,27 @@ const Top = () => {
     };
 
     // 単一データ取得
-    // const userDocumentRef = doc(firebaseFirestore, 'people', 'FABaAq5aZcFywChaqCh0');
+    // const userDocumentRef = doc(firebaseFirestore, 'people', '0xU1bJT2woHaS5RTuFJH');
+    // // const q = query(userDocumentRef, where('userid', '==', "1"));
+    // // console.log(q);
     // getDoc(userDocumentRef).then((documentSnapshot) => {
     //     console.log(documentSnapshot.data());
+    //     setTextValue(documentSnapshot.data().name)
+    //     console.log(textValue)
     // });
+
+    // コンテンツ表示
+    const setText = async (index) => {
+        const usersDocumentRef = collection(firebaseFirestore, 'task');
+
+        getDocs(query(usersDocumentRef, where('content', '==', allTasks[index].content), where('due', '==', allTasks[index].due.toString()))).then(snapshot => {
+            snapshot.forEach(doc => {
+                // console.log(`${doc.data().due}: ${doc.data().content}`);
+                setTextValue(doc.data().name)
+                console.log(`${doc.data().name}: ${doc.data().content}`);
+            })
+        })
+    }
     // 終わり
 
     const getAllTasks = async () => {
@@ -170,8 +190,8 @@ const Top = () => {
 
         const onDoneTask = (user, index) => {
             console.log("Done.", user, index);
+            alert(`タスク完了おめでとうございます！🔥🚀`);
         };
-        // alert(`タスク完了おめでとうございます！🔥🚀`);
 
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -303,28 +323,6 @@ const Top = () => {
         }
     };
 
-    const viewTask = async (index) => {
-        console.log(index)
-        console.log(modalIsOpen)
-        setIsOpen(true)
-        return (
-            allTasks.slice(0).map((task, index) => {
-                return (
-                    <Modal isOpen={modalIsOpen}>
-                        <div key={index} style={{ backgroundColor: "#F8F8FF", marginTop: "16px", padding: "8px" }}>
-                            <div>担当者: {task.user}</div>
-                            <div>期日: {task.due.toString()}</div>
-                            <div>タスク: {task.content}</div>
-                            <div>報酬: {ethers.utils.formatEther(task.bounty)}ether</div>
-                            <div>完了: {task.done.toString()}</div>
-                            <button onClick={() => setIsOpen(false)}>Close Modal</button>
-                        </div >
-                    </Modal>)
-            })
-        )
-    };
-
-
     useEffect(() => {
         checkIfWalletIsConnected();
     }, []);
@@ -411,17 +409,19 @@ const Top = () => {
                                 <div>完了: {task.done.toString()}</div>
                                 {/* setispenと合わせて別の関数を策定、idを渡す。このidをベースにtaskを特定して表示する関数を書く */}
                                 <button className="waveButton" onClick={() => {
+                                    setIndexValue(index);
+                                    setText(index);
                                     setIsOpen(true);
-                                    viewTask(index);
                                 }}>詳細</button>
                                 {/* 詳細を押した際の挙動 */}
                                 <Modal isOpen={modalIsOpen}>
                                     タスク詳細<br />
-                                    <div>担当者: {task.user}</div>
-                                    <div>期日: {task.due.toString()}</div>
-                                    <div>タスク: {task.content}</div>
-                                    <div>報酬: {ethers.utils.formatEther(task.bounty)}ether</div>
-                                    <div>完了: {task.done.toString()}</div>
+                                    <div>担当者: {allTasks[indexValue].user}</div>
+                                    <div>期日: {allTasks[indexValue].due.toString()}</div>
+                                    <div>タスク: {allTasks[indexValue].content}</div>
+                                    <div>詳細説明: {textValue}</div>
+                                    <div>報酬: {ethers.utils.formatEther(allTasks[indexValue].bounty)}ether</div>
+                                    <div>完了: {allTasks[indexValue].done.toString()}</div>
                                     <button onClick={() => setIsOpen(false)}>Close Modal</button>
                                 </Modal>
                                 <button className="waveButton" onClick={() => done(index)}>提出</button>

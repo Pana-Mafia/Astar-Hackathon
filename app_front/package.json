@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^12.8.3",
     "ethers": "^5.4.7",
     "firebase": "^9.0.0-beta.2",
+    "firebase-admin": "^10.2.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-modal": "^3.15.1",
