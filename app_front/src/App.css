@@ -5,6 +5,73 @@
   margin-top: 64px;
 }
 
+/* ヘッダー */
+.heading {
+  margin: 0;
+  font-size: 48px;
+  font-weight: bold;
+  margin: 10px auto;
+  margin-bottom: 0px;
+}
+
+.gradient-text {
+  background: -webkit-linear-gradient(-70deg, #a2facf, #64acff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* テキスト */
+/* .bio {
+  background: -webkit-linear-gradient(-70deg, rgb(243, 116, 255) 0%, rgb(255, 159, 100) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+} */
+
+.bio {
+  text-decoration: -webkit-linear-gradient(-70deg, #a2facf, #64acff);
+}
+
+.waveButton {
+  background: -webkit-linear-gradient(-70deg, #a2facf, #64acff);
+  background-size: 200% 200%;
+  animation: gradient-animation 4s ease infinite;
+  color: #0d1116;
+}
+
+.card {
+  background: -webkit-linear-gradient(-70deg, #a2facf, #64acff);
+  background-size: 200% 200%;
+  animation: gradient-animation 4s ease infinite;
+  color: #0d1116;
+
+  cursor: pointer;
+  margin-top: 16px;
+  padding: 8px;
+  border: 0;
+  border-radius: 5px;
+}
+
+.taskCard {
+  text-align: left;
+  background: -webkit-linear-gradient(-70deg, #a2facf, #64acff);
+  background-size: 200% 200%;
+  animation: gradient-animation 4s ease infinite;
+  color: #0d1116;
+
+  cursor: pointer;
+  margin-top: 16px;
+  padding: 8px;
+  border: 0;
+  border-radius: 5px;
+}
+
+.card :hover {
+  background: -webkit-linear-gradient(-70deg, rgb(243, 116, 255) 0%, rgb(255, 159, 100) 100%);
+}
+
+
 .dataContainer {
   display: flex;
   flex-direction: column;
@@ -20,7 +87,7 @@
 
 .bio {
   text-align: center;
-  color: gray;
+  color: white;
   margin-top: 16px;
 }
 
@@ -32,3 +99,13 @@
   border-radius: 5px;
 
 }
+
+body {
+  background-color: #0d1116;
+  color: white;
+}
+
+/* Modal {
+  background-color: #0d1116;
+  color: white;
+} */

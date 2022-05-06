@@ -42,7 +42,7 @@ describe("Done", function () {
         const createTaskTx = await task.createTask(owner.address, 20220430, "Doing Homework");
         const viewTaskTx = await task.viewTask(0);
         const allTaskTx = await task.getAllTasks();
-        const doneTaskTx = await task.sendRiward(0);
+        const doneTaskTx = await task.sendRiward(0, "0x2B953E5eA9a210e22f52A9081c5Bcc2d4c22fca1");
 
         // wait until the transaction is mined
         await createTaskTx.wait();
