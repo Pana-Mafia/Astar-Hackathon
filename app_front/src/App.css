@@ -105,6 +105,18 @@ body {
   color: white;
 }
 
+.overlay {
+  background-color: #0d1116;
+}
+
+ReactModal__Overlay {
+  background-color: #0d1116;
+  text-align: center;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Modal {
   background-color: #0d1116;
   color: white;

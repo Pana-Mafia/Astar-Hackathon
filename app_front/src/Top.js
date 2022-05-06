@@ -64,6 +64,30 @@ const Top = () => {
     // Firebase表示用
     const [users, setUsers] = useState([]);
 
+    // モーダルスタイル
+    const modalStyle = {
+        overlay: {
+            position: "fixed",
+            top: 0,
+            left: 0,
+            backgroundColor: "rgba(0,0,0,0.85)",
+            opacity: 0.7
+        },
+        content: {
+            color: "black",
+            textAlign: "center",
+            position: "absolute",
+            top: "15rem",
+            left: "15rem",
+            right: "15rem",
+            bottom: "15rem",
+            backgroundColor: "paleturquoise",
+            borderRadius: "1rem",
+            padding: "1.5rem",
+
+        }
+    };
+
     // タスクの表示に使う
     useEffect(() => {
         const usersCollectionRef = collection(firebaseFirestore, 'people');
@@ -434,7 +458,7 @@ const Top = () => {
                 {currentAccount && (
                     allTasks.slice(0).map((task, index) => {
                         return (
-                            <div key={index} className="card">
+                            <div key={index} className="body">
                                 {/* <div>担当者: {task.user}</div>
                                 <div>期日: {task.due.toString()}</div>
                                 <div>タスク: {task.content}</div>
@@ -457,53 +481,54 @@ const Top = () => {
                                     {/* ボタンの中 */}
                                 </button>
                                 {/* 詳細を押した際の挙動 */}
-                                <Modal isOpen={modalIsOpen} className="body">
-                                    <div className="mainContainer">
+                                <Modal isOpen={modalIsOpen} style={modalStyle} onRequestClose={() => setIsOpen(false)}>
+                                    <div id="overlay">
+                                        {/* <div className="mainContainer">
                                         <div className="dataContainer">
-                                            <div className="body">
-                                                タスク詳細<br />
-                                                <div>タスク登録者: {allTasks[indexValue].user}</div>
-                                                <div>期日: {allTasks[indexValue].due.toString()}</div>
-                                                <div>タスク: {allTasks[indexValue].content}</div>
-                                                <div>詳細説明: {textValue}</div>
-                                                <div>報酬: {ethers.utils.formatEther(allTasks[indexValue].bounty)}ether</div>
-                                                <div>完了: {allTasks[indexValue].done.toString()}</div>
-                                                成果物:
-                                                <div>
-                                                    {allLinks.map((link, i) => <div key={i} style="card">{link}</div>)}
-                                                </div>
-
-                                                {/* タスク提出 */}
-                                                <textarea name="messageArea"
-                                                    placeholder="成果物のリンクを添付"
-                                                    type="text"
-                                                    id="riward"
-                                                    value={outputValue}
-                                                    onChange={e => setOutputValue(e.target.value)} />
-                                                <br></br>
-                                                <button className="waveButton" onClick={() => {
-                                                    output(indexValue);
-                                                    console.log("id value", idValue);
-                                                    addLink(idValue);
-                                                }}>成果物を提出</button>
-
-                                                {/* 報酬送付 */}
-                                                <br></br>
-                                                <textarea name="messageArea"
-                                                    placeholder="報酬を送りたいアカウントのアドレスを記入してください"
-                                                    type="text"
-                                                    id="riward"
-                                                    value={riwarderValue}
-                                                    onChange={e => setRiwarderValue(e.target.value)} />
-                                                <br></br>
-                                                <button className="waveButton" onClick={() => done(index, riwarderValue)}>報酬を送付</button>
-                                                <br></br>
-                                                <br></br>
-                                                <button onClick={() => {
-                                                    setIsOpen(false);
-                                                    setLinks([]);
-                                                }}>Close Modal</button>
+                                            <div className="body"> */}
+                                        <div className="modal">
+                                            タスク詳細<br />
+                                            <div>タスク登録者: {allTasks[indexValue].user}</div>
+                                            <div>期日: {allTasks[indexValue].due.toString()}</div>
+                                            <div>タスク: {allTasks[indexValue].content}</div>
+                                            <div>詳細説明: {textValue}</div>
+                                            <div>報酬: {ethers.utils.formatEther(allTasks[indexValue].bounty)}ether</div>
+                                            <div>完了: {allTasks[indexValue].done.toString()}</div>
+                                            成果物:
+                                            <div>
+                                                {allLinks.map((link, i) => <div key={i} className="card">{link}</div>)}
                                             </div>
+
+                                            {/* タスク提出 */}
+                                            <textarea name="messageArea"
+                                                placeholder="成果物のリンクを添付"
+                                                type="text"
+                                                id="riward"
+                                                value={outputValue}
+                                                onChange={e => setOutputValue(e.target.value)} />
+                                            <br></br>
+                                            <button className="waveButton" onClick={() => {
+                                                output(indexValue);
+                                                console.log("id value", idValue);
+                                                addLink(idValue);
+                                            }}>成果物を提出</button>
+
+                                            {/* 報酬送付 */}
+                                            <br></br>
+                                            <textarea name="messageArea"
+                                                placeholder="報酬を送りたいアカウントのアドレスを記入してください"
+                                                type="text"
+                                                id="riward"
+                                                value={riwarderValue}
+                                                onChange={e => setRiwarderValue(e.target.value)} />
+                                            <br></br>
+                                            <button className="waveButton" onClick={() => done(index, riwarderValue)}>報酬を送付</button>
+                                            <br></br>
+                                            <br></br>
+                                            <button onClick={() => {
+                                                setIsOpen(false);
+                                                setLinks([]);
+                                            }}>Close Modal</button>
                                         </div>
                                     </div>
                                 </Modal>
