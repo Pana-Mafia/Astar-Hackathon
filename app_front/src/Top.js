@@ -1,5 +1,5 @@
-import React, { useEffect, useId, useState } from "react";
-import { getFirestore, onSnapshot } from "firebase/firestore"
+import React, { useEffect, useState } from "react";
+import { onSnapshot } from "firebase/firestore"
 import { Link } from 'react-router-dom';
 import './App.css';
 import { ethers } from "ethers";
@@ -10,8 +10,7 @@ import abi from './utils/CreateTask.json';
 import Modal from "react-modal";
 
 // Firebase関係
-import { doc, addDoc, setDoc, updateDoc, collection, getDoc, getDocs, query, where } from 'firebase/firestore';
-import { getDatabase, ref, child, get } from "firebase/database";
+import { doc, setDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { firebaseFirestore } from './firebase';
 
 Modal.setAppElement("#root");
@@ -35,20 +34,29 @@ const Top = () => {
     // タスク詳細保存用状態変数
     const [expressionValue, setExpressionValue] = useState([]);
 
+    // 報酬送付先保存用状態変数
+    const [riwarderValue, setRiwarderValue] = useState([]);
+
+    // 成果物保存用状態変数
+    const [outputValue, setOutputValue] = useState([]);
+
     // モーダル
     const [modalIsOpen, setIsOpen] = React.useState(false);
 
-    // ID保存用状態変数
-    const [idValue, setIdValue] = useState([]);
+    // タスクID保存用状態変数
+    const [idValue, setValue] = React.useState("0");
 
     // モーダル表示用インデックス・コンテンツ保存
     const [indexValue, setIndexValue] = React.useState(0);
     const [textValue, setTextValue] = React.useState(0);
 
+    // 成果物一覧保存用配列
+    const [allLinks, setLinks] = useState([]);
+
     // Astarアドレス保存用
     // const contractAddress = "0x980a80De95bc528b6e413516F881B78F1e474F41"
     // rinkeby保存用
-    const contractAddress = "0xEcab270B6Dc488686fa3a292D526a182A516c39f"
+    const contractAddress = "0x5617b6BA58A2fcA6969B0e75A05E21C1A5840F8a"
 
     // ABIの参照
     const ContractABI = abi.abi;
@@ -68,56 +76,52 @@ const Top = () => {
         return unsub;
 
     }, []);
-    // 提出練習
+
+    // タスク登録
     const handleTask = async () => {
         // event.preventDefault();
-        console.log(idValue, expressionValue);
         const usersCollectionRef = collection(firebaseFirestore, 'task');
-        const documentRef = await setDoc(doc(usersCollectionRef, currentAccount), {
-            id: idValue,
+        const newDoc = doc(usersCollectionRef).id
+        console.log(newDoc)
+        const documentRef = await setDoc(doc(usersCollectionRef, newDoc), {
+            // usersCollectionRef.doc(newDoc).set({
             user: currentAccount,
             content: contentValue,
             due: dueValue,
             name: expressionValue,
+            id: newDoc,
         });
-        console.log(documentRef);
     };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const { name, userid } = event.target.elements;
-        console.log(name.value, userid.value);
-        const usersCollectionRef = collection(firebaseFirestore, 'people');
-        // クエリー
-        const q = query(usersCollectionRef, where('userid', '==', "1"));
-        console.log(q);
-        // クエリー終わり
-        const documentRef = await addDoc(usersCollectionRef, {
-            name: name.value,
-            userid: userid.value,
-        });
-        console.log(documentRef);
-    };
-
-    // 単一データ取得
-    // const userDocumentRef = doc(firebaseFirestore, 'people', '0xU1bJT2woHaS5RTuFJH');
-    // // const q = query(userDocumentRef, where('userid', '==', "1"));
-    // // console.log(q);
-    // getDoc(userDocumentRef).then((documentSnapshot) => {
-    //     console.log(documentSnapshot.data());
-    //     setTextValue(documentSnapshot.data().name)
-    //     console.log(textValue)
-    // });
-
     // コンテンツ表示
     const setText = async (index) => {
         const usersDocumentRef = collection(firebaseFirestore, 'task');
-
-        getDocs(query(usersDocumentRef, where('content', '==', allTasks[index].content), where('due', '==', allTasks[index].due.toString()))).then(snapshot => {
+        await getDocs(query(usersDocumentRef, where('content', '==', allTasks[index].content), where('due', '==', allTasks[index].due.toString()))).then(snapshot => {
             snapshot.forEach(doc => {
-                // console.log(`${doc.data().due}: ${doc.data().content}`);
                 setTextValue(doc.data().name)
-                console.log(`${doc.data().name}: ${doc.data().content}`);
+            })
+        })
+    }
+    // 終わり
+
+    // 成果物一覧表示
+    const setOutput = async (index) => {
+        const usersDocumentRef = collection(firebaseFirestore, 'task');
+        let taskId = 0;
+        await getDocs(query(usersDocumentRef, where('content', '==', allTasks[index].content), where('due', '==', allTasks[index].due.toString()))).then(snapshot => {
+            snapshot.forEach(doc => {
+                taskId = doc.data().id
+                console.log(taskId)
+            })
+        })
+
+        const usersLinkRef = collection(firebaseFirestore, `task/${taskId}/output`);
+        // 成果物を全て配列に入れる
+        await getDocs(query(usersLinkRef)).then(snapshot => {
+            snapshot.forEach(doc => {
+                // setContentValue(doc.data().link)
+                console.log(allLinks);
+                allLinks.push(doc.data().link);
+                setLinks(allLinks);
             })
         })
     }
@@ -190,7 +194,7 @@ const Top = () => {
 
         const onDoneTask = (user, index) => {
             console.log("Done.", user, index);
-            alert(`タスク完了おめでとうございます！🔥🚀`);
+            // alert(`タスク完了おめでとうございます！🔥🚀`);
         };
 
         if (window.ethereum) {
@@ -208,7 +212,7 @@ const Top = () => {
         };
     }, []);
 
-    console.log("currentAccount: ", currentAccount);
+    // console.log("currentAccount: ", currentAccount);
 
     const checkIfWalletIsConnected = async () => {
         try {
@@ -282,7 +286,7 @@ const Top = () => {
     };
 
     // task完了
-    const done = async (index) => {
+    const done = async (index, riwarderValue) => {
         console.log(index)
         if (allTasks[index].done !== false) {
             alert(`「${allTasks[index].content}」は既に完了しています、別のタスクを探してみてね🚀`);
@@ -304,7 +308,7 @@ const Top = () => {
                 );
 
                 // トランザクションへの書き込み
-                const taskTxn = await taskContract.sendRiward(index)
+                const taskTxn = await taskContract.sendRiward(index, riwarderValue)
                 console.log("Mining...", taskTxn.hash);
                 await taskTxn.wait();
                 console.log("Mined -- ", taskTxn.hash);
@@ -323,6 +327,38 @@ const Top = () => {
         }
     };
 
+    // 成果物提出
+    const output = async (indexValue) => {
+
+        // ドキュメントIDを取得 
+        console.log(indexValue)
+        const usersDocumentRef = collection(firebaseFirestore, 'task');
+        getDocs(query(usersDocumentRef, where('content', '==', allTasks[indexValue].content), where('due', '==', allTasks[indexValue].due.toString()))).then(snapshot => {
+            snapshot.forEach(doc => {
+                console.log(allTasks[indexValue].content)
+                // idを文字列に保存
+                setValue(doc.data().id)
+                // console.log("doc id", doc.data().id)
+                // console.log("id value", idValue)
+            })
+        })
+    };
+
+    const addLink = async (idValue) => {
+        // IDからさらにコレクションを~~Refに保存
+        const usersLinkRef = collection(firebaseFirestore, `task/${idValue}/output`);
+        console.log(`task/${idValue}/output`)
+        console.log(usersLinkRef)
+
+        // ~~Refにリンクを登録、IDつきで
+        const newDoc = doc(usersLinkRef).id
+        console.log(newDoc)
+        const documentRef = await setDoc(doc(usersLinkRef, newDoc), {
+            id: newDoc,
+            link: outputValue,
+        });
+    };
+
     useEffect(() => {
         checkIfWalletIsConnected();
     }, []);
@@ -331,16 +367,18 @@ const Top = () => {
         <div className="mainContainer">
             <div className="dataContainer">
                 <div className="header">
-                    <span role="img" aria-label="hand-wave">🚀</span> Task Manager
+                    <h1 className="heading gradient-text">
+                        <span role="img" aria-label="hand-wave">🚀</span> Task Manager🚀
+                    </h1>
                 </div>
                 <div className="bio">
                     タスクを管理しよう！🔥🚀
                 </div>
 
-                <br />
+                {/* <br />
                 <Link to={`/sample`}>サンプルページはこちら</Link>
                 <Link to={`/team`}>チームの登録はこちら</Link>
-                <br />
+                <br /> */}
 
                 {!currentAccount && (
                     <button className="waveButton" onClick={connectWallet}>
@@ -385,12 +423,7 @@ const Top = () => {
                     value={bountyValue}
                     onChange={e => setBountyValue(e.target.value)} />)
                 }
-                <textarea name="messageArea"
-                    placeholder="タスクの番号を記入してください"
-                    type="text"
-                    id="id"
-                    value={idValue}
-                    onChange={e => setIdValue(e.target.value)} />
+
                 <textarea name="messageArea"
                     placeholder="タスクの説明を記入してください"
                     type="text"
@@ -401,30 +434,79 @@ const Top = () => {
                 {currentAccount && (
                     allTasks.slice(0).map((task, index) => {
                         return (
-                            <div key={index} style={{ backgroundColor: "#F8F8FF", marginTop: "16px", padding: "8px" }}>
-                                <div>担当者: {task.user}</div>
+                            <div key={index} className="card">
+                                {/* <div>担当者: {task.user}</div>
                                 <div>期日: {task.due.toString()}</div>
                                 <div>タスク: {task.content}</div>
                                 <div>報酬: {ethers.utils.formatEther(task.bounty)}ether</div>
-                                <div>完了: {task.done.toString()}</div>
+                                <div>完了: {task.done.toString()}</div> */}
                                 {/* setispenと合わせて別の関数を策定、idを渡す。このidをベースにtaskを特定して表示する関数を書く */}
-                                <button className="waveButton" onClick={() => {
+                                <button className="taskCard" onClick={() => {
                                     setIndexValue(index);
                                     setText(index);
+                                    setOutput(index);
                                     setIsOpen(true);
-                                }}>詳細</button>
+                                    // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
+                                    output(index);
+                                }}>
+                                    <div>担当者: {task.user}</div>
+                                    <div>期日: {task.due.toString()}</div>
+                                    <div>タスク: {task.content}</div>
+                                    <div>報酬: {ethers.utils.formatEther(task.bounty)}ether</div>
+                                    <div>完了: {task.done.toString()}</div>
+                                    {/* ボタンの中 */}
+                                </button>
                                 {/* 詳細を押した際の挙動 */}
-                                <Modal isOpen={modalIsOpen}>
-                                    タスク詳細<br />
-                                    <div>担当者: {allTasks[indexValue].user}</div>
-                                    <div>期日: {allTasks[indexValue].due.toString()}</div>
-                                    <div>タスク: {allTasks[indexValue].content}</div>
-                                    <div>詳細説明: {textValue}</div>
-                                    <div>報酬: {ethers.utils.formatEther(allTasks[indexValue].bounty)}ether</div>
-                                    <div>完了: {allTasks[indexValue].done.toString()}</div>
-                                    <button onClick={() => setIsOpen(false)}>Close Modal</button>
+                                <Modal isOpen={modalIsOpen} className="body">
+                                    <div className="mainContainer">
+                                        <div className="dataContainer">
+                                            <div className="body">
+                                                タスク詳細<br />
+                                                <div>タスク登録者: {allTasks[indexValue].user}</div>
+                                                <div>期日: {allTasks[indexValue].due.toString()}</div>
+                                                <div>タスク: {allTasks[indexValue].content}</div>
+                                                <div>詳細説明: {textValue}</div>
+                                                <div>報酬: {ethers.utils.formatEther(allTasks[indexValue].bounty)}ether</div>
+                                                <div>完了: {allTasks[indexValue].done.toString()}</div>
+                                                成果物:
+                                                <div>
+                                                    {allLinks.map((link, i) => <div key={i} style="card">{link}</div>)}
+                                                </div>
+
+                                                {/* タスク提出 */}
+                                                <textarea name="messageArea"
+                                                    placeholder="成果物のリンクを添付"
+                                                    type="text"
+                                                    id="riward"
+                                                    value={outputValue}
+                                                    onChange={e => setOutputValue(e.target.value)} />
+                                                <br></br>
+                                                <button className="waveButton" onClick={() => {
+                                                    output(indexValue);
+                                                    console.log("id value", idValue);
+                                                    addLink(idValue);
+                                                }}>成果物を提出</button>
+
+                                                {/* 報酬送付 */}
+                                                <br></br>
+                                                <textarea name="messageArea"
+                                                    placeholder="報酬を送りたいアカウントのアドレスを記入してください"
+                                                    type="text"
+                                                    id="riward"
+                                                    value={riwarderValue}
+                                                    onChange={e => setRiwarderValue(e.target.value)} />
+                                                <br></br>
+                                                <button className="waveButton" onClick={() => done(index, riwarderValue)}>報酬を送付</button>
+                                                <br></br>
+                                                <br></br>
+                                                <button onClick={() => {
+                                                    setIsOpen(false);
+                                                    setLinks([]);
+                                                }}>Close Modal</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </Modal>
-                                <button className="waveButton" onClick={() => done(index)}>提出</button>
                             </div >)
                     })
                 )}
