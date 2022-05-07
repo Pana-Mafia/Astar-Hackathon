@@ -393,11 +393,14 @@ const Top = () => {
             <div className="dataContainer">
                 <div className="header">
                     <h1 className="heading gradient-text">
-                        <span role="img" aria-label="hand-wave">🚀</span> Task Manager🚀
+                        <span role="img" aria-label="hand-wave">🚀</span> Taskal 🚀
                     </h1>
                 </div>
                 <div className="bio">
-                    タスクを管理しよう！🔥🚀
+                    Web3 Task-Manager
+                    <br></br>
+                    <br></br>
+                    🔥🚀  Work to Earn $ASTR 🔥🚀
                 </div>
 
                 {/* <br />
