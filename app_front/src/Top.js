@@ -55,9 +55,9 @@ const Top = () => {
     const [allLinks, setLinks] = useState([]);
 
     // Astarアドレス保存用
-    // const contractAddress = "0x980a80De95bc528b6e413516F881B78F1e474F41"
+    const contractAddress = "0x113FA87E7D8c4C4eA49956943C2dcc8659ABF6FA"
     // rinkeby保存用
-    const contractAddress = "0x5617b6BA58A2fcA6969B0e75A05E21C1A5840F8a"
+    // const contractAddress = "0x5617b6BA58A2fcA6969B0e75A05E21C1A5840F8a"
 
     // ABIの参照
     const ContractABI = abi.abi;
@@ -78,10 +78,10 @@ const Top = () => {
             color: "black",
             textAlign: "center",
             position: "absolute",
-            top: "15rem",
+            top: "5rem",
             left: "15rem",
             right: "15rem",
-            bottom: "15rem",
+            bottom: "5rem",
             backgroundColor: "paleturquoise",
             borderRadius: "1rem",
             padding: "1.5rem",
@@ -430,7 +430,8 @@ const Top = () => {
                     </h2>
 
                     {currentAccount && (<textarea name="messageArea"
-                        placeholder="タスクを記入してください"
+                        className="form"
+                        placeholder="タスクを記入してください(例：コントラクトアドレスの変更)"
                         type="text"
                         id="message"
                         value={contentValue}
@@ -438,8 +439,8 @@ const Top = () => {
                     }<br></br>
 
                     {currentAccount && (<textarea name="messageArea"
-                        placeholder="期日を記入してください"
-                        className="messageArea"
+                        className="form"
+                        placeholder="期日を記入してください(例：20220507)"
                         type="text"
                         id="message"
                         value={dueValue}
@@ -447,7 +448,8 @@ const Top = () => {
                     }<br></br>
 
                     {currentAccount && (<textarea name="messageArea"
-                        placeholder="タスクの報酬額(eth単位)を記入してください"
+                        placeholder="タスクの報酬額を記入してください(単位:SBY)"
+                        className="form"
                         type="text"
                         id="message"
                         value={bountyValue}
@@ -455,14 +457,15 @@ const Top = () => {
                     }<br></br>
 
                     <textarea name="messageArea"
-                        placeholder="タスクの説明を記入してください"
+                        placeholder="タスクの説明を記入してください(例：コントラクトを新たにデプロイし、アドレスを取得してください。提出時には新たなコントラクトアドレスの送付をお願いします)"
+                        className="form"
                         type="text"
                         id="expression"
                         value={expressionValue}
                         onChange={e => setExpressionValue(e.target.value)} />
                     <br></br>
                     {currentAccount && (
-                        <button className="waveButton" onClick={() => {
+                        <button className="submitButton" onClick={() => {
                             handleTask();
                             task();
                         }}>
@@ -503,12 +506,12 @@ const Top = () => {
                                         <h2>タスク詳細<br /></h2>
                                         <div className="modal">
                                             タスク登録者▼<br />
-                                            <div className="card"> {allTasks[indexValue].user}</div>
-                                            期日:<br /> <div className="card">{allTasks[indexValue].due.toString()}</div>
-                                            タスク:<div className="card"> {allTasks[indexValue].content}</div>
-                                            詳細説明:<div className="card"> {textValue}</div>
-                                            報酬:<div className="card"> {ethers.utils.formatEther(allTasks[indexValue].bounty)}ether</div>
-                                            完了: <div className="card">{allTasks[indexValue].done.toString()}</div>
+                                            <div className="card"> {allTasks[indexValue].user}</div><br />
+                                            期日▼<br /> <div className="card">{allTasks[indexValue].due.toString()}</div><br />
+                                            タスク▼<div className="card"> {allTasks[indexValue].content}</div><br />
+                                            詳細説明▼<div className="card"> {textValue}</div><br />
+                                            報酬▼<div className="card"> {ethers.utils.formatEther(allTasks[indexValue].bounty)}ether</div><br />
+                                            完了▼ <div className="card">{allTasks[indexValue].done.toString()}</div><br />
                                             成果物:
                                             <div>
                                                 {allLinks.map((link, i) => <div key={i} className="card">{link}</div>)}
@@ -518,13 +521,14 @@ const Top = () => {
 
                                         {/* タスク提出 */}
                                         <textarea name="messageArea"
+                                            className="form"
                                             placeholder="成果物のリンクを添付"
                                             type="text"
                                             id="riward"
                                             value={outputValue}
                                             onChange={e => setOutputValue(e.target.value)} />
                                         <br></br>
-                                        <button className="waveButton" onClick={() => {
+                                        <button className="submitButton" onClick={() => {
                                             output(indexValue);
                                             console.log("id value", idValue);
                                             addLink(idValue);
@@ -533,19 +537,20 @@ const Top = () => {
                                         {/* 報酬送付 */}
                                         <br></br>
                                         <textarea name="messageArea"
+                                            className="form"
                                             placeholder="報酬を送りたいアカウントのアドレスを記入してください"
                                             type="text"
                                             id="riward"
                                             value={riwarderValue}
                                             onChange={e => setRiwarderValue(e.target.value)} />
                                         <br></br>
-                                        <button className="waveButton" onClick={() => done(index, riwarderValue)}>報酬を送付</button>
+                                        <button className="submitButton" onClick={() => done(index, riwarderValue)}>報酬を送付</button>
                                         <br></br>
                                         <br></br>
-                                        <button onClick={() => {
+                                        {/* <button onClick={() => {
                                             setSelectedItem("")
                                             setLinks([]);
-                                        }}>Close Modal</button>
+                                        }}>Close Modal</button> */}
                                     </div>
                                 </Modal>
                             </div >)

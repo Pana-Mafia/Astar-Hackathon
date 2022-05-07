@@ -141,3 +141,31 @@ h2 {
   color: #0d1116;
   background-color: #0d1116;
 }
+
+.form {
+  width: 100%;
+  cursor: pointer;
+  margin-top: 16px;
+  padding: 8px;
+  border: 0;
+  border-radius: 5px;
+  color: white;
+  background: -webkit-linear-gradient(-70deg, rgb(243, 116, 255) 0%, rgb(255, 159, 100) 60%);
+}
+
+.form placeholder {
+  color: white;
+}
+
+.submitButton {
+  background: -webkit-linear-gradient(-70deg, rgb(243, 116, 255) 0%, rgb(255, 159, 100) 60%);
+  background-size: 200% 200%;
+  animation: gradient-animation 4s ease infinite;
+  color: #0d1116;
+  cursor: pointer;
+  margin-top: 16px;
+  padding: 8px;
+  border: 0;
+  border-radius: 5px;
+  width: 30%;
+}
