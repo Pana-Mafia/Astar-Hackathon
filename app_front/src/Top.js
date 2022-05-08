@@ -493,7 +493,7 @@ const Top = () => {
                                     担当者: {task.user}<br></br>
                                     期日: {task.due.toString()}<br></br>
                                     タスク: {task.content}<br></br>
-                                    報酬: {ethers.utils.formatEther(task.bounty)}ether<br></br>
+                                    報酬: {ethers.utils.formatEther(task.bounty)}SBY<br></br>
                                     完了: {task.done.toString()}<br></br>
                                     {/* ボタンの中 */}
                                 </button>
@@ -513,7 +513,7 @@ const Top = () => {
                                             期日▼<br /> <div className="card">{allTasks[indexValue].due.toString()}</div><br />
                                             タスク▼<div className="card"> {allTasks[indexValue].content}</div><br />
                                             詳細説明▼<div className="card"> {textValue}</div><br />
-                                            報酬▼<div className="card"> {ethers.utils.formatEther(allTasks[indexValue].bounty)}ether</div><br />
+                                            報酬▼<div className="card"> {ethers.utils.formatEther(allTasks[indexValue].bounty)}SBY</div><br />
                                             完了▼ <div className="card">{allTasks[indexValue].done.toString()}</div><br />
                                             成果物:
                                             <div>
