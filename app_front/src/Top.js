@@ -38,7 +38,7 @@ const Top = () => {
     const [riwarderValue, setRiwarderValue] = useState([]);
 
     // 成果物保存用状態変数
-    const [outputValue, setOutputValue] = useState([]);
+    const [outputValue, setOutputValue] = useState("");
 
     // モーダル
     const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -81,8 +81,8 @@ const Top = () => {
             textAlign: "center",
             position: "absolute",
             top: "5rem",
-            left: "15rem",
-            right: "15rem",
+            left: "5rem",
+            right: "5rem",
             bottom: "5rem",
             backgroundColor: "paleturquoise",
             borderRadius: "1rem",
@@ -146,7 +146,7 @@ const Top = () => {
         await getDocs(query(usersLinkRef)).then(snapshot => {
             snapshot.forEach(doc => {
                 // setContentValue(doc.data().link)
-                console.log(allLinks);
+                // console.log(allLinks);
                 allLinks.push(doc.data().link);
                 setLinks(allLinks);
             })
@@ -372,18 +372,29 @@ const Top = () => {
     };
 
     const addLink = async (idValue) => {
-        // IDからさらにコレクションを~~Refに保存
-        const usersLinkRef = collection(firebaseFirestore, `task/${idValue}/output`);
-        console.log(`task/${idValue}/output`)
-        console.log(usersLinkRef)
+        // Outputがなかった場合はアラートを出して処理を中断
+        try {
+            if (outputValue != "") {
+                // IDからさらにコレクションを~~Refに保存
+                const usersLinkRef = collection(firebaseFirestore, `task/${idValue}/output`);
+                console.log(`task/${idValue}/output`)
+                console.log(usersLinkRef)
 
-        // ~~Refにリンクを登録、IDつきで
-        const newDoc = doc(usersLinkRef).id
-        console.log(newDoc)
-        const documentRef = await setDoc(doc(usersLinkRef, newDoc), {
-            id: newDoc,
-            link: outputValue,
-        });
+                // ~~Refにリンクを登録、IDつきで
+                const newDoc = doc(usersLinkRef).id
+                console.log(newDoc)
+                const documentRef = await setDoc(doc(usersLinkRef, newDoc), {
+                    id: newDoc,
+                    link: outputValue,
+                })
+            }
+            else {
+                alert(`成果物を入力してください`);
+            }
+        }
+        catch (error) {
+            alert("エラーが発生しました");
+        }
     };
 
     useEffect(() => {
@@ -540,6 +551,7 @@ const Top = () => {
                                             output(indexValue);
                                             console.log("id value", idValue);
                                             addLink(idValue);
+                                            setOutputValue("")
                                         }}>成果物を提出</button>
 
                                         {/* 報酬送付 */}

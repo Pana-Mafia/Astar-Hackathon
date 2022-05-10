@@ -38,7 +38,7 @@ const Top = () => {
     const [riwarderValue, setRiwarderValue] = useState([]);
 
     // 成果物保存用状態変数
-    const [outputValue, setOutputValue] = useState([]);
+    const [outputValue, setOutputValue] = useState("");
 
     // モーダル
     const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -146,7 +146,7 @@ const Top = () => {
         await getDocs(query(usersLinkRef)).then(snapshot => {
             snapshot.forEach(doc => {
                 // setContentValue(doc.data().link)
-                console.log(allLinks);
+                // console.log(allLinks);
                 allLinks.push(doc.data().link);
                 setLinks(allLinks);
             })
@@ -373,7 +373,7 @@ const Top = () => {
     const addLink = async (idValue) => {
         // Outputがなかった場合はアラートを出して処理を中断
         try {
-            if (outputValue !== "") {
+            if (outputValue != "") {
                 // IDからさらにコレクションを~~Refに保存
                 const usersLinkRef = collection(firebaseFirestore, `task/${idValue}/output`);
                 console.log(`task/${idValue}/output`)
