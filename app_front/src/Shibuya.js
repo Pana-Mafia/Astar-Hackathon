@@ -81,8 +81,8 @@ const Top = () => {
             textAlign: "center",
             position: "absolute",
             top: "5rem",
-            left: "15rem",
-            right: "15rem",
+            left: "5rem",
+            right: "5rem",
             bottom: "5rem",
             backgroundColor: "paleturquoise",
             borderRadius: "1rem",
@@ -461,7 +461,7 @@ const Top = () => {
                     }<br></br>
 
                     {currentAccount && (<textarea name="messageArea"
-                        placeholder="タスクの報酬額を記入してください(単位:ASTR)"
+                        placeholder="タスクの報酬額を記入してください(単位:SBY)"
                         className="form"
                         type="text"
                         id="message"
@@ -503,7 +503,7 @@ const Top = () => {
                                     担当者: {task.user}<br></br>
                                     期日: {task.due.toString()}<br></br>
                                     タスク: {task.content}<br></br>
-                                    報酬: {ethers.utils.formatEther(task.bounty)}ASTR<br></br>
+                                    報酬: {ethers.utils.formatEther(task.bounty)}SBY<br></br>
                                     完了: {task.done.toString()}<br></br>
                                     {/* ボタンの中 */}
                                 </button>
@@ -523,7 +523,7 @@ const Top = () => {
                                             期日▼<br /> <div className="card">{allTasks[indexValue].due.toString()}</div><br />
                                             タスク▼<div className="card"> {allTasks[indexValue].content}</div><br />
                                             詳細説明▼<div className="card"> {textValue}</div><br />
-                                            報酬▼<div className="card"> {ethers.utils.formatEther(allTasks[indexValue].bounty)}ASTR</div><br />
+                                            報酬▼<div className="card"> {ethers.utils.formatEther(allTasks[indexValue].bounty)}SBY</div><br />
                                             完了▼ <div className="card">{allTasks[indexValue].done.toString()}</div><br />
                                             成果物:
                                             <div>
