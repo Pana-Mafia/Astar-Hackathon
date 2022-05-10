@@ -54,8 +54,10 @@ const Top = () => {
     // 成果物一覧保存用配列
     const [allLinks, setLinks] = useState([]);
 
+    // Astar Mainnetアドレス保存用
+    const contractAddress = "0x980a80De95bc528b6e413516F881B78F1e474F41"
     // Astarアドレス保存用
-    const contractAddress = "0x113FA87E7D8c4C4eA49956943C2dcc8659ABF6FA"
+    // const contractAddress = "0x113FA87E7D8c4C4eA49956943C2dcc8659ABF6FA"
     // rinkeby保存用
     // const contractAddress = "0x5617b6BA58A2fcA6969B0e75A05E21C1A5840F8a"
 
@@ -400,13 +402,16 @@ const Top = () => {
                     Web3 Task-Manager
                     <br></br>
                     <br></br>
+                    Version  Astar
+                    <br></br>
+                    <br></br>
                     🔥🚀  Work to Earn $ASTR 🔥🚀
-                </div>
 
-                <br />
-                <Link to={`/astar`}>ASTR版はこちら</Link>
-                {/* <Link to={`/team`}>チームの登録はこちら</Link> */}
-                <br />
+                    <br />
+                    <Link to={`/Shibuya`}>Shibuya testnet版はこちら</Link>
+                    {/* <Link to={`/team`}>チームの登録はこちら</Link> */}
+                    <br />
+                </div>
 
                 {!currentAccount && (
                     <button className="waveButton" onClick={connectWallet}>
