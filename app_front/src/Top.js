@@ -495,7 +495,7 @@ const Top = () => {
                                     // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
                                     output(index);
                                 }}>
-                                    担当者: {task.user}<br></br>
+                                    投稿者: {task.user}<br></br>
                                     期日: {task.due.toString()}<br></br>
                                     タスク: {task.content}<br></br>
                                     報酬: {ethers.utils.formatEther(task.bounty)}ASTR<br></br>
@@ -544,21 +544,25 @@ const Top = () => {
 
                                         {/* 報酬送付 */}
                                         <br></br>
-                                        <textarea name="messageArea"
-                                            className="form"
-                                            placeholder="報酬を送りたいアカウントのアドレスを記入してください"
-                                            type="text"
-                                            id="riward"
-                                            value={riwarderValue}
-                                            onChange={e => setRiwarderValue(e.target.value)} />
-                                        <br></br>
-                                        <button className="submitButton" onClick={() => done(index, riwarderValue)}>報酬を送付</button>
-                                        <br></br>
-                                        <br></br>
-                                        {/* <button onClick={() => {
+                                        {currentAccount == allTasks[indexValue].user.toLowerCase() && (
+                                            <div>
+                                                <textarea name="messageArea"
+                                                    className="form"
+                                                    placeholder="報酬を送りたいアカウントのアドレスを記入してください"
+                                                    type="text"
+                                                    id="riward"
+                                                    value={riwarderValue}
+                                                    onChange={e => setRiwarderValue(e.target.value)} />
+                                                <br></br>
+                                                <button className="submitButton" onClick={() => done(index, riwarderValue)}>報酬を送付</button>
+                                                <br></br>
+                                                <br></br>
+                                                {/* <button onClick={() => {
                                             setSelectedItem("")
                                             setLinks([]);
                                         }}>Close Modal</button> */}
+                                            </div>
+                                        )}
                                     </div>
                                 </Modal>
                             </div >)
