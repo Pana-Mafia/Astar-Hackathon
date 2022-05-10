@@ -356,7 +356,6 @@ const Top = () => {
 
     // 成果物提出
     const output = async (indexValue) => {
-
         // ドキュメントIDを取得 
         console.log(indexValue)
         const usersDocumentRef = collection(firebaseFirestore, 'task');
@@ -372,18 +371,29 @@ const Top = () => {
     };
 
     const addLink = async (idValue) => {
-        // IDからさらにコレクションを~~Refに保存
-        const usersLinkRef = collection(firebaseFirestore, `task/${idValue}/output`);
-        console.log(`task/${idValue}/output`)
-        console.log(usersLinkRef)
+        // Outputがなかった場合はアラートを出して処理を中断
+        try {
+            if (outputValue !== "") {
+                // IDからさらにコレクションを~~Refに保存
+                const usersLinkRef = collection(firebaseFirestore, `task/${idValue}/output`);
+                console.log(`task/${idValue}/output`)
+                console.log(usersLinkRef)
 
-        // ~~Refにリンクを登録、IDつきで
-        const newDoc = doc(usersLinkRef).id
-        console.log(newDoc)
-        const documentRef = await setDoc(doc(usersLinkRef, newDoc), {
-            id: newDoc,
-            link: outputValue,
-        });
+                // ~~Refにリンクを登録、IDつきで
+                const newDoc = doc(usersLinkRef).id
+                console.log(newDoc)
+                const documentRef = await setDoc(doc(usersLinkRef, newDoc), {
+                    id: newDoc,
+                    link: outputValue,
+                })
+            }
+            else {
+                alert(`成果物を入力してください`);
+            }
+        }
+        catch (error) {
+            alert("エラーが発生しました");
+        }
     };
 
     useEffect(() => {
@@ -500,7 +510,7 @@ const Top = () => {
                                     // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
                                     output(index);
                                 }}>
-                                    担当者: {task.user}<br></br>
+                                    投稿者: {task.user}<br></br>
                                     期日: {task.due.toString()}<br></br>
                                     タスク: {task.content}<br></br>
                                     報酬: {ethers.utils.formatEther(task.bounty)}SBY<br></br>
@@ -549,21 +559,25 @@ const Top = () => {
 
                                         {/* 報酬送付 */}
                                         <br></br>
-                                        <textarea name="messageArea"
-                                            className="form"
-                                            placeholder="報酬を送りたいアカウントのアドレスを記入してください"
-                                            type="text"
-                                            id="riward"
-                                            value={riwarderValue}
-                                            onChange={e => setRiwarderValue(e.target.value)} />
-                                        <br></br>
-                                        <button className="submitButton" onClick={() => done(index, riwarderValue)}>報酬を送付</button>
-                                        <br></br>
-                                        <br></br>
-                                        {/* <button onClick={() => {
+                                        {currentAccount == allTasks[indexValue].user.toLowerCase() && (
+                                            <div>
+                                                <textarea name="messageArea"
+                                                    className="form"
+                                                    placeholder="報酬を送りたいアカウントのアドレスを記入してください"
+                                                    type="text"
+                                                    id="riward"
+                                                    value={riwarderValue}
+                                                    onChange={e => setRiwarderValue(e.target.value)} />
+                                                <br></br>
+                                                <button className="submitButton" onClick={() => done(index, riwarderValue)}>報酬を送付</button>
+                                                <br></br>
+                                                <br></br>
+                                                {/* <button onClick={() => {
                                             setSelectedItem("")
                                             setLinks([]);
                                         }}>Close Modal</button> */}
+                                            </div>
+                                        )}
                                     </div>
                                 </Modal>
                             </div >)
