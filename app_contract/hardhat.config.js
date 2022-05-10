@@ -35,6 +35,13 @@ module.exports = {
       url: process.env.PROD_ALCHEMY_KEY,
       accounts: [process.env.PRIVATE_KEY],
     },
+    astar: {
+      // Shibuyaノードのエンドポイント
+      url: "https://rpc.astar.network:8545/",
+      // ガス代を払うアカウントの秘密鍵（envファイルから読み込む）
+      accounts:
+        [process.env.PRIVATE_KEY],
+    },
     shibuya: {
       // Shibuyaノードのエンドポイント
       url: "https://rpc.shibuya.astar.network:8545",
