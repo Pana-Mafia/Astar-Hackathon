@@ -40,6 +40,11 @@
   color: #0d1116;
 }
 
+.waveCheckButton {
+  color: -webkit-linear-gradient(-70deg, #a2facf, #64acff);
+  animation: gradient-animation 4s ease infinite;
+}
+
 .card {
   background: -webkit-linear-gradient(-70deg, #a2facf, #64acff);
   background-size: 200% 200%;
