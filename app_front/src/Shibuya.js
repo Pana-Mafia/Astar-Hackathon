@@ -445,7 +445,7 @@ const Top = () => {
   }, []);
 
   function switchNetwork(e) {
-    e.target.checked ? navigate("/Shibuya") : navigate("/");
+    e.target.checked ? navigate("/") : navigate("/Shibuya");
   }
 
   return (
@@ -468,13 +468,13 @@ const Top = () => {
           <br></br>
           🔥🚀 Work to Earn $SBY 🔥🚀
           <br />
-          <Link to={`/`}>Astar版はこちら</Link>
-          {/* <Link to={`/team`}>チームの登録はこちら</Link> */}
           <br />
+          {/* <Link to={`/`}>Astar版はこちら</Link> */}
+          {/* <Link to={`/team`}>チームの登録はこちら</Link> */}
           <div style={{ display: "flex", alignItems: "center" }}>
-            <p>Astar network</p>
-            <Switch defaultChecked onChange={switchNetwork}></Switch>
             <p>Shibuya Test Net</p>
+            <Switch onChange={switchNetwork}></Switch>
+            <p>Astar network</p>
           </div>
         </div>
 

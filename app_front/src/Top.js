@@ -496,7 +496,7 @@ const Top = () => {
   }));
 
   function switchNetwork(e) {
-    e.target.checked ? navigate("/Shibuya") : navigate("/");
+    e.target.checked ? navigate("/") : navigate("/Shibuya");
   }
 
   return (
@@ -519,9 +519,14 @@ const Top = () => {
           <br></br>
           🔥🚀 Work to Earn $ASTR 🔥🚀
           <br />
-          <Link to={`/Shibuya`}>Shibuya testnet版はこちら</Link>
-          {/* <Link to={`/team`}>チームの登録はこちら</Link> */}
           <br />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <p>Shibuya Test Net</p>
+            <Switch defaultChecked onChange={switchNetwork}></Switch>
+            <p>Astar network</p>
+          </div>
+          {/* <Link to={`/Shibuya`}>Shibuya testnet版はこちら</Link> */}
+          {/* <Link to={`/team`}>チームの登録はこちら</Link> */}
         </div>
 
         {!currentAccount && (
@@ -545,23 +550,6 @@ const Top = () => {
             タスクを作成する
           </button>
         )}
-        <p>--- 以下、新規作成コンポーネント ---</p>
-        <Button
-          className="waveButton"
-          style={{ color: "black" }}
-          onClick={() => {
-            setSelectedItem("create");
-          }}
-        >
-          タスクを作成する
-        </Button>
-        <Checkbox defaultChecked className="waveCheckButton" />
-        <ShibuyaOrAstar />
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <p>Astar network</p>
-          <Switch onChange={switchNetwork}></Switch>
-          <p>Shibuya Test Net</p>
-        </div>
 
         {/* モーダルにするテスト */}
         <Modal
