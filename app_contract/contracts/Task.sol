@@ -35,7 +35,7 @@ contract CreateTask {
     // イベントを設定。フロントで新たにタスクを登録した時に発火する.今後コントラクトを新たにデプロイ、ABIを変更、フロントを変更という作業が残っている
     event NewTask(
         address user,
-        uint256 due,
+        string due,
         string content,
         uint256 bounty,
         bool done
@@ -44,7 +44,7 @@ contract CreateTask {
 
     struct Task {
         address user;
-        uint256 due;
+        string due;
         string content;
         uint256 bounty;
         bool done;
@@ -54,7 +54,7 @@ contract CreateTask {
     // タスク作成
     function createTask(
         address _user,
-        uint256 _due,
+        string memory _due,
         string memory _content // uint256 _bounty
     ) public payable {
         _user = msg.sender;
@@ -72,7 +72,7 @@ contract CreateTask {
         view
         returns (
             address,
-            uint256,
+            string memory,
             string memory,
             uint256
         )
@@ -94,6 +94,12 @@ contract CreateTask {
         require(tasks[_index].done == false, "Already done.");
         // コントラクト作成者を特定
         address payable _riwarder = payable(_riwarder);
+
+        // タスク作成者とコントラクト実行者が同じでない場合はエラーを返す
+        require(
+            tasks[_index].user == msg.sender,
+            "You Don't have the right to end this task."
+        );
         // コントラクト作成者へ、タスクのbountyと同値の報酬を送付
         _riwarder.transfer(tasks[_index].bounty);
         // タスクのuserを作成者へ変更
