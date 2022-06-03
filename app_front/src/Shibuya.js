@@ -64,7 +64,10 @@ const Top = () => {
     // const contractAddress = "0x08565FA1c291e97970a88E599Ae0641Ebe52eE6C"
 
     // Shibuyaアドレス最新
-    const contractAddress = "0x69eb613f5c43D9F40da91D176DCbFB075097e236"
+    // const contractAddress = "0x69eb613f5c43D9F40da91D176DCbFB075097e236"
+
+    // Fuji testnet
+    const contractAddress = "0x980a80De95bc528b6e413516F881B78F1e474F41"
 
     // ABIの参照
     const ContractABI = abi.abi;
@@ -428,10 +431,10 @@ const Top = () => {
                     <br></br>
                     <br></br>
                     <br></br>
-                    Version  Shibuya
+                    Version  Fuji
                     <br></br>
                     <br></br>
-                    🔥🚀  Work to Earn $SBY 🔥🚀
+                    🔥🚀  Work to Earn $AVAX 🔥🚀
 
                     <br />
                     {/* 変更をボタン形式に */}
@@ -440,7 +443,7 @@ const Top = () => {
                         <Link className="b_text" to={`/`}>Rinekby<br /> Testnet</Link>
                     </div>
                     <div className="Button">
-                        <Link className="b_text" to={`/Shibuya`}>Shibuya <br />Testnet</Link>
+                        <Link className="b_text" to={`/Shibuya`}>Fuji <br />Testnet</Link>
                     </div>
                     {/* <Link to={`/team`}>チームの登録はこちら</Link> */}
                     <br />
@@ -490,7 +493,7 @@ const Top = () => {
                     }<br></br>
 
                     {currentAccount && (<textarea name="messageArea"
-                        placeholder="タスクの報酬額を記入してください(単位:SBY)"
+                        placeholder="タスクの報酬額を記入してください(単位:AVAX)"
                         className="form"
                         type="text"
                         id="message"
@@ -532,7 +535,7 @@ const Top = () => {
                                     投稿者: {task.user}<br></br>
                                     期日: {task.due.toString()}<br></br>
                                     タスク: {task.content}<br></br>
-                                    報酬: {ethers.utils.formatEther(task.bounty)}SBY<br></br>
+                                    報酬: {ethers.utils.formatEther(task.bounty)}AVAX<br></br>
                                     完了: {task.done.toString()}<br></br>
                                     {/* ボタンの中 */}
                                 </button>
@@ -553,7 +556,7 @@ const Top = () => {
                                             期日▼<br /> <div className="card">{allTasks[indexValue].due.toString()}</div><br />
                                             タスク▼<div className="card"> {allTasks[indexValue].content}</div><br />
                                             詳細説明▼<div className="card"> {textValue}</div><br />
-                                            報酬▼<div className="card"> {ethers.utils.formatEther(allTasks[indexValue].bounty)}SBY</div><br />
+                                            報酬▼<div className="card"> {ethers.utils.formatEther(allTasks[indexValue].bounty)}AVAX</div><br />
                                             完了▼ <div className="card">{allTasks[indexValue].done.toString()}</div><br />
                                             成果物:
                                             {/* <div>

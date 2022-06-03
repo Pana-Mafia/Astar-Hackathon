@@ -49,5 +49,12 @@ module.exports = {
       accounts:
         [process.env.PRIVATE_KEY],
     },
+    fuji: {
+      // Shibuyaノードのエンドポイント
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
+      // ガス代を払うアカウントの秘密鍵（envファイルから読み込む）
+      accounts:
+        [process.env.PRIVATE_KEY],
+    },
   },
 };

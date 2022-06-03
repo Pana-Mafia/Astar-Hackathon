@@ -505,7 +505,8 @@ const Top = () => {
                         <Link className="b_text" to={`/`}>Rinkeby<br /> Testnet</Link>
                     </div>
                     <div className="Button_passive">
-                        <Link className="b_text" to={`/Shibuya`}>Shibuya<br /> Testnet</Link>
+                        {/* <Link className="b_text" to={`/Shibuya`}>Fuji<br /> Testnet</Link> */}
+                        <Link className="b_text" to={`/Shibuya`}>Fuji<br /> Testnet</Link>
                     </div>
                     {/* <Link to={`/team`}>チームの登録はこちら</Link> */}
                     <br />
