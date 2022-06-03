@@ -9,6 +9,9 @@ import abi from './utils/CreateTask.json';
 // モーダル
 import Modal from "react-modal";
 
+// スイッチ
+// import SwitchSelector from "react-native-switch-selector";
+
 // Firebase関係
 import { doc, setDoc, collection, getDocs, query, where } from 'firebase/firestore';
 import { firebaseFirestore } from './firebase';
@@ -38,7 +41,7 @@ const Top = () => {
     const [riwarderValue, setRiwarderValue] = useState([]);
 
     // 成果物保存用状態変数
-    const [outputValue, setOutputValue] = useState("");
+    const [outputValue, setOutputValue] = React.useState("0");
 
     // モーダル
     const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -55,19 +58,18 @@ const Top = () => {
     const [allLinks, setLinks] = useState([]);
     // 成果物投稿者
     const [allLinkHolders, setLinkHolders] = useState([]);
+    // 成果物いいね数
+    const [allLinkGoods, setLinkGoods] = useState([]);
 
     // Astar Mainnetアドレス保存用
     // const contractAddress = "0x980a80De95bc528b6e413516F881B78F1e474F41"
-    // Shibuyaアドレス保存用
+    // Astarアドレス保存用
     // const contractAddress = "0x113FA87E7D8c4C4eA49956943C2dcc8659ABF6FA"
     // rinkeby保存用
     // const contractAddress = "0x08565FA1c291e97970a88E599Ae0641Ebe52eE6C"
 
-    // Shibuyaアドレス最新
-    // const contractAddress = "0x69eb613f5c43D9F40da91D176DCbFB075097e236"
-
-    // Fuji testnet
-    const contractAddress = "0x980a80De95bc528b6e413516F881B78F1e474F41"
+    // 新testnet(Rinekby)
+    const contractAddress = "0xC45Cb7eCe0823bCD1df7Eaf6275462fAe114EFbD"
 
     // ABIの参照
     const ContractABI = abi.abi;
@@ -163,6 +165,12 @@ const Top = () => {
             snapshot.forEach(doc => {
                 allLinkHolders.push(doc.data().userid);
                 setLinkHolders(allLinkHolders);
+            })
+        })
+        await getDocs(query(usersLinkRef)).then(snapshot => {
+            snapshot.forEach(doc => {
+                allLinkGoods.push(doc.data().like);
+                setLinkGoods(allLinkGoods);
             })
         })
         setOutputValue("")
@@ -362,7 +370,7 @@ const Top = () => {
                 );
 
             } else {
-                alert(`報酬の送付先が指定されていません`);
+                alert(`報酬の送付先が指定されていません🥺　コントラクトアドレスを入力してください！`);
             }
         } catch (error) {
             console.log(error)
@@ -424,6 +432,60 @@ const Top = () => {
                     <h1 className="heading gradient-text">
                         <span role="img" aria-label="hand-wave">🚀</span> Taskal 🚀
                     </h1>
+                    {/* スイッチテスト */}
+                    {/* <SwitchSelector
+                        initial={0}
+                        onPress={value => this.setState({ gender: value })}
+                        textColor="purple"
+                        selectedColor="white"
+                        buttonColor="purple"
+                        borderColor="purple"
+                        hasPadding
+                        options={[
+                            {
+                                label: "8:00",
+                                value: "1",
+                                customIcon:
+                                    <Icon
+                                        name="sun"
+                                        size={18}
+                                        style={{
+                                            marginRight: 10,
+                                            marginTop: 3,
+                                            color: gender == 1 ? "white" : "black"
+                                        }}
+                                    />
+                            },
+                            {
+                                label: "18:00",
+                                value: "2",
+                                customIcon:
+                                    <Icon
+                                        name="sunset"
+                                        size={18}
+                                        style={{
+                                            marginRight: 10,
+                                            marginTop: 3,
+                                            color: gender == 2 ? "white" : "black"
+                                        }}
+                                    />
+                            },
+                            {
+                                label: "22:00",
+                                value: "3",
+                                customIcon:
+                                    <Icon
+                                        name="moon"
+                                        size={18}
+                                        style={{
+                                            marginRight: 10,
+                                            marginTop: 3,
+                                            color: gender == 3 ? "white" : "black"
+                                        }}
+                                    />
+                            },
+                        ]}></SwitchSelector> */}
+
                 </div>
                 <div className="bio">
                     Web3 Task-Manager<br></br><br></br>
@@ -431,19 +493,20 @@ const Top = () => {
                     <br></br>
                     <br></br>
                     <br></br>
-                    Version  Fuji
+                    Version  Rinkeby
                     <br></br>
                     <br></br>
-                    🔥🚀  Work to Earn $AVAX 🔥🚀
+                    🔥🚀  Work to Earn $ETH 🔥🚀
 
                     <br />
                     {/* 変更をボタン形式に */}
                     <br />
-                    <div className="Button_passive">
-                        <Link className="b_text" to={`/`}>Rinekby<br /> Testnet</Link>
-                    </div>
                     <div className="Button">
-                        <Link className="b_text" to={`/Shibuya`}>Fuji <br />Testnet</Link>
+                        <Link className="b_text" to={`/`}>Rinkeby<br /> Testnet</Link>
+                    </div>
+                    <div className="Button_passive">
+                        {/* <Link className="b_text" to={`/Shibuya`}>Fuji<br /> Testnet</Link> */}
+                        <Link className="b_text" to={`/Shibuya`}>Fuji<br /> Testnet</Link>
                     </div>
                     {/* <Link to={`/team`}>チームの登録はこちら</Link> */}
                     <br />
@@ -493,7 +556,7 @@ const Top = () => {
                     }<br></br>
 
                     {currentAccount && (<textarea name="messageArea"
-                        placeholder="タスクの報酬額を記入してください(単位:AVAX)"
+                        placeholder="タスクの報酬額を記入してください(単位:ETH)"
                         className="form"
                         type="text"
                         id="message"
@@ -535,7 +598,7 @@ const Top = () => {
                                     投稿者: {task.user}<br></br>
                                     期日: {task.due.toString()}<br></br>
                                     タスク: {task.content}<br></br>
-                                    報酬: {ethers.utils.formatEther(task.bounty)}AVAX<br></br>
+                                    報酬: {ethers.utils.formatEther(task.bounty)}ETH<br></br>
                                     完了: {task.done.toString()}<br></br>
                                     {/* ボタンの中 */}
                                 </button>
@@ -544,6 +607,8 @@ const Top = () => {
                                     setSelectedItem("");
                                     setRiwarderValue("");
                                     setLinks([]);
+                                    setLinkHolders([]);
+                                    setLinkGoods([]);
                                 }}>
                                     <div id="overlay">
                                         {/* <div className="mainContainer">
@@ -556,13 +621,9 @@ const Top = () => {
                                             期日▼<br /> <div className="card">{allTasks[indexValue].due.toString()}</div><br />
                                             タスク▼<div className="card"> {allTasks[indexValue].content}</div><br />
                                             詳細説明▼<div className="card"> {textValue}</div><br />
-                                            報酬▼<div className="card"> {ethers.utils.formatEther(allTasks[indexValue].bounty)}AVAX</div><br />
+                                            報酬▼<div className="card"> {ethers.utils.formatEther(allTasks[indexValue].bounty)}ETH</div><br />
                                             完了▼ <div className="card">{allTasks[indexValue].done.toString()}</div><br />
                                             成果物:
-                                            {/* <div>
-                                                {allLinks.map((link, i) => <div key={i} className="card">{link}</div>)}
-                                            </div> */}
-
                                             <table>
                                                 <thead >
                                                     <tr className="table">
@@ -594,7 +655,6 @@ const Top = () => {
                                                     </tr>
                                                 </tbody>
                                             </table>
-
                                         </div>
 
                                         {/* タスク提出 */}
@@ -606,15 +666,31 @@ const Top = () => {
                                             value={outputValue}
                                             onChange={e => setOutputValue(e.target.value)} />
                                         <br></br>
-                                        <button className="submitButton" onClick={() => {
+                                        <button className="submitButton" onClick={(e) => {
                                             output(indexValue);
                                             console.log("id value", idValue);
                                             addLink(idValue);
+                                            setOutput(index);
+                                            setOutputValue("")
                                         }}>成果物を提出</button>
 
-                                        {/* 報酬送付 */}
+                                        {/* 報酬送付
                                         <br></br>
-
+                                        {currentAccount == allTasks[indexValue].user.toLowerCase() && (
+                                            <div>
+                                                <textarea name="messageArea"
+                                                    className="form"
+                                                    placeholder="報酬を送りたいアカウントのアドレスを記入してください"
+                                                    type="text"
+                                                    id="riward"
+                                                    value={riwarderValue}
+                                                    onChange={e => setRiwarderValue(e.target.value)} />
+                                                <br></br>
+                                                <button className="submitButton" onClick={() => done(index, riwarderValue)}>報酬を送付</button>
+                                                <br></br>
+                                                <br></br>
+                                            </div>
+                                        )} */}
                                     </div>
                                 </Modal>
                             </div >)

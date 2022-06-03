@@ -44,7 +44,14 @@ module.exports = {
     },
     shibuya: {
       // Shibuyaノードのエンドポイント
-      url: "https://rpc.shibuya.astar.network:8545",
+      url: "https://evm.shibuya.astar.network",
+      // ガス代を払うアカウントの秘密鍵（envファイルから読み込む）
+      accounts:
+        [process.env.PRIVATE_KEY],
+    },
+    fuji: {
+      // Shibuyaノードのエンドポイント
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
       // ガス代を払うアカウントの秘密鍵（envファイルから読み込む）
       accounts:
         [process.env.PRIVATE_KEY],
