@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import Switch from "@mui/material/Switch";
 
-const Eyecatch = () => {
+const Eyecatch = (props) => {
   const navigate = useNavigate();
   function switchNetwork(e) {
     e.target.checked ? navigate("/") : navigate("/Shibuya");
@@ -23,17 +23,28 @@ const Eyecatch = () => {
         <br></br>
         <br></br>
         <br></br>
-        Version Rinkeby
+        Version {props.version}
         <br></br>
         <br></br>
-        🔥🚀 Work to Earn $ETH 🔥🚀
+        <br></br>
+        🔥🚀 Work to Earn {props.unit} 🔥🚀
         <br />
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <p>Shibuya Test Net</p>
-          <Switch onChange={switchNetwork}></Switch>
-          <p>Astar network</p>
+        <br />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div>Fuji Testnet</div>
+          <Switch
+            defaultChecked={props.checked}
+            onChange={switchNetwork}
+          ></Switch>
+          <div>Rinkeby Testnet</div>
         </div>
-        <br />
+        {/* <br />
         <div className="Button">
           <Link className="b_text" to={`/`}>
             Rinkeby
@@ -41,14 +52,14 @@ const Eyecatch = () => {
           </Link>
         </div>
         <div className="Button_passive">
-          {/* <Link className="b_text" to={`/Shibuya`}>Fuji<br /> Testnet</Link> */}
+          <Link className="b_text" to={`/Shibuya`}>Fuji<br /> Testnet</Link>
           <Link className="b_text" to={`/Shibuya`}>
             Fuji
             <br /> Testnet
           </Link>
-        </div>
+        </div> */}
         {/* <Link to={`/team`}>チームの登録はこちら</Link> */}
-        <br />
+        {/* <br /> */}
       </div>
     </div>
   );

@@ -478,7 +478,7 @@ const Top = () => {
   return (
     <div className="mainContainer">
       <div className="dataContainer">
-        <Eyecatch />
+        <Eyecatch version="Rinkeby" unit="$ETH" checked={true} />
 
         <br />
         {!currentAccount && (

@@ -23,6 +23,8 @@ import {
 } from "firebase/firestore";
 import { firebaseFirestore } from "./firebase";
 
+import Eyecatch from "./components/Eyecatch";
+
 Modal.setAppElement("#root");
 const Top = () => {
   // ユーザーのウォレット保存用状態変数
@@ -466,48 +468,7 @@ const Top = () => {
   return (
     <div className="mainContainer">
       <div className="dataContainer">
-        <div className="header">
-          <h1 className="heading gradient-text">
-            <span role="img" aria-label="hand-wave">
-              🚀
-            </span>{" "}
-            Taskal 🚀
-          </h1>
-        </div>
-        <div className="bio">
-          Web3 Task-Manager<br></br>
-          <br></br>
-          (Alpha test for TRUST SMITH Team)
-          <br></br>
-          <br></br>
-          <br></br>
-          Version Fuji
-          <br></br>
-          <br></br>
-          🔥🚀 Work to Earn $AVAX 🔥🚀
-          <br />
-          {/* 変更をボタン形式に */}
-          <br />
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <p>Shibuya Test Net</p>
-            <Switch onChange={switchNetwork}></Switch>
-            <p>Astar network</p>
-          </div>
-          <div className="Button_passive">
-            <Link className="b_text" to={`/`}>
-              Rinekby
-              <br /> Testnet
-            </Link>
-          </div>
-          <div className="Button">
-            <Link className="b_text" to={`/Shibuya`}>
-              Fuji <br />
-              Testnet
-            </Link>
-          </div>
-          {/* <Link to={`/team`}>チームの登録はこちら</Link> */}
-          <br />
-        </div>
+        <Eyecatch version="Fuji" unit="$AVAX" checked={false} />
 
         <br />
         {!currentAccount && (
