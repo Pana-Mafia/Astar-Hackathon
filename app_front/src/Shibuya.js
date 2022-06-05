@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { onSnapshot } from "firebase/firestore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./App.css";
 import { ethers } from "ethers";
 // ABIのインポート
@@ -8,6 +8,9 @@ import abi from "./utils/CreateTask.json";
 
 // モーダル
 import Modal from "react-modal";
+
+// MUI
+import Switch from "@mui/material/Switch";
 
 // Firebase関係
 import {
@@ -456,9 +459,10 @@ const Top = () => {
     checkIfWalletIsConnected();
   }, []);
 
-  // function switchNetwork(e) {
-  //   e.target.checked ? navigate("/") : navigate("/Shibuya");
-  // }
+  const navigate = useNavigate();
+  function switchNetwork(e) {
+    e.target.checked ? navigate("/") : navigate("/Shibuya");
+  }
   return (
     <div className="mainContainer">
       <div className="dataContainer">
@@ -484,6 +488,11 @@ const Top = () => {
           <br />
           {/* 変更をボタン形式に */}
           <br />
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <p>Shibuya Test Net</p>
+            <Switch onChange={switchNetwork}></Switch>
+            <p>Astar network</p>
+          </div>
           <div className="Button_passive">
             <Link className="b_text" to={`/`}>
               Rinekby
