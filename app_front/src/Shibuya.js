@@ -38,6 +38,9 @@ const Top = () => {
     }
   };
 
+  // マイニング中にロード
+  const [mineStatus, setMineStatus] = useState(null);
+
   // ユーザーのウォレット保存用状態変数
   const [currentAccount, setCurrentAccount] = useState("");
 
@@ -334,6 +337,7 @@ const Top = () => {
   // task生成
   const task = async () => {
     try {
+      setMineStatus('mining');
       const { ethereum } = window;
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
@@ -364,10 +368,13 @@ const Top = () => {
         console.log("Mining...", taskTxn.hash);
         await taskTxn.wait();
         console.log("Mined -- ", taskTxn.hash);
+        setMineStatus('success');
       } else {
+        setMineStatus('error');
         console.log("Ethereum object doesn't exist!");
       }
     } catch (error) {
+      setMineStatus('error');
       console.log(error);
     }
   };
@@ -513,6 +520,21 @@ const Top = () => {
           </button>
         )}
 
+        {/* mining時にロード画面にする実装 */}
+        <br></br>
+        <div className='mine-submission'>
+          {mineStatus === 'success' && <div className={mineStatus}>
+            <p>success!</p>
+          </div>}
+          {mineStatus === 'mining' && <div className={mineStatus}>
+            <div className='loader' />
+            <span>Transaction is mining</span>
+          </div>}
+          {mineStatus === 'error' && <div className={mineStatus}>
+            <p>Transaction failed. Make sure you have $ETH in your Metamask wallet and try again.</p>
+          </div>}
+        </div>
+
         {/* モーダルにするテスト */}
         <Modal
           isOpen={"create" === selectedItem}
@@ -576,6 +598,7 @@ const Top = () => {
               onClick={() => {
                 handleTask();
                 task();
+                setSelectedItem("");
               }}
             >
               タスクを作成する
