@@ -27,6 +27,17 @@ import Eyecatch from "./components/Eyecatch";
 
 Modal.setAppElement("#root");
 const Top = () => {
+  // チェックボックスの実装
+  const [isChecked, setIsChecked] = React.useState(false);
+
+  const changeIsChecked = (e) => {
+    if (isChecked == false) {
+      setIsChecked(true);
+    } else {
+      setIsChecked(false);
+    }
+  };
+
   // ユーザーのウォレット保存用状態変数
   const [currentAccount, setCurrentAccount] = useState("");
 
@@ -469,6 +480,15 @@ const Top = () => {
     <div className="mainContainer">
       <div className="dataContainer">
         <Eyecatch version="Fuji" unit="$AVAX" checked={false} />
+        <br />
+        <input
+          type="checkbox"
+          id="button"
+          value="ribbon"
+          checked={isChecked}
+          onChange={changeIsChecked}
+        />
+        <label htmlFor="text">完了済のタスクを非表示　</label>
 
         <br />
         {!currentAccount && (
@@ -568,184 +588,374 @@ const Top = () => {
             return (
               <div key={index} className="cover">
                 {/* setispenと合わせて別の関数を策定、idを渡す。このidをベースにtaskを特定して表示する関数を書く */}
-                <button
-                  className="taskCard"
-                  onClick={() => {
-                    setIndexValue(index);
-                    setText(index);
-                    setOutput(index);
-                    // setIsOpen(true);
-                    setSelectedItem("task");
-                    // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
-                    output(index);
-                  }}
-                >
-                  投稿者: {task.user}
-                  <br></br>
-                  期日: {task.due.toString()}
-                  <br></br>
-                  タスク: {task.content}
-                  <br></br>
-                  報酬: {ethers.utils.formatEther(task.bounty)}AVAX<br></br>
-                  完了: {task.done.toString()}
-                  <br></br>
-                  {/* ボタンの中 */}
-                </button>
-                {/* 詳細を押した際の挙動 */}
-                <Modal
-                  isOpen={"task" === selectedItem}
-                  style={modalStyle}
-                  onRequestClose={() => {
-                    setSelectedItem("");
-                    setRiwarderValue("");
-                    setLinks([]);
-                  }}
-                >
-                  <div id="overlay">
-                    {/* <div className="mainContainer">
+                {/* チェックすると完了済のものを非表示 */}
+                {(isChecked == true) && (
+                  (task.done.toString() == "false") && (
+                    <div>
+                      <button
+                        className="taskCard"
+                        onClick={() => {
+                          setIndexValue(index);
+                          setText(index);
+                          setOutput(index);
+                          // setIsOpen(true);
+                          setSelectedItem("task");
+                          // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
+                          output(index);
+                        }}
+                      >
+                        投稿者: {task.user}
+                        <br></br>
+                        期日: {task.due.toString()}
+                        <br></br>
+                        タスク: {task.content}
+                        <br></br>
+                        報酬: {ethers.utils.formatEther(task.bounty)}AVAX<br></br>
+                        完了: {task.done.toString()}
+                        <br></br>
+                        {/* ボタンの中 */}
+                      </button>
+                      {/* 詳細を押した際の挙動 */}
+                      <Modal
+                        isOpen={"task" === selectedItem}
+                        style={modalStyle}
+                        onRequestClose={() => {
+                          setSelectedItem("");
+                          setRiwarderValue("");
+                          setLinks([]);
+                        }}
+                      >
+                        <div id="overlay">
+                          {/* <div className="mainContainer">
                                         <div className="dataContainer">
                                             <div className="body"> */}
-                    <h2>
-                      タスク詳細
-                      <br />
-                    </h2>
-                    <div className="modal">
-                      タスク登録者▼
-                      <br />
-                      <div className="card"> {allTasks[indexValue].user}</div>
-                      <br />
-                      期日▼
-                      <br />{" "}
-                      <div className="card">
-                        {allTasks[indexValue].due.toString()}
-                      </div>
-                      <br />
-                      タスク▼
-                      <div className="card">
-                        {" "}
-                        {allTasks[indexValue].content}
-                      </div>
-                      <br />
-                      詳細説明▼<div className="card"> {textValue}</div>
-                      <br />
-                      報酬▼
-                      <div className="card">
-                        {" "}
-                        {ethers.utils.formatEther(allTasks[indexValue].bounty)}
-                        AVAX
-                      </div>
-                      <br />
-                      完了▼{" "}
-                      <div className="card">
-                        {allTasks[indexValue].done.toString()}
-                      </div>
-                      <br />
-                      成果物:
-                      {/* <div>
+                          <h2>
+                            タスク詳細
+                            <br />
+                          </h2>
+                          <div className="modal">
+                            タスク登録者▼
+                            <br />
+                            <div className="card"> {allTasks[indexValue].user}</div>
+                            <br />
+                            期日▼
+                            <br />{" "}
+                            <div className="card">
+                              {allTasks[indexValue].due.toString()}
+                            </div>
+                            <br />
+                            タスク▼
+                            <div className="card">
+                              {" "}
+                              {allTasks[indexValue].content}
+                            </div>
+                            <br />
+                            詳細説明▼<div className="card"> {textValue}</div>
+                            <br />
+                            報酬▼
+                            <div className="card">
+                              {" "}
+                              {ethers.utils.formatEther(allTasks[indexValue].bounty)}
+                              AVAX
+                            </div>
+                            <br />
+                            完了▼{" "}
+                            <div className="card">
+                              {allTasks[indexValue].done.toString()}
+                            </div>
+                            <br />
+                            成果物:
+                            {/* <div>
                                                 {allLinks.map((link, i) => <div key={i} className="card">{link}</div>)}
                                             </div> */}
-                      <table>
-                        <thead>
-                          <tr className="table">
-                            <th scope="col" className="Button_col">
-                              アドレス
-                            </th>
-                            <th scope="col" className="Button_col">
-                              成果物
-                            </th>
-                            {/* <th scope="col" className="Button_col">いいね</th> */}
-                            {currentAccount ==
-                              allTasks[indexValue].user.toLowerCase() && (
-                              <th scope="col" className="Button_col">
-                                報酬
-                              </th>
-                            )}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className="">
-                            <td data-label="アドレス" className="">
-                              {allLinkHolders.map((userid, i) => (
-                                <a
-                                  key={i}
-                                  className=""
-                                  href={`https://etherscan.io/address/${userid}`}
-                                  target="_blank"
-                                >
-                                  {userid.slice(0, 5)}...
-                                  <br />
-                                  <br />
-                                </a>
-                              ))}
-                            </td>
-                            <td data-label="成果物" className="">
-                              {allLinks.map((link, i) => (
-                                <div>
-                                  <a
-                                    key={i}
-                                    className=""
-                                    href={link}
-                                    target="_blank"
-                                  >
-                                    {" "}
-                                    {link.slice(0, 15)}...
-                                    <br />
-                                    <br />
-                                  </a>
-                                </div>
-                              ))}
-                            </td>
-                            {/* <td data-label="いいね" className="">
+                            <table>
+                              <thead>
+                                <tr className="table">
+                                  <th scope="col" className="Button_col">
+                                    アドレス
+                                  </th>
+                                  <th scope="col" className="Button_col">
+                                    成果物
+                                  </th>
+                                  {/* <th scope="col" className="Button_col">いいね</th> */}
+                                  {currentAccount ==
+                                    allTasks[indexValue].user.toLowerCase() && (
+                                      <th scope="col" className="Button_col">
+                                        報酬
+                                      </th>
+                                    )}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr className="">
+                                  <td data-label="アドレス" className="">
+                                    {allLinkHolders.map((userid, i) => (
+                                      <a
+                                        key={i}
+                                        className=""
+                                        href={`https://etherscan.io/address/${userid}`}
+                                        target="_blank"
+                                      >
+                                        {userid.slice(0, 5)}...
+                                        <br />
+                                        <br />
+                                      </a>
+                                    ))}
+                                  </td>
+                                  <td data-label="成果物" className="">
+                                    {allLinks.map((link, i) => (
+                                      <div>
+                                        <a
+                                          key={i}
+                                          className=""
+                                          href={link}
+                                          target="_blank"
+                                        >
+                                          {" "}
+                                          {link.slice(0, 15)}...
+                                          <br />
+                                          <br />
+                                        </a>
+                                      </div>
+                                    ))}
+                                  </td>
+                                  {/* <td data-label="いいね" className="">
                                                             {allLinkGoods.map((like, i) => <a key={i} className=""> {like}<br /><br /></a>)}
 
                                                         </td> */}
-                            <td data-label="いいね" className="">
-                              {currentAccount ==
-                                allTasks[indexValue].user.toLowerCase() &&
-                                allLinkHolders.map((userid, i) => (
-                                  <div>
-                                    <button
-                                      key={i}
-                                      className="submitButton"
-                                      onClick={() => done(index, userid)}
-                                    >
-                                      報酬を送付
-                                    </button>
-                                    <br></br>
-                                  </div>
-                                ))}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                                  <td data-label="いいね" className="">
+                                    {currentAccount ==
+                                      allTasks[indexValue].user.toLowerCase() &&
+                                      allLinkHolders.map((userid, i) => (
+                                        <div>
+                                          <button
+                                            key={i}
+                                            className="submitButton"
+                                            onClick={() => done(index, userid)}
+                                          >
+                                            報酬を送付
+                                          </button>
+                                          <br></br>
+                                        </div>
+                                      ))}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
 
-                    {/* タスク提出 */}
-                    <textarea
-                      name="messageArea"
-                      className="form"
-                      placeholder="成果物のリンクを添付"
-                      type="text"
-                      id="riward"
-                      value={outputValue}
-                      onChange={(e) => setOutputValue(e.target.value)}
-                    />
-                    <br></br>
+                          {/* タスク提出 */}
+                          <textarea
+                            name="messageArea"
+                            className="form"
+                            placeholder="成果物のリンクを添付"
+                            type="text"
+                            id="riward"
+                            value={outputValue}
+                            onChange={(e) => setOutputValue(e.target.value)}
+                          />
+                          <br></br>
+                          <button
+                            className="submitButton"
+                            onClick={() => {
+                              output(indexValue);
+                              console.log("id value", idValue);
+                              addLink(idValue);
+                            }}
+                          >
+                            成果物を提出
+                          </button>
+
+                          {/* 報酬送付 */}
+                          <br></br>
+                        </div>
+                      </Modal>
+                    </div>
+                  )
+                )}
+
+                {(isChecked == false) && (
+                  <div>
                     <button
-                      className="submitButton"
+                      className="taskCard"
                       onClick={() => {
-                        output(indexValue);
-                        console.log("id value", idValue);
-                        addLink(idValue);
+                        setIndexValue(index);
+                        setText(index);
+                        setOutput(index);
+                        // setIsOpen(true);
+                        setSelectedItem("task");
+                        // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
+                        output(index);
                       }}
                     >
-                      成果物を提出
+                      投稿者: {task.user}
+                      <br></br>
+                      期日: {task.due.toString()}
+                      <br></br>
+                      タスク: {task.content}
+                      <br></br>
+                      報酬: {ethers.utils.formatEther(task.bounty)}AVAX<br></br>
+                      完了: {task.done.toString()}
+                      <br></br>
+                      {/* ボタンの中 */}
                     </button>
+                    {/* 詳細を押した際の挙動 */}
+                    <Modal
+                      isOpen={"task" === selectedItem}
+                      style={modalStyle}
+                      onRequestClose={() => {
+                        setSelectedItem("");
+                        setRiwarderValue("");
+                        setLinks([]);
+                      }}
+                    >
+                      <div id="overlay">
+                        {/* <div className="mainContainer">
+                                        <div className="dataContainer">
+                                            <div className="body"> */}
+                        <h2>
+                          タスク詳細
+                          <br />
+                        </h2>
+                        <div className="modal">
+                          タスク登録者▼
+                          <br />
+                          <div className="card"> {allTasks[indexValue].user}</div>
+                          <br />
+                          期日▼
+                          <br />{" "}
+                          <div className="card">
+                            {allTasks[indexValue].due.toString()}
+                          </div>
+                          <br />
+                          タスク▼
+                          <div className="card">
+                            {" "}
+                            {allTasks[indexValue].content}
+                          </div>
+                          <br />
+                          詳細説明▼<div className="card"> {textValue}</div>
+                          <br />
+                          報酬▼
+                          <div className="card">
+                            {" "}
+                            {ethers.utils.formatEther(allTasks[indexValue].bounty)}
+                            AVAX
+                          </div>
+                          <br />
+                          完了▼{" "}
+                          <div className="card">
+                            {allTasks[indexValue].done.toString()}
+                          </div>
+                          <br />
+                          成果物:
+                          {/* <div>
+                                                {allLinks.map((link, i) => <div key={i} className="card">{link}</div>)}
+                                            </div> */}
+                          <table>
+                            <thead>
+                              <tr className="table">
+                                <th scope="col" className="Button_col">
+                                  アドレス
+                                </th>
+                                <th scope="col" className="Button_col">
+                                  成果物
+                                </th>
+                                {/* <th scope="col" className="Button_col">いいね</th> */}
+                                {currentAccount ==
+                                  allTasks[indexValue].user.toLowerCase() && (
+                                    <th scope="col" className="Button_col">
+                                      報酬
+                                    </th>
+                                  )}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr className="">
+                                <td data-label="アドレス" className="">
+                                  {allLinkHolders.map((userid, i) => (
+                                    <a
+                                      key={i}
+                                      className=""
+                                      href={`https://etherscan.io/address/${userid}`}
+                                      target="_blank"
+                                    >
+                                      {userid.slice(0, 5)}...
+                                      <br />
+                                      <br />
+                                    </a>
+                                  ))}
+                                </td>
+                                <td data-label="成果物" className="">
+                                  {allLinks.map((link, i) => (
+                                    <div>
+                                      <a
+                                        key={i}
+                                        className=""
+                                        href={link}
+                                        target="_blank"
+                                      >
+                                        {" "}
+                                        {link.slice(0, 15)}...
+                                        <br />
+                                        <br />
+                                      </a>
+                                    </div>
+                                  ))}
+                                </td>
+                                {/* <td data-label="いいね" className="">
+                                                            {allLinkGoods.map((like, i) => <a key={i} className=""> {like}<br /><br /></a>)}
 
-                    {/* 報酬送付 */}
-                    <br></br>
+                                                        </td> */}
+                                <td data-label="いいね" className="">
+                                  {currentAccount ==
+                                    allTasks[indexValue].user.toLowerCase() &&
+                                    allLinkHolders.map((userid, i) => (
+                                      <div>
+                                        <button
+                                          key={i}
+                                          className="submitButton"
+                                          onClick={() => done(index, userid)}
+                                        >
+                                          報酬を送付
+                                        </button>
+                                        <br></br>
+                                      </div>
+                                    ))}
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+
+                        {/* タスク提出 */}
+                        <textarea
+                          name="messageArea"
+                          className="form"
+                          placeholder="成果物のリンクを添付"
+                          type="text"
+                          id="riward"
+                          value={outputValue}
+                          onChange={(e) => setOutputValue(e.target.value)}
+                        />
+                        <br></br>
+                        <button
+                          className="submitButton"
+                          onClick={() => {
+                            output(indexValue);
+                            console.log("id value", idValue);
+                            addLink(idValue);
+                          }}
+                        >
+                          成果物を提出
+                        </button>
+
+                        {/* 報酬送付 */}
+                        <br></br>
+                      </div>
+                    </Modal>
                   </div>
-                </Modal>
+                )}
               </div>
             );
           })}
