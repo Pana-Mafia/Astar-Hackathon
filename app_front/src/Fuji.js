@@ -531,7 +531,7 @@ const Top = () => {
   return (
     <div className="mainContainer">
       <div className="dataContainer">
-        {metamaskError && <div className='metamask-error'>Metamask から Fuji Testnet に接続してください!</div>}
+        {metamaskError && <div className='metamask-error'>Fuji Testnet に<br></br>接続してください!</div>}
         <Eyecatch version="Fuji" unit="$AVAX" checked={false} />
         <br />
         <input
@@ -1044,7 +1044,7 @@ const Top = () => {
             );
           })}
       </div>
-    </div>
+    </div >
   );
 };
 

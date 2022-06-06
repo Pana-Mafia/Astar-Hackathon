@@ -533,7 +533,7 @@ const Top = () => {
     return (
         <div className="mainContainer">
             <div className="dataContainer">
-                {metamaskError && <div className='metamask-error'>Metamask から Rinkeby Testnet に接続してください!</div>}
+                {metamaskError && <div className='metamask-error'>Rinkeby Testnetに <br></br>接続してください!</div>}
                 <Eyecatch version="Rinkeby" unit="$ETH" checked={true} />
                 <br />
 
