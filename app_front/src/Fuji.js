@@ -138,18 +138,24 @@ const Top = () => {
 
   // タスク登録
   const handleTask = async () => {
-    // event.preventDefault();
-    const usersCollectionRef = collection(firebaseFirestore, "task");
-    const newDoc = doc(usersCollectionRef).id;
-    console.log(newDoc);
-    const documentRef = await setDoc(doc(usersCollectionRef, newDoc), {
-      // usersCollectionRef.doc(newDoc).set({
-      user: currentAccount,
-      content: contentValue,
-      due: dueValue,
-      name: expressionValue,
-      id: newDoc,
-    });
+    // エラーを拾える実装に
+    try {
+      // event.preventDefault();
+      const usersCollectionRef = collection(firebaseFirestore, "task");
+      const newDoc = doc(usersCollectionRef).id;
+      console.log(newDoc);
+      const documentRef = await setDoc(doc(usersCollectionRef, newDoc), {
+        // usersCollectionRef.doc(newDoc).set({
+        user: currentAccount,
+        content: contentValue,
+        due: dueValue,
+        name: expressionValue,
+        id: newDoc,
+      });
+    } catch (error) {
+      alert(`エラーです`);
+    }
+
   };
   // コンテンツ表示
   const setText = async (index) => {
@@ -394,6 +400,23 @@ const Top = () => {
     } catch (error) {
       setMineStatus('error');
       console.log(error);
+      if (error.toString().match(/string/)) {
+        alert("エラーです🥺フォームが空欄の可能性があります。ご確認ください🙇‍♂️")
+      } else {
+        if (error.toString().match(/decimal/)) {
+          alert("エラーです🥺「報酬」欄は数字になっていますか…？ご確認ください🙇‍♂️")
+        }
+        else {
+          if (error.toString().match(/object/)) {
+            console.log(error)
+          } else {
+            alert(
+              `エラーです🥺記入内容を確認してみてください。例：「報酬」欄は数字になっていますか…？
+              ▼今回のエラーメッセージ
+            ${error}`)
+          }
+        }
+      };
     }
   };
 
@@ -489,7 +512,7 @@ const Top = () => {
         alert(`成果物を入力してください`);
       }
     } catch (error) {
-      alert("エラーが発生しました");
+      alert(`報酬の送付先が指定されていません`);
     }
   };
 
