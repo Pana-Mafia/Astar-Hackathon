@@ -347,6 +347,7 @@ const Top = () => {
             }
 
             else {
+                alert("Rinkeby testnetに切り替えてリトライしてください🙇‍♂️");
                 setMetamaskError(true);
                 setMineStatus('e');
             }

@@ -341,6 +341,7 @@ const Top = () => {
       }
 
       else {
+        alert("Fuji testnetに切り替えてリトライしてください🙇‍♂️");
         setMetamaskError(true);
         setMineStatus('e');
       }
