@@ -40,6 +40,7 @@ const Top = () => {
 
   // マイニング中にロード
   const [mineStatus, setMineStatus] = useState(null);
+  const [metamaskError, setMetamaskError] = useState(null);
 
   // ユーザーのウォレット保存用状態変数
   const [currentAccount, setCurrentAccount] = useState("");
@@ -296,43 +297,55 @@ const Top = () => {
   // console.log("currentAccount: ", currentAccount);
 
   const checkIfWalletIsConnected = async () => {
-    try {
-      const { ethereum } = window;
-      if (!ethereum) {
-        console.log("Make sure you have metamask!");
-      } else {
-        console.log("We have the ethreum object", ethereum);
-      }
-      // サイトにきたユーザーのアカウントを格納できる（複数格納可能のためaccountsと表記）
-      const accounts = await ethereum.request({ method: "eth_accounts" });
-      if (accounts.length !== 0) {
-        const account = accounts[0];
-        console.log("Found an authorized account:", account);
-        setCurrentAccount(account);
-        getAllTasks();
-      } else {
-        console.log("No authorized account found");
-      }
-    } catch (error) {
-      console.log(error);
+    const { ethereum } = window;
+
+    if (!ethereum) {
+      console.log("Make sure you have Metamask installed!");
+      return;
+    } else {
+      console.log("Wallet exists! We're ready to go!")
     }
-  };
+
+    const accounts = await ethereum.request({ method: 'eth_accounts' });
+    const network = await ethereum.request({ method: 'eth_chainId' });
+
+    if (accounts.length !== 0 && network.toString() === '0xa869') {
+      const account = accounts[0];
+      console.log("Found an authorized account: ", account);
+      setMetamaskError(false);
+      setCurrentAccount(account);
+      getAllTasks();
+    } else {
+      setMetamaskError(true);
+      console.log("No authorized account found");
+    }
+  }
 
   const connectWallet = async () => {
-    try {
-      const { ethereum } = window;
-      if (!ethereum) {
-        alert("Get MetaMask!");
-        return;
-      }
-      const accounts = await ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      console.log("Connected: ", accounts[0]);
-    } catch (error) {
-      console.log(error);
+    const { ethereum } = window;
+
+    if (!ethereum) {
+      alert("Please install Metamask!");
     }
-  };
+
+    try {
+      const network = await ethereum.request({ method: 'eth_chainId' });
+
+      if (network.toString() === '0xa869') {
+        const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+        console.log("Found an account! Address: ", accounts[0]);
+        setMetamaskError(null);
+        setCurrentAccount(accounts[0]);
+      }
+
+      else {
+        setMetamaskError(true);
+      }
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   // task生成
   const task = async () => {
@@ -477,7 +490,11 @@ const Top = () => {
 
   useEffect(() => {
     checkIfWalletIsConnected();
-  }, []);
+
+    if (window.ethereum) {
+      window.ethereum.on('chainChanged', (_chainId) => window.location.reload());
+    }
+  }, [])
 
   const navigate = useNavigate();
   function switchNetwork(e) {
@@ -486,6 +503,7 @@ const Top = () => {
   return (
     <div className="mainContainer">
       <div className="dataContainer">
+        {metamaskError && <div className='metamask-error'>Metamask から Fuji Testnet に接続してください!</div>}
         <Eyecatch version="Fuji" unit="$AVAX" checked={false} />
         <br />
         <input
@@ -531,7 +549,7 @@ const Top = () => {
             <span>Transaction is mining</span>
           </div>}
           {mineStatus === 'error' && <div className={mineStatus}>
-            <p>Transaction failed. Make sure you have $ETH in your Metamask wallet and try again.</p>
+            <p>Transaction failed. Make sure you have $AVAX in your Metamask wallet and try again.</p>
           </div>}
         </div>
 
