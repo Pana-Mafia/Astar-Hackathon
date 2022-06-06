@@ -4,7 +4,7 @@ import Switch from "@mui/material/Switch";
 const Eyecatch = (props) => {
   const navigate = useNavigate();
   function switchNetwork(e) {
-    e.target.checked ? navigate("/") : navigate("/Shibuya");
+    e.target.checked ? navigate("/") : navigate("/Fuji");
   }
   return (
     <div>

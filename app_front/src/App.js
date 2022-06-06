@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // import { Link } from 'react-router-dom';
 import Top from './Top'; //作成したtop.jsを読み込んでいる
 import Hybrid from './Hybrid';
-import Shibuya from './Shibuya';
+import Fuji from './Fuji';
 import Sample from './Sample';
 import Team from './Team';
 import Alpha from './Alpha';
@@ -21,7 +21,7 @@ const App = () => {
       <Routes>
         <Route exact path="/" element={<Alpha />} />
         <Route exact path="/top" element={<Top />} />
-        <Route exact path="/shibuya" element={<Shibuya />} />
+        <Route exact path="/fuji" element={<Fuji />} />
         <Route exact path="/sample" element={<Sample />} />
         <Route exact path="/team" element={<Team />} />
       </Routes>
