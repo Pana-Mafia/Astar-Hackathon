@@ -22,6 +22,10 @@ import { firebaseFirestore } from "./firebase";
 
 import Eyecatch from "./components/Eyecatch";
 
+// MUI
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+
 Modal.setAppElement("#root");
 const Top = () => {
   // チェックボックスの実装
@@ -540,17 +544,24 @@ const Top = () => {
           </div>
         )}
         <Eyecatch version="Fuji" unit="$AVAX" checked={false} />
-        <br />
-        <input
-          type="checkbox"
-          id="button"
-          value="ribbon"
-          checked={isChecked}
-          onChange={changeIsChecked}
-        />
-        <label htmlFor="text">完了済のタスクを非表示　</label>
 
         <br />
+
+        <FormControlLabel
+          label="完了済のタスクを非表示"
+          value="ribbon"
+          control={
+            <Checkbox
+              color="info"
+              checked={isChecked}
+              onChange={changeIsChecked}
+              name="toggleDisplayAll"
+            />
+          }
+        />
+
+        <br />
+
         {!currentAccount && mineStatus !== "connecting" && (
           <button className="waveButton" onClick={connectWallet}>
             Connect Wallet

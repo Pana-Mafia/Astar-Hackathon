@@ -556,6 +556,8 @@ const Top = () => {
           value="ribbon"
           control={
             <Checkbox
+              color="info"
+              defaultChecked
               checked={isChecked}
               onChange={changeIsChecked}
               name="toggleDisplayAll"
