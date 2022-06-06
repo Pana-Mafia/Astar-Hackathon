@@ -326,7 +326,7 @@ const Top = () => {
     setMineStatus('connecting');
 
     if (!ethereum) {
-      alert("Please install Metamask!");
+      alert("Metamaskがインストールされていないようです🥺スマホでご利用の方は、Metamaskアプリ内ブラウザからご利用ください🙇‍♂️");
     }
 
     try {
@@ -341,7 +341,7 @@ const Top = () => {
       }
 
       else {
-        alert("Fuji testnetに切り替えてリトライしてください🙇‍♂️");
+        alert("Fuji testnetとは異なるネットワークに接続されているようです🥺Fuji testnetに切り替えてリトライしてください🙇‍♂️");
         setMetamaskError(true);
         setMineStatus('e');
       }
