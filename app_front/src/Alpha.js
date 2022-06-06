@@ -557,7 +557,6 @@ const Top = () => {
           control={
             <Checkbox
               color="info"
-              defaultChecked
               checked={isChecked}
               onChange={changeIsChecked}
               name="toggleDisplayAll"
