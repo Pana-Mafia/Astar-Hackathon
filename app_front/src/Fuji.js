@@ -323,6 +323,7 @@ const Top = () => {
 
   const connectWallet = async () => {
     const { ethereum } = window;
+    setMineStatus('connecting');
 
     if (!ethereum) {
       alert("Please install Metamask!");
@@ -336,14 +337,17 @@ const Top = () => {
         console.log("Found an account! Address: ", accounts[0]);
         setMetamaskError(null);
         setCurrentAccount(accounts[0]);
+        setMineStatus('ok');
       }
 
       else {
         setMetamaskError(true);
+        setMineStatus('e');
       }
 
     } catch (err) {
       console.log(err)
+      setMineStatus('e');
     }
   }
 
@@ -498,7 +502,7 @@ const Top = () => {
 
   const navigate = useNavigate();
   function switchNetwork(e) {
-    e.target.checked ? navigate("/") : navigate("/Shibuya");
+    e.target.checked ? navigate("/") : navigate("/Fuji");
   }
   return (
     <div className="mainContainer">
@@ -516,14 +520,29 @@ const Top = () => {
         <label htmlFor="text">完了済のタスクを非表示　</label>
 
         <br />
-        {!currentAccount && (
+        {!currentAccount && (mineStatus !== 'connecting') && (
           <button className="waveButton" onClick={connectWallet}>
             Connect Wallet
           </button>
         )}
 
+        {/* ウォレット接続時のローディング */}
+        <br></br>
+        <div className='mine-submission'>
+          {mineStatus === 'ok' && <div className={mineStatus}>
+            {window.location.reload()}
+          </div>}
+          {mineStatus === 'connecting' && <div className="mining">
+            <div className='loader' />
+            <span>Transaction is mining</span>
+          </div>}
+          {mineStatus === 'e' && <div className='error'>
+            <p>Transaction failed. Please try again.</p>
+          </div>}
+        </div>
+
         {currentAccount && (
-          <button className="waveButton" onClick={connectWallet}>
+          <button className="waveButton" onClick={null}>
             Wallet Connected
           </button>
         )}

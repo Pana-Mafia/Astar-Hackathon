@@ -444,7 +444,7 @@ const Top = () => {
 
   const navigate = useNavigate();
   function switchNetwork(e) {
-    e.target.checked ? navigate("/") : navigate("/Shibuya");
+    e.target.checked ? navigate("/") : navigate("/Fuji");
   }
   return (
     <div className="mainContainer">
@@ -681,31 +681,31 @@ const Top = () => {
                     <br></br>
                     {currentAccount ==
                       allTasks[indexValue].user.toLowerCase() && (
-                      <div>
-                        <textarea
-                          name="messageArea"
-                          className="form"
-                          placeholder="報酬を送りたいアカウントのアドレスを記入してください"
-                          type="text"
-                          id="riward"
-                          value={riwarderValue}
-                          onChange={(e) => setRiwarderValue(e.target.value)}
-                        />
-                        <br></br>
-                        <button
-                          className="submitButton"
-                          onClick={() => done(index, riwarderValue)}
-                        >
-                          報酬を送付
-                        </button>
-                        <br></br>
-                        <br></br>
-                        {/* <button onClick={() => {
+                        <div>
+                          <textarea
+                            name="messageArea"
+                            className="form"
+                            placeholder="報酬を送りたいアカウントのアドレスを記入してください"
+                            type="text"
+                            id="riward"
+                            value={riwarderValue}
+                            onChange={(e) => setRiwarderValue(e.target.value)}
+                          />
+                          <br></br>
+                          <button
+                            className="submitButton"
+                            onClick={() => done(index, riwarderValue)}
+                          >
+                            報酬を送付
+                          </button>
+                          <br></br>
+                          <br></br>
+                          {/* <button onClick={() => {
                                             setSelectedItem("")
                                             setLinks([]);
                                         }}>Close Modal</button> */}
-                      </div>
-                    )}
+                        </div>
+                      )}
                   </div>
                 </Modal>
               </div>
