@@ -95,7 +95,7 @@ const Top = () => {
   // const contractAddress = "0x59CF146881B9191c51b38e5990834a0779E07a90"
 
   // 新testnet(Rinekby)
-  const contractAddress = "0x59CF146881B9191c51b38e5990834a0779E07a90";
+  const contractAddress = "0xC45Cb7eCe0823bCD1df7Eaf6275462fAe114EFbD";
 
   // ABIの参照
   const ContractABI = abi.abi;
