@@ -1,15 +1,15 @@
 // import React, { useEffect, useState } from "react";
 import React from "react";
 // ページ遷移用
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 // import { Link } from 'react-router-dom';
-import Top from './Top'; //作成したtop.jsを読み込んでいる
-import Hybrid from './Hybrid';
-import Fuji from './Fuji';
-import Sample from './Sample';
-import Team from './Team';
-import Alpha from './Alpha';
-import './App.css';
+import Top from "./Top"; //作成したtop.jsを読み込んでいる
+import Hybrid from "./Hybrid";
+import Fuji from "./Fuji";
+import Sample from "./Sample";
+import Team from "./Team";
+import Rinkeby from "./Rinkeby";
+import "./App.css";
 // import { ethers } from "ethers";
 // ABIのインポート
 // import abi from './utils/CreateTask.json';
@@ -19,15 +19,15 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route exact path="/" element={<Alpha />} />
+        <Route exact path="/" element={<Rinkeby />} />
         <Route exact path="/top" element={<Top />} />
         <Route exact path="/fuji" element={<Fuji />} />
         <Route exact path="/sample" element={<Sample />} />
         <Route exact path="/team" element={<Team />} />
       </Routes>
     </BrowserRouter>
-  )
-}
+  );
+};
 
 // 前のもの
 
@@ -47,7 +47,6 @@ const App = () => {
 
 //   // 報酬額保存用状態変数
 //   const [bountyValue, setBountyValue] = useState([]);
-
 
 //   // コントラクトアドレス保存用
 //   const contractAddress = "0xEcab270B6Dc488686fa3a292D526a182A516c39f"
@@ -255,7 +254,6 @@ const App = () => {
 //     }
 //   };
 
-
 //   useEffect(() => {
 //     checkIfWalletIsConnected();
 //   }, [])
@@ -317,7 +315,6 @@ const App = () => {
 
 //           <Link to={`/top`}>Go To top</Link>
 
-
 //           {currentAccount && (
 //             allTasks.slice(0).map((task, index) => {
 //               return (
@@ -339,5 +336,4 @@ const App = () => {
 //   );
 // }
 
-
-export default App
+export default App;

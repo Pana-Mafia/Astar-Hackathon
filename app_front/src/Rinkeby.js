@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { onSnapshot } from "firebase/firestore";
-import { Link, useNavigate } from "react-router-dom";
 import "./App.css";
 import { ethers } from "ethers";
 // ABIのインポート
@@ -20,11 +19,13 @@ import {
 } from "firebase/firestore";
 import { firebaseFirestore } from "./firebase";
 
-import Eyecatch from "./components/Eyecatch";
+import { Link, useNavigate } from "react-router-dom";
 
 // MUI
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+
+import Eyecatch from "./components/Eyecatch";
 
 Modal.setAppElement("#root");
 const Top = () => {
@@ -65,7 +66,7 @@ const Top = () => {
   const [riwarderValue, setRiwarderValue] = useState([]);
 
   // 成果物保存用状態変数
-  const [outputValue, setOutputValue] = useState("");
+  const [outputValue, setOutputValue] = React.useState("0");
 
   // モーダル
   const [modalIsOpen, setIsOpen] = React.useState(false);
@@ -82,19 +83,19 @@ const Top = () => {
   const [allLinks, setLinks] = useState([]);
   // 成果物投稿者
   const [allLinkHolders, setLinkHolders] = useState([]);
+  // 成果物いいね数
+  const [allLinkGoods, setLinkGoods] = useState([]);
 
   // Astar Mainnetアドレス保存用
   // const contractAddress = "0x980a80De95bc528b6e413516F881B78F1e474F41"
-  // Shibuyaアドレス保存用
+  // Astarアドレス保存用
   // const contractAddress = "0x113FA87E7D8c4C4eA49956943C2dcc8659ABF6FA"
-  // rinkeby保存用
-  // const contractAddress = "0x08565FA1c291e97970a88E599Ae0641Ebe52eE6C"
 
-  // Shibuyaアドレス最新
-  // const contractAddress = "0x69eb613f5c43D9F40da91D176DCbFB075097e236"
+  // rinkebyテスト用
+  // const contractAddress = "0x59CF146881B9191c51b38e5990834a0779E07a90"
 
-  // Fuji testnet
-  const contractAddress = "0x980a80De95bc528b6e413516F881B78F1e474F41";
+  // 新testnet(Rinekby)
+  const contractAddress = "0x59CF146881B9191c51b38e5990834a0779E07a90";
 
   // ABIの参照
   const ContractABI = abi.abi;
@@ -139,23 +140,18 @@ const Top = () => {
 
   // タスク登録
   const handleTask = async () => {
-    // エラーを拾える実装に
-    try {
-      // event.preventDefault();
-      const usersCollectionRef = collection(firebaseFirestore, "task");
-      const newDoc = doc(usersCollectionRef).id;
-      console.log(newDoc);
-      const documentRef = await setDoc(doc(usersCollectionRef, newDoc), {
-        // usersCollectionRef.doc(newDoc).set({
-        user: currentAccount,
-        content: contentValue,
-        due: dueValue,
-        name: expressionValue,
-        id: newDoc,
-      });
-    } catch (error) {
-      alert(`エラーです`);
-    }
+    // event.preventDefault();
+    const usersCollectionRef = collection(firebaseFirestore, "task");
+    const newDoc = doc(usersCollectionRef).id;
+    console.log(newDoc);
+    const documentRef = await setDoc(doc(usersCollectionRef, newDoc), {
+      // usersCollectionRef.doc(newDoc).set({
+      user: currentAccount,
+      content: contentValue,
+      due: dueValue,
+      name: expressionValue,
+      id: newDoc,
+    });
   };
   // コンテンツ表示
   const setText = async (index) => {
@@ -205,6 +201,12 @@ const Top = () => {
       snapshot.forEach((doc) => {
         allLinkHolders.push(doc.data().userid);
         setLinkHolders(allLinkHolders);
+      });
+    });
+    await getDocs(query(usersLinkRef)).then((snapshot) => {
+      snapshot.forEach((doc) => {
+        allLinkGoods.push(doc.data().like);
+        setLinkGoods(allLinkGoods);
       });
     });
     setOutputValue("");
@@ -315,7 +317,7 @@ const Top = () => {
     const accounts = await ethereum.request({ method: "eth_accounts" });
     const network = await ethereum.request({ method: "eth_chainId" });
 
-    if (accounts.length !== 0 && network.toString() === "0xa869") {
+    if (accounts.length !== 0 && network.toString() === "0x4") {
       const account = accounts[0];
       console.log("Found an authorized account: ", account);
       setMetamaskError(false);
@@ -340,7 +342,7 @@ const Top = () => {
     try {
       const network = await ethereum.request({ method: "eth_chainId" });
 
-      if (network.toString() === "0xa869") {
+      if (network.toString() === "0x4") {
         const accounts = await ethereum.request({
           method: "eth_requestAccounts",
         });
@@ -350,7 +352,7 @@ const Top = () => {
         setMineStatus("ok");
       } else {
         alert(
-          "Fuji testnetとは異なるネットワークに接続されているようです🥺Fuji testnetに切り替えてリトライしてください🙇‍♂️"
+          "Rinkeby testnetとは異なるネットワークに接続されているようです🥺Metamaskアプリから、ネットワークをRinkeby testnetに切り替えてリトライしてください🙇‍♂️"
         );
         setMetamaskError(true);
         setMineStatus("e");
@@ -416,8 +418,8 @@ const Top = () => {
           } else {
             alert(
               `エラーです🥺記入内容を確認してみてください。例：「報酬」欄は数字になっていますか…？
-              ▼今回のエラーメッセージ
-            ${error}`
+                      ▼今回のエラーメッセージ
+                    ${error}`
             );
           }
         }
@@ -463,7 +465,9 @@ const Top = () => {
           ethers.utils.formatEther(contractBalance)
         );
       } else {
-        alert(`報酬の送付先が指定されていません`);
+        alert(
+          `報酬の送付先が指定されていません🥺　コントラクトアドレスを入力してください！`
+        );
       }
     } catch (error) {
       console.log(error);
@@ -517,7 +521,7 @@ const Top = () => {
         alert(`成果物を入力してください`);
       }
     } catch (error) {
-      alert(`報酬の送付先が指定されていません`);
+      alert("エラーが発生しました");
     }
   };
 
@@ -533,17 +537,17 @@ const Top = () => {
 
   const navigate = useNavigate();
   function switchNetwork(e) {
-    e.target.checked ? navigate("/") : navigate("/Fuji");
+    e.target.checked ? navigate("/") : navigate("/fuji");
   }
   return (
     <div className="mainContainer">
       <div className="dataContainer">
         {metamaskError && (
           <div className="metamask-error">
-            Fuji Testnet に<br></br>接続してください!
+            Rinkeby Testnetに <br></br>接続してください!
           </div>
         )}
-        <Eyecatch version="Fuji" unit="$AVAX" checked={false} />
+        <Eyecatch version="Rinkeby" unit="$ETH" checked={true} />
 
         <br />
 
@@ -574,7 +578,6 @@ const Top = () => {
               Connect Wallet
             </button>
           )}
-
           {/* ウォレット接続時のローディング */}
           <br></br>
           <div className="mine-submission">
@@ -593,13 +596,12 @@ const Top = () => {
               </div>
             )}
           </div>
-
           {currentAccount && (
             <button className="waveButton" onClick={null}>
               Wallet Connected
             </button>
           )}
-          {currentAccount && (
+          {currentAccount && mineStatus !== "mining" && (
             <button
               className="waveButton"
               onClick={() => {
@@ -628,7 +630,7 @@ const Top = () => {
           {mineStatus === "error" && (
             <div className={mineStatus}>
               <p>
-                Transaction failed. Make sure you have $AVAX in your Metamask
+                Transaction failed. Make sure you have $ETH in your Metamask
                 wallet and try again.
               </p>
             </div>
@@ -672,7 +674,7 @@ const Top = () => {
           {currentAccount && (
             <textarea
               name="messageArea"
-              placeholder="タスクの報酬額を記入してください(単位:AVAX)"
+              placeholder="タスクの報酬額を記入してください(単位:ETH)"
               className="form"
               type="text"
               id="message"
@@ -711,7 +713,8 @@ const Top = () => {
             return (
               <div key={index} className="cover">
                 {/* setispenと合わせて別の関数を策定、idを渡す。このidをベースにtaskを特定して表示する関数を書く */}
-                {/* チェックすると完了済のものを非表示 */}
+
+                {/* チェックされている場合、完了済のタスクは表示しない */}
                 {isChecked == true && task.done.toString() == "false" && (
                   <div>
                     <button
@@ -732,7 +735,7 @@ const Top = () => {
                       <br></br>
                       タスク: {task.content}
                       <br></br>
-                      報酬: {ethers.utils.formatEther(task.bounty)}AVAX<br></br>
+                      報酬: {ethers.utils.formatEther(task.bounty)}ETH<br></br>
                       完了: {task.done.toString()}
                       <br></br>
                       {/* ボタンの中 */}
@@ -745,6 +748,8 @@ const Top = () => {
                         setSelectedItem("");
                         setRiwarderValue("");
                         setLinks([]);
+                        setLinkHolders([]);
+                        setLinkGoods([]);
                       }}
                     >
                       <div id="overlay">
@@ -783,7 +788,7 @@ const Top = () => {
                             {ethers.utils.formatEther(
                               allTasks[indexValue].bounty
                             )}
-                            AVAX
+                            ETH
                           </div>
                           <br />
                           完了▼{" "}
@@ -792,9 +797,6 @@ const Top = () => {
                           </div>
                           <br />
                           成果物:
-                          {/* <div>
-                                                {allLinks.map((link, i) => <div key={i} className="card">{link}</div>)}
-                                            </div> */}
                           <table>
                             <thead>
                               <tr className="table">
@@ -884,17 +886,16 @@ const Top = () => {
                         <br></br>
                         <button
                           className="submitButton"
-                          onClick={() => {
+                          onClick={(e) => {
                             output(indexValue);
                             console.log("id value", idValue);
                             addLink(idValue);
+                            setOutput(index);
+                            setOutputValue("");
                           }}
                         >
                           成果物を提出
                         </button>
-
-                        {/* 報酬送付 */}
-                        <br></br>
                       </div>
                     </Modal>
                   </div>
@@ -920,7 +921,7 @@ const Top = () => {
                       <br></br>
                       タスク: {task.content}
                       <br></br>
-                      報酬: {ethers.utils.formatEther(task.bounty)}AVAX<br></br>
+                      報酬: {ethers.utils.formatEther(task.bounty)}ETH<br></br>
                       完了: {task.done.toString()}
                       <br></br>
                       {/* ボタンの中 */}
@@ -933,6 +934,8 @@ const Top = () => {
                         setSelectedItem("");
                         setRiwarderValue("");
                         setLinks([]);
+                        setLinkHolders([]);
+                        setLinkGoods([]);
                       }}
                     >
                       <div id="overlay">
@@ -971,7 +974,7 @@ const Top = () => {
                             {ethers.utils.formatEther(
                               allTasks[indexValue].bounty
                             )}
-                            AVAX
+                            ETH
                           </div>
                           <br />
                           完了▼{" "}
@@ -980,9 +983,6 @@ const Top = () => {
                           </div>
                           <br />
                           成果物:
-                          {/* <div>
-                                                {allLinks.map((link, i) => <div key={i} className="card">{link}</div>)}
-                                            </div> */}
                           <table>
                             <thead>
                               <tr className="table">
@@ -1072,17 +1072,16 @@ const Top = () => {
                         <br></br>
                         <button
                           className="submitButton"
-                          onClick={() => {
+                          onClick={(e) => {
                             output(indexValue);
                             console.log("id value", idValue);
                             addLink(idValue);
+                            setOutput(index);
+                            setOutputValue("");
                           }}
                         >
                           成果物を提出
                         </button>
-
-                        {/* 報酬送付 */}
-                        <br></br>
                       </div>
                     </Modal>
                   </div>
