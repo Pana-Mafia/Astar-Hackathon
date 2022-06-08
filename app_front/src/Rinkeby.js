@@ -26,6 +26,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 
 import Eyecatch from "./components/Eyecatch";
+import { width } from "@mui/system";
 
 Modal.setAppElement("#root");
 const Top = () => {
@@ -833,7 +834,12 @@ const Top = () => {
                                 </td>
                                 <td data-label="成果物" className="">
                                   {allLinks.map((link, i) => (
-                                    <div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                      }}
+                                    >
                                       <a
                                         key={i}
                                         className=""
@@ -842,9 +848,19 @@ const Top = () => {
                                       >
                                         {" "}
                                         {link.slice(0, 15)}...
-                                        <br />
-                                        <br />
                                       </a>
+                                      <br />
+                                      <p style={{ fontSize: 24 }}>
+                                        Lorem Ipsum is simply dummy text of the
+                                        printing and typesetting industry. Lorem
+                                        Ipsum has been the industry's standard
+                                        dummy text ever since the 1500s, when an
+                                        unknown printer took a galley of type
+                                        and scrambled it to make a type specimen
+                                        book.
+                                      </p>
+                                      <br />
+                                      <br />
                                     </div>
                                   ))}
                                 </td>
@@ -1019,7 +1035,12 @@ const Top = () => {
                                 </td>
                                 <td data-label="成果物" className="">
                                   {allLinks.map((link, i) => (
-                                    <div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                      }}
+                                    >
                                       <a
                                         key={i}
                                         className=""
@@ -1028,9 +1049,13 @@ const Top = () => {
                                       >
                                         {" "}
                                         {link.slice(0, 15)}...
-                                        <br />
-                                        <br />
                                       </a>
+                                      <p style={{ fontSize: 16 }}>
+                                        Lorem Ipsum is simply dummy text of the
+                                        printing and typesetting industry.
+                                      </p>
+                                      <br />
+                                      <br />
                                     </div>
                                   ))}
                                 </td>
