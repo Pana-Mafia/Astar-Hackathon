@@ -34,10 +34,17 @@
 }
 
 .waveButton {
+  width: 240px;
+  text-align: center;
   background: -webkit-linear-gradient(-70deg, #a2facf, #64acff);
   background-size: 200% 200%;
   animation: gradient-animation 4s ease infinite;
   color: #0d1116;
+  cursor: pointer;
+  margin-top: 16px;
+  padding: 8px;
+  border: 0;
+  border-radius: 5px;
 }
 
 .card {
@@ -71,9 +78,11 @@
 }
 
 .taskCard :hover {
-  background: -webkit-linear-gradient(-70deg,
-      rgb(243, 116, 255) 0%,
-      rgb(255, 159, 100) 100%);
+  background: -webkit-linear-gradient(
+    -70deg,
+    rgb(243, 116, 255) 0%,
+    rgb(255, 159, 100) 100%
+  );
 }
 
 .dataContainer {
@@ -93,14 +102,6 @@
   text-align: center;
   color: white;
   margin-top: 16px;
-}
-
-.waveButton {
-  cursor: pointer;
-  margin-top: 16px;
-  padding: 8px;
-  border: 0;
-  border-radius: 5px;
 }
 
 body {
@@ -157,9 +158,11 @@ h2 {
   border: 0;
   border-radius: 5px;
   color: white;
-  background: -webkit-linear-gradient(-70deg,
-      rgb(243, 116, 255) 0%,
-      rgb(255, 159, 100) 60%);
+  background: -webkit-linear-gradient(
+    -70deg,
+    rgb(243, 116, 255) 0%,
+    rgb(255, 159, 100) 60%
+  );
 }
 
 .form placeholder {
@@ -167,9 +170,11 @@ h2 {
 }
 
 .submitButton {
-  background: -webkit-linear-gradient(-70deg,
-      rgb(243, 116, 255) 0%,
-      rgb(255, 159, 100) 60%);
+  background: -webkit-linear-gradient(
+    -70deg,
+    rgb(243, 116, 255) 0%,
+    rgb(255, 159, 100) 60%
+  );
   background-size: 200% 200%;
   animation: gradient-animation 4s ease infinite;
   color: #0d1116;
@@ -261,7 +266,7 @@ h2 {
 }
 
 .mining span {
-  color: #FBD34D;
+  color: #fbd34d;
 }
 
 .success,
@@ -285,8 +290,7 @@ h2 {
 }
 
 .success p {
-  color: #34D399;
-
+  color: #34d399;
 }
 
 .error p {
@@ -296,7 +300,7 @@ h2 {
 .loader {
   border: 5px solid #f3f3f3;
   /* Light grey */
-  border-top: 5px solid #FBD34D;
+  border-top: 5px solid #fbd34d;
   /* Yellow */
   border-radius: 50%;
   width: 30px;
@@ -320,9 +324,11 @@ h2 {
   top: 0;
   left: 0;
   right: 0;
-  background: -webkit-linear-gradient(-70deg,
-      rgb(243, 116, 255) 0%,
-      rgb(255, 159, 100) 60%);
+  background: -webkit-linear-gradient(
+    -70deg,
+    rgb(243, 116, 255) 0%,
+    rgb(255, 159, 100) 60%
+  );
   color: black;
   width: 88%;
   padding: 15px;

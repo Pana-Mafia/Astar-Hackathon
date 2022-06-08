@@ -562,46 +562,54 @@ const Top = () => {
 
         <br />
 
-        {!currentAccount && mineStatus !== "connecting" && (
-          <button className="waveButton" onClick={connectWallet}>
-            Connect Wallet
-          </button>
-        )}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          {!currentAccount && mineStatus !== "connecting" && (
+            <button className="waveButton" onClick={connectWallet}>
+              Connect Wallet
+            </button>
+          )}
 
-        {/* ウォレット接続時のローディング */}
-        <br></br>
-        <div className="mine-submission">
-          {mineStatus === "ok" && (
-            <div className={mineStatus}>{window.location.reload()}</div>
+          {/* ウォレット接続時のローディング */}
+          <br></br>
+          <div className="mine-submission">
+            {mineStatus === "ok" && (
+              <div className={mineStatus}>{window.location.reload()}</div>
+            )}
+            {mineStatus === "connecting" && (
+              <div className="mining">
+                <div className="loader" />
+                <span>Transaction is mining</span>
+              </div>
+            )}
+            {mineStatus === "e" && (
+              <div className="error">
+                <p>Transaction failed. Please try again.</p>
+              </div>
+            )}
+          </div>
+
+          {currentAccount && (
+            <button className="waveButton" onClick={null}>
+              Wallet Connected
+            </button>
           )}
-          {mineStatus === "connecting" && (
-            <div className="mining">
-              <div className="loader" />
-              <span>Transaction is mining</span>
-            </div>
-          )}
-          {mineStatus === "e" && (
-            <div className="error">
-              <p>Transaction failed. Please try again.</p>
-            </div>
+          {currentAccount && (
+            <button
+              className="waveButton"
+              onClick={() => {
+                setSelectedItem("create");
+              }}
+            >
+              タスクを作成する
+            </button>
           )}
         </div>
-
-        {currentAccount && (
-          <button className="waveButton" onClick={null}>
-            Wallet Connected
-          </button>
-        )}
-        {currentAccount && (
-          <button
-            className="waveButton"
-            onClick={() => {
-              setSelectedItem("create");
-            }}
-          >
-            タスクを作成する
-          </button>
-        )}
 
         {/* mining時にロード画面にする実装 */}
         <br></br>
