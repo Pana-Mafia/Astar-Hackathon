@@ -24,6 +24,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Switch from "@mui/material/Switch";
 
 import Eyecatch from "./components/Eyecatch";
+// ハンバーガーメニュー
+import Menu from "./components/Menu";
 
 Modal.setAppElement("#root");
 const Top = () => {
@@ -41,6 +43,9 @@ const Top = () => {
     // マイニング中にロード
     const [mineStatus, setMineStatus] = useState(null);
     const [metamaskError, setMetamaskError] = useState(null);
+
+    // コメント保存用状態変数
+    const [commentValue, setComment] = useState("")
 
     // ユーザーのウォレット保存用状態変数
     const [currentAccount, setCurrentAccount] = useState("");
@@ -90,10 +95,10 @@ const Top = () => {
     // const contractAddress = "0x113FA87E7D8c4C4eA49956943C2dcc8659ABF6FA"
 
     // rinkebyテスト用
-    // const contractAddress = "0x59CF146881B9191c51b38e5990834a0779E07a90"
+    const contractAddress = "0x59CF146881B9191c51b38e5990834a0779E07a90"
 
     // 新testnet(Rinekby)
-    const contractAddress = "0xC45Cb7eCe0823bCD1df7Eaf6275462fAe114EFbD";
+    // const contractAddress = "0xC45Cb7eCe0823bCD1df7Eaf6275462fAe114EFbD";
 
     // ABIの参照
     const ContractABI = abi.abi;
@@ -188,6 +193,8 @@ const Top = () => {
         const usersLinkRef = collection(firebaseFirestore, `task/${taskId}/output`);
         // 成果物を全て配列に入れる
         await getDocs(query(usersLinkRef)).then((snapshot) => {
+            // カウント
+            // console.log(snapshot.size)
             snapshot.forEach((doc) => {
                 // setContentValue(doc.data().link)
                 // console.log(allLinks);
@@ -531,154 +538,388 @@ const Top = () => {
         e.target.checked ? navigate("/") : navigate("/fuji");
     }
     return (
-        <div className="mainContainer">
-            <div className="dataContainer">
-                {metamaskError && <div className='metamask-error'>Rinkeby Testnetに <br></br>接続してください!</div>}
-                <Eyecatch version="Rinkeby" unit="$ETH" checked={true} />
-                <br />
+        <div>
+            <Menu width={250} />
+            <div className="mainContainer">
+                <div className="dataContainer">
+                    {metamaskError && <div className='metamask-error'>Rinkeby Testnetに <br></br>接続してください!</div>}
+                    <Eyecatch version="Rinkeby" unit="$ETH" checked={true} />
+                    <br />
 
-                <input
-                    type="checkbox"
-                    id="button"
-                    value="ribbon"
-                    checked={isChecked}
-                    onChange={changeIsChecked}
-                />
-                <label htmlFor="text">完了済のタスクを非表示　</label>
-                <br />
-                {!currentAccount && (mineStatus !== 'connecting') && (
-                    <button className="waveButton" onClick={connectWallet}>
-                        Connect Wallet
-                    </button>
-                )}
-
-                {/* ウォレット接続時のローディング */}
-                <br></br>
-                <div className='mine-submission'>
-                    {mineStatus === 'ok' && <div className={mineStatus}>
-                        {window.location.reload()}
-                    </div>}
-                    {mineStatus === 'connecting' && <div className="mining">
-                        <div className='loader' />
-                        <span>Transaction is mining</span>
-                    </div>}
-                    {mineStatus === 'e' && <div className='error'>
-                        <p>Transaction failed. Please try again.</p>
-                    </div>}
-                </div>
-
-                {currentAccount && (
-                    <button className="waveButton" onClick={null}>
-                        Wallet Connected
-                    </button>
-                )}
-                {currentAccount && mineStatus !== 'mining' && (
-                    <button
-                        className="waveButton"
-                        onClick={() => {
-                            setSelectedItem("create");
-                        }}
-                    >
-                        タスクを作成する
-                    </button>
-                )}
-
-                {/* mining時にロード画面にする実装 */}
-                <br></br>
-                <div className='mine-submission'>
-                    {mineStatus === 'success' && <div className={mineStatus}>
-                        <p>success!</p>
-                    </div>}
-                    {mineStatus === 'mining' && <div className={mineStatus}>
-                        <div className='loader' />
-                        <span>Transaction is mining</span>
-                    </div>}
-                    {mineStatus === 'error' && <div className={mineStatus}>
-                        <p>Transaction failed. Make sure you have $ETH in your Metamask wallet and try again.</p>
-                    </div>}
-                </div>
-
-                {/* モーダルにするテスト */}
-                <Modal
-                    isOpen={"create" === selectedItem}
-                    style={modalStyle}
-                    onRequestClose={() => setSelectedItem("")}
-                >
-                    <h2>タスクの作成</h2>
-
-                    {currentAccount && (
-                        <textarea
-                            name="messageArea"
-                            className="form"
-                            placeholder="タスクを記入してください(例：コントラクトアドレスの変更)"
-                            type="text"
-                            id="message"
-                            value={contentValue}
-                            onChange={(e) => setContentValue(e.target.value)}
-                        />
-                    )}
-                    <br></br>
-
-                    {currentAccount && (
-                        <textarea
-                            name="messageArea"
-                            className="form"
-                            placeholder="期日を記入してください(例：20220507)"
-                            type="text"
-                            id="message"
-                            value={dueValue}
-                            onChange={(e) => setDueValue(e.target.value)}
-                        />
-                    )}
-                    <br></br>
-
-                    {currentAccount && (
-                        <textarea
-                            name="messageArea"
-                            placeholder="タスクの報酬額を記入してください(単位:ETH)"
-                            className="form"
-                            type="text"
-                            id="message"
-                            value={bountyValue}
-                            onChange={(e) => setBountyValue(e.target.value)}
-                        />
-                    )}
-                    <br></br>
-
-                    <textarea
-                        name="messageArea"
-                        placeholder="タスクの説明を記入してください(例：コントラクトを新たにデプロイし、アドレスを取得してください。提出時には新たなコントラクトアドレスの送付をお願いします)"
-                        className="form"
-                        type="text"
-                        id="expression"
-                        value={expressionValue}
-                        onChange={(e) => setExpressionValue(e.target.value)}
+                    <input
+                        type="checkbox"
+                        id="button"
+                        value="ribbon"
+                        checked={isChecked}
+                        onChange={changeIsChecked}
                     />
+                    <label htmlFor="text">完了済のタスクを非表示　</label>
+                    <br />
+                    {!currentAccount && (mineStatus !== 'connecting') && (
+                        <button className="waveButton" onClick={connectWallet}>
+                            Connect Wallet
+                        </button>
+                    )}
+
+                    {/* ウォレット接続時のローディング */}
                     <br></br>
+                    <div className='mine-submission'>
+                        {mineStatus === 'ok' && <div className={mineStatus}>
+                            {window.location.reload()}
+                        </div>}
+                        {mineStatus === 'connecting' && <div className="mining">
+                            <div className='loader' />
+                            <span>Transaction is mining</span>
+                        </div>}
+                        {mineStatus === 'e' && <div className='error'>
+                            <p>Transaction failed. Please try again.</p>
+                        </div>}
+                    </div>
+
                     {currentAccount && (
+                        <button className="waveButton" onClick={null}>
+                            Wallet Connected
+                        </button>
+                    )}
+                    {currentAccount && mineStatus !== 'mining' && (
                         <button
-                            className="submitButton"
+                            className="waveButton"
                             onClick={() => {
-                                handleTask();
-                                task();
-                                setSelectedItem("");
+                                setSelectedItem("create");
                             }}
                         >
                             タスクを作成する
                         </button>
                     )}
-                </Modal>
 
-                {currentAccount &&
-                    allTasks.slice(0).map((task, index) => {
-                        return (
-                            < div key={index} className="cover" >
-                                {/* setispenと合わせて別の関数を策定、idを渡す。このidをベースにtaskを特定して表示する関数を書く */}
+                    {/* mining時にロード画面にする実装 */}
+                    <br></br>
+                    <div className='mine-submission'>
+                        {mineStatus === 'success' && <div className={mineStatus}>
+                            <p>success!</p>
+                        </div>}
+                        {mineStatus === 'mining' && <div className={mineStatus}>
+                            <div className='loader' />
+                            <span>Transaction is mining</span>
+                        </div>}
+                        {mineStatus === 'error' && <div className={mineStatus}>
+                            <p>Transaction failed. Make sure you have $ETH in your Metamask wallet and try again.</p>
+                        </div>}
+                    </div>
 
-                                {/* チェックされている場合、完了済のタスクは表示しない */}
-                                {
-                                    (isChecked == true) && (
-                                        (task.done.toString() == "false") && (
+                    {/* モーダルにするテスト */}
+                    <Modal
+                        isOpen={"create" === selectedItem}
+                        style={modalStyle}
+                        onRequestClose={() => setSelectedItem("")}
+                    >
+                        <h2>タスクの作成</h2>
+
+                        {currentAccount && (
+                            <textarea
+                                name="messageArea"
+                                className="form"
+                                placeholder="タスクを記入してください(例：コントラクトアドレスの変更)"
+                                type="text"
+                                id="message"
+                                value={contentValue}
+                                onChange={(e) => setContentValue(e.target.value)}
+                            />
+                        )}
+                        <br></br>
+
+                        {currentAccount && (
+                            <textarea
+                                name="messageArea"
+                                className="form"
+                                placeholder="期日を記入してください(例：20220507)"
+                                type="text"
+                                id="message"
+                                value={dueValue}
+                                onChange={(e) => setDueValue(e.target.value)}
+                            />
+                        )}
+                        <br></br>
+
+                        {currentAccount && (
+                            <textarea
+                                name="messageArea"
+                                placeholder="タスクの報酬額を記入してください(単位:ETH)"
+                                className="form"
+                                type="text"
+                                id="message"
+                                value={bountyValue}
+                                onChange={(e) => setBountyValue(e.target.value)}
+                            />
+                        )}
+                        <br></br>
+
+                        <textarea
+                            name="messageArea"
+                            placeholder="タスクの説明を記入してください(例：コントラクトを新たにデプロイし、アドレスを取得してください。提出時には新たなコントラクトアドレスの送付をお願いします)"
+                            className="form"
+                            type="text"
+                            id="expression"
+                            value={expressionValue}
+                            onChange={(e) => setExpressionValue(e.target.value)}
+                        />
+                        <br></br>
+                        {currentAccount && (
+                            <button
+                                className="submitButton"
+                                onClick={() => {
+                                    handleTask();
+                                    task();
+                                    setSelectedItem("");
+                                }}
+                            >
+                                タスクを作成する
+                            </button>
+                        )}
+                    </Modal>
+
+
+                    {currentAccount &&
+                        allTasks.slice(0).map((task, index) => {
+                            return (
+                                < div key={index} className="cover" >
+                                    {/* setispenと合わせて別の関数を策定、idを渡す。このidをベースにtaskを特定して表示する関数を書く */}
+
+                                    {/* チェックされている場合、完了済のタスクは表示しない */}
+                                    {
+                                        (isChecked == true) && (
+                                            (task.done.toString() == "false") && (
+                                                <div>
+                                                    <button
+                                                        className="taskCard"
+                                                        onClick={() => {
+                                                            setIndexValue(index);
+                                                            setText(index);
+                                                            setOutput(index);
+                                                            // setIsOpen(true);
+                                                            setSelectedItem("task");
+                                                            // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
+                                                            output(index);
+                                                        }}
+                                                    >
+                                                        投稿者: {task.user}
+                                                        <br></br>
+                                                        期日: {task.due.toString()}
+                                                        <br></br>
+                                                        タスク: {task.content}
+                                                        <br></br>
+                                                        報酬: {ethers.utils.formatEther(task.bounty)}ETH<br></br>
+                                                        完了: {task.done.toString()}
+                                                        <br></br>
+                                                        {/* ボタンの中 */}
+                                                    </button>
+                                                    {/* 詳細を押した際の挙動 */}
+                                                    <Modal
+                                                        isOpen={"task" === selectedItem}
+                                                        style={modalStyle}
+                                                        onRequestClose={() => {
+                                                            setSelectedItem("");
+                                                            setRiwarderValue("");
+                                                            setLinks([]);
+                                                            setLinkHolders([]);
+                                                            setLinkGoods([]);
+                                                        }}
+                                                    >
+                                                        <div id="overlay">
+                                                            {/* <div className="mainContainer">
+                                        <div className="dataContainer">
+                                            <div className="body"> */}
+                                                            <h2>
+                                                                タスク詳細
+                                                                <br />
+                                                            </h2>
+                                                            <div className="modal">
+                                                                タスク登録者▼
+                                                                <br />
+                                                                <div className="card"> {allTasks[indexValue].user}</div>
+                                                                <br />
+                                                                期日▼
+                                                                <br />{" "}
+                                                                <div className="card">
+                                                                    {allTasks[indexValue].due.toString()}
+                                                                </div>
+                                                                <br />
+                                                                タスク▼
+                                                                <div className="card">
+                                                                    {" "}
+                                                                    {allTasks[indexValue].content}
+                                                                </div>
+                                                                <br />
+                                                                詳細説明▼<div className="card"> {textValue}</div>
+                                                                <br />
+                                                                報酬▼
+                                                                <div className="card">
+                                                                    {" "}
+                                                                    {ethers.utils.formatEther(allTasks[indexValue].bounty)}
+                                                                    ETH
+                                                                </div>
+                                                                <br />
+                                                                完了▼{" "}
+                                                                <div className="card">
+                                                                    {allTasks[indexValue].done.toString()}
+                                                                </div>
+                                                                <br />
+                                                                成果物:
+                                                                <table>
+                                                                    <thead>
+                                                                        <tr className="table">
+                                                                            <th scope="col" className="Button_col">
+                                                                                アドレス
+                                                                            </th>
+                                                                            <th scope="col" className="Button_col">
+                                                                                成果物
+                                                                            </th>
+                                                                            {/* <th scope="col" className="Button_col">いいね</th> */}
+                                                                            {currentAccount ==
+                                                                                allTasks[indexValue].user.toLowerCase() && (
+                                                                                    <th scope="col" className="Button_col">
+                                                                                        報酬
+                                                                                    </th>
+                                                                                )}
+
+                                                                            <th scope="col" className="Button_col">
+                                                                                コメント
+                                                                            </th>
+
+                                                                            <th scope="col" className="Button_col">
+                                                                                コメントの投稿
+                                                                            </th>
+
+
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr className="">
+                                                                            <td data-label="アドレス" className="">
+                                                                                {allLinkHolders.map((userid, i) => (
+                                                                                    <a
+                                                                                        key={i}
+                                                                                        className=""
+                                                                                        href={`https://etherscan.io/address/${userid}`}
+                                                                                        target="_blank"
+                                                                                    >
+                                                                                        {userid.slice(0, 5)}...
+                                                                                        <br />
+                                                                                        <br />
+                                                                                    </a>
+                                                                                ))}
+                                                                            </td>
+                                                                            <td data-label="成果物" className="">
+                                                                                {allLinks.map((link, i) => (
+                                                                                    <div>
+                                                                                        <a
+                                                                                            key={i}
+                                                                                            className=""
+                                                                                            href={link}
+                                                                                            target="_blank"
+                                                                                        >
+                                                                                            {" "}
+                                                                                            {link.slice(0, 15)}...
+                                                                                            <br />
+                                                                                            <br />
+                                                                                        </a>
+                                                                                    </div>
+                                                                                ))}
+                                                                            </td>
+
+
+                                                                            {currentAccount ==
+                                                                                allTasks[indexValue].user.toLowerCase() &&
+                                                                                allLinkHolders.map((userid, i) => (
+                                                                                    <td data-label="いいね" className="">
+                                                                                        <button
+                                                                                            key={i}
+                                                                                            className="submitButton"
+                                                                                            onClick={() => done(index, userid)}
+                                                                                        >
+                                                                                            報酬を送付
+                                                                                        </button>
+                                                                                        <br></br>
+                                                                                    </td>
+                                                                                ))}
+
+
+                                                                            <td data-label="アドレス" className="">
+                                                                                {allLinkHolders.map((userid, i) => (
+                                                                                    <a
+                                                                                        key={i}
+                                                                                        className=""
+                                                                                        href={`https://etherscan.io/address/${userid}`}
+                                                                                        target="_blank"
+                                                                                    >
+                                                                                        いいですね！<br />いいですね！<br />いいですね！
+                                                                                        <br />
+                                                                                        <br />
+                                                                                    </a>
+                                                                                ))}
+                                                                            </td>
+
+                                                                            <td data-label="アドレス" className="">
+
+                                                                                {allLinkHolders.map((userid, i) => (
+                                                                                    <div>
+                                                                                        <textarea
+                                                                                            name="messageArea"
+                                                                                            className="form"
+                                                                                            placeholder="成果物のリンクを添付"
+                                                                                            type="text"
+                                                                                            id="riward"
+                                                                                            value={commentValue}
+                                                                                            onChange={(e) => setComment(e.target.value)}
+                                                                                        />
+                                                                                        <button
+                                                                                            key={i}
+                                                                                            className="submitButton"
+                                                                                            onClick={() => console.log(commentValue)}
+                                                                                        ></button>
+                                                                                    </div>
+                                                                                ))}
+                                                                            </td>
+                                                                        </tr>
+
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+
+                                                            {/* タスク提出 */}
+                                                            <textarea
+                                                                name="messageArea"
+                                                                className="form"
+                                                                placeholder="成果物のリンクを添付"
+                                                                type="text"
+                                                                id="riward"
+                                                                value={outputValue}
+                                                                onChange={(e) => setOutputValue(e.target.value)}
+                                                            />
+                                                            <br></br>
+                                                            <button
+                                                                className="submitButton"
+                                                                onClick={(e) => {
+                                                                    output(indexValue);
+                                                                    console.log("id value", idValue);
+                                                                    addLink(idValue);
+                                                                    setOutput(index);
+                                                                    setOutputValue("");
+                                                                }}
+                                                            >
+                                                                成果物を提出
+                                                            </button>
+
+                                                        </div>
+                                                    </Modal>
+                                                </div>
+                                            )
+                                        )
+                                    }
+
+
+                                    {
+                                        (isChecked == false) && (
                                             <div>
                                                 <button
                                                     className="taskCard"
@@ -859,198 +1100,13 @@ const Top = () => {
                                                 </Modal>
                                             </div>
                                         )
-                                    )
-                                }
+                                    }
+                                </div>
 
-
-                                {
-                                    (isChecked == false) && (
-                                        <div>
-                                            <button
-                                                className="taskCard"
-                                                onClick={() => {
-                                                    setIndexValue(index);
-                                                    setText(index);
-                                                    setOutput(index);
-                                                    // setIsOpen(true);
-                                                    setSelectedItem("task");
-                                                    // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
-                                                    output(index);
-                                                }}
-                                            >
-                                                投稿者: {task.user}
-                                                <br></br>
-                                                期日: {task.due.toString()}
-                                                <br></br>
-                                                タスク: {task.content}
-                                                <br></br>
-                                                報酬: {ethers.utils.formatEther(task.bounty)}ETH<br></br>
-                                                完了: {task.done.toString()}
-                                                <br></br>
-                                                {/* ボタンの中 */}
-                                            </button>
-                                            {/* 詳細を押した際の挙動 */}
-                                            <Modal
-                                                isOpen={"task" === selectedItem}
-                                                style={modalStyle}
-                                                onRequestClose={() => {
-                                                    setSelectedItem("");
-                                                    setRiwarderValue("");
-                                                    setLinks([]);
-                                                    setLinkHolders([]);
-                                                    setLinkGoods([]);
-                                                }}
-                                            >
-                                                <div id="overlay">
-                                                    {/* <div className="mainContainer">
-                                        <div className="dataContainer">
-                                            <div className="body"> */}
-                                                    <h2>
-                                                        タスク詳細
-                                                        <br />
-                                                    </h2>
-                                                    <div className="modal">
-                                                        タスク登録者▼
-                                                        <br />
-                                                        <div className="card"> {allTasks[indexValue].user}</div>
-                                                        <br />
-                                                        期日▼
-                                                        <br />{" "}
-                                                        <div className="card">
-                                                            {allTasks[indexValue].due.toString()}
-                                                        </div>
-                                                        <br />
-                                                        タスク▼
-                                                        <div className="card">
-                                                            {" "}
-                                                            {allTasks[indexValue].content}
-                                                        </div>
-                                                        <br />
-                                                        詳細説明▼<div className="card"> {textValue}</div>
-                                                        <br />
-                                                        報酬▼
-                                                        <div className="card">
-                                                            {" "}
-                                                            {ethers.utils.formatEther(allTasks[indexValue].bounty)}
-                                                            ETH
-                                                        </div>
-                                                        <br />
-                                                        完了▼{" "}
-                                                        <div className="card">
-                                                            {allTasks[indexValue].done.toString()}
-                                                        </div>
-                                                        <br />
-                                                        成果物:
-                                                        <table>
-                                                            <thead>
-                                                                <tr className="table">
-                                                                    <th scope="col" className="Button_col">
-                                                                        アドレス
-                                                                    </th>
-                                                                    <th scope="col" className="Button_col">
-                                                                        成果物
-                                                                    </th>
-                                                                    {/* <th scope="col" className="Button_col">いいね</th> */}
-                                                                    {currentAccount ==
-                                                                        allTasks[indexValue].user.toLowerCase() && (
-                                                                            <th scope="col" className="Button_col">
-                                                                                報酬
-                                                                            </th>
-                                                                        )}
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr className="">
-                                                                    <td data-label="アドレス" className="">
-                                                                        {allLinkHolders.map((userid, i) => (
-                                                                            <a
-                                                                                key={i}
-                                                                                className=""
-                                                                                href={`https://etherscan.io/address/${userid}`}
-                                                                                target="_blank"
-                                                                            >
-                                                                                {userid.slice(0, 5)}...
-                                                                                <br />
-                                                                                <br />
-                                                                            </a>
-                                                                        ))}
-                                                                    </td>
-                                                                    <td data-label="成果物" className="">
-                                                                        {allLinks.map((link, i) => (
-                                                                            <div>
-                                                                                <a
-                                                                                    key={i}
-                                                                                    className=""
-                                                                                    href={link}
-                                                                                    target="_blank"
-                                                                                >
-                                                                                    {" "}
-                                                                                    {link.slice(0, 15)}...
-                                                                                    <br />
-                                                                                    <br />
-                                                                                </a>
-                                                                            </div>
-                                                                        ))}
-                                                                    </td>
-                                                                    {/* <td data-label="いいね" className="">
-                                                            {allLinkGoods.map((like, i) => <a key={i} className=""> {like}<br /><br /></a>)}
-
-                                                        </td> */}
-                                                                    <td data-label="いいね" className="">
-                                                                        {currentAccount ==
-                                                                            allTasks[indexValue].user.toLowerCase() &&
-                                                                            allLinkHolders.map((userid, i) => (
-                                                                                <div>
-                                                                                    <button
-                                                                                        key={i}
-                                                                                        className="submitButton"
-                                                                                        onClick={() => done(index, userid)}
-                                                                                    >
-                                                                                        報酬を送付
-                                                                                    </button>
-                                                                                    <br></br>
-                                                                                </div>
-                                                                            ))}
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-
-                                                    {/* タスク提出 */}
-                                                    <textarea
-                                                        name="messageArea"
-                                                        className="form"
-                                                        placeholder="成果物のリンクを添付"
-                                                        type="text"
-                                                        id="riward"
-                                                        value={outputValue}
-                                                        onChange={(e) => setOutputValue(e.target.value)}
-                                                    />
-                                                    <br></br>
-                                                    <button
-                                                        className="submitButton"
-                                                        onClick={(e) => {
-                                                            output(indexValue);
-                                                            console.log("id value", idValue);
-                                                            addLink(idValue);
-                                                            setOutput(index);
-                                                            setOutputValue("");
-                                                        }}
-                                                    >
-                                                        成果物を提出
-                                                    </button>
-
-                                                </div>
-                                            </Modal>
-                                        </div>
-                                    )
-                                }
-                            </div>
-
-                        );
-                    })}</div>
-        </div >
+                            );
+                        })}</div>
+            </div >
+        </div>
     );
 }
 
