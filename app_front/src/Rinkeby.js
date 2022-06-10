@@ -24,8 +24,11 @@ import { Link, useNavigate } from "react-router-dom";
 // MUI
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
 import Eyecatch from "./components/Eyecatch";
+import { width } from "@mui/system";
 
 // ハンバーガーメニュー
 import Menu from "./components/Menu";
@@ -88,6 +91,7 @@ const Top = () => {
   const [allLinkHolders, setLinkHolders] = useState([]);
   // 成果物いいね数
   const [allLinkGoods, setLinkGoods] = useState([]);
+  const [outputDataList, setOutputDataList] = useState([]);
 
   // Astar Mainnetアドレス保存用
   // const contractAddress = "0x980a80De95bc528b6e413516F881B78F1e474F41"
@@ -105,6 +109,16 @@ const Top = () => {
 
   // Firebase表示用
   const [users, setUsers] = useState([]);
+
+  // タスクへのコメント保存用状態変数
+  const [d, setData] = useState("");
+  const comment = (e) => {
+    const value = e.target.value;
+    const name = e.target.name;
+    setData({ ...d, [name]: value });
+  }
+  // コメント用のID保管場所
+  const [saveId, setSaveId] = useState([]);
 
   // モーダルスタイル
   const modalStyle = {
@@ -191,6 +205,12 @@ const Top = () => {
     });
 
     const usersLinkRef = collection(firebaseFirestore, `task/${taskId}/output`);
+    await getDocs(query(usersLinkRef)).then((snapshot) => {
+      snapshot.forEach((doc) => {
+        outputDataList.push(doc.data());
+        setLinks(outputDataList);
+      });
+    });
     // 成果物を全て配列に入れる
     await getDocs(query(usersLinkRef)).then((snapshot) => {
       snapshot.forEach((doc) => {
@@ -528,6 +548,69 @@ const Top = () => {
     }
   };
 
+  // 成果物へのコメント追加
+  const addComment = async (userid, link, text) => {
+    // どの成果物に対してコメントしようとしているかを特定(userid,linkから検索、成果物idを変数に格納)
+    console.log(userid)
+    console.log(link)
+    console.log(allTasks[indexValue].user)
+    console.log(allTasks[indexValue].content)
+    console.log(allTasks[indexValue].due.toString())
+    console.log(text)
+
+    const linkRef = collection(firebaseFirestore, "task");
+
+    // タスクidを特定
+    await getDocs(
+      query(
+        linkRef,
+        where("user", "==", allTasks[indexValue].user.toLowerCase()),
+        where("content", "==", allTasks[indexValue].content),
+        where("due", "==", allTasks[indexValue].due.toString())
+      )
+    ).then((snapshot) => {
+      snapshot.forEach(async (doc1) => {
+        console.log(snapshot);
+        // idを文字列に保存
+        console.log(doc1.data().id);
+        // 特定したidからoutputidを特定
+        const outputRef = await collection(firebaseFirestore, `task/${doc1.data().id}/output`);
+        console.log(`task/${doc1.data().id}/output`)
+        await getDocs(
+          query(
+            outputRef,
+            where("userid", "==", userid),
+            where("link", "==", link)
+          )
+        ).then((snapshot) => {
+          snapshot.forEach(async (doc2) => {
+            // output/(id)/commentコレクションを作成
+            const usersCommentRef = await collection(
+              firebaseFirestore,
+              `task/${doc1.data().id}/output/${doc2.data().id}/comment`
+            );
+            console.log(`task/${doc1.data().id}/output/${doc2.data().id}/comment`)
+            // コレクション内にコメントを登録
+            try {
+              const newDoc = doc(usersCommentRef).id;
+              console.log(newDoc);
+              const documentRef = await setDoc(doc(usersCommentRef, newDoc), {
+                id: newDoc,
+                userid: currentAccount,
+                comment: text
+              });
+            } catch (error) {
+              console.log("エラーです")
+            }
+          });
+        });
+      });
+    });
+
+  };
+
+  // コメントの内容をDBに追加
+
   useEffect(() => {
     checkIfWalletIsConnected();
 
@@ -544,7 +627,7 @@ const Top = () => {
   }
   return (
     <div>
-      <Menu width={250} />
+      {/* <Menu width={250} /> */}
       <div className="mainContainer">
         <div className="dataContainer">
           {metamaskError && (
@@ -755,6 +838,7 @@ const Top = () => {
                           setLinks([]);
                           setLinkHolders([]);
                           setLinkGoods([]);
+                          setOutputDataList([]);
                         }}
                       >
                         <div id="overlay">
@@ -802,78 +886,137 @@ const Top = () => {
                             </div>
                             <br />
                             成果物:
-                            <table>
+                            <table style={{ tableLayout: "fixe" }}>
                               <thead>
                                 <tr className="table">
-                                  <th scope="col" className="Button_col">
+                                  <th
+                                    scope="col"
+                                    style={{ textAlign: "left" }}
+                                    className="Button_col"
+                                  >
                                     アドレス
                                   </th>
-                                  <th scope="col" className="Button_col">
+                                  <th
+                                    scope="col"
+                                    style={{ textAlign: "left" }}
+                                    className="Button_col"
+                                  >
                                     成果物
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    style={{ textAlign: "left" }}
+                                    className="Button_col"
+                                  >
+                                    コメント
                                   </th>
                                   {/* <th scope="col" className="Button_col">いいね</th> */}
                                   {currentAccount ==
                                     allTasks[indexValue].user.toLowerCase() && (
                                       <th scope="col" className="Button_col">
-                                        報酬
+                                        アドレス
                                       </th>
                                     )}
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr className="">
-                                  <td data-label="アドレス" className="">
-                                    {allLinkHolders.map((userid, i) => (
+                                {outputDataList.map((data, i) => (
+                                  <tr>
+                                    <td
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                      }}
+                                      data-label="アドレス"
+                                    >
                                       <a
                                         key={i}
                                         className=""
-                                        href={`https://etherscan.io/address/${userid}`}
+                                        href={`https://etherscan.io/address/${data.userid}`}
                                         target="_blank"
                                       >
-                                        {userid.slice(0, 5)}...
+                                        {data.userid.slice(0, 5)}...
                                         <br />
                                         <br />
                                       </a>
-                                    ))}
-                                  </td>
-                                  <td data-label="成果物" className="">
-                                    {allLinks.map((link, i) => (
-                                      <div>
-                                        <a
-                                          key={i}
-                                          className=""
-                                          href={link}
-                                          target="_blank"
-                                        >
-                                          {" "}
-                                          {link.slice(0, 15)}...
-                                          <br />
-                                          <br />
-                                        </a>
+                                    </td>
+                                    <td
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                      }}
+                                      data-label="成果物"
+                                    >
+                                      <a
+                                        key={i}
+                                        className=""
+                                        href={data.link}
+                                        target="_blank"
+                                      >
+                                        {" "}
+                                        {data.link.slice(0, 15)}...
+                                      </a>
+                                    </td>
+                                    <td
+                                      data-label="コメント"
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                      }}
+                                    >
+                                      <p style={{ fontSize: 16 }}>
+                                        Lorem Ipsum is simply dummy text of the
+                                        printing and typesetting industry.
+                                      </p>
+                                      <p style={{ fontSize: 16 }}>
+                                        Lorem Ipsum is simply dummy text of the
+                                        printing and typesetting industry.
+                                      </p>
+                                      <div
+                                        style={{
+                                          marginTop: 24,
+                                          marginBottom: 12,
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <TextField
+                                          style={{ marginRight: 12 }}
+                                          id="outlined-error"
+                                          label="コメント内容"
+                                          defaultValue=""
+                                          variant="standard"
+                                          name={i.toString()}
+                                          value={data.username}
+                                          onChange={comment}
+                                        />
+                                        <Button variant="contained" onClick={(e) => {
+                                          addComment(data.userid, data.link, d[i])
+                                        }}>
+                                          送信する
+                                        </Button>
                                       </div>
-                                    ))}
-                                  </td>
-                                  {/* <td data-label="いいね" className="">
-                                                            {allLinkGoods.map((like, i) => <a key={i} className=""> {like}<br /><br /></a>)}
-
-                                                        </td> */}
-                                  <td data-label="いいね" className="">
-                                    {currentAccount ==
-                                      allTasks[indexValue].user.toLowerCase() &&
-                                      allLinkHolders.map((userid, i) => (
+                                    </td>
+                                    <td
+                                      style={{ verticalAlign: "top" }}
+                                      data-label="いいね"
+                                      className=""
+                                    >
+                                      {currentAccount ==
+                                        allTasks[indexValue].user.toLowerCase() &&
                                         <div>
                                           <button
                                             key={i}
                                             className="submitButton"
-                                            onClick={() => done(index, userid)}
+                                            onClick={() => done(indexValue, data)}
                                           >
                                             報酬を送付
                                           </button>
                                           <br></br>
                                         </div>
-                                      ))}
-                                  </td>
-                                </tr>
+                                      }
+                                    </td>
+                                  </tr>
+                                ))}
                               </tbody>
                             </table>
                           </div>
@@ -941,6 +1084,7 @@ const Top = () => {
                           setLinks([]);
                           setLinkHolders([]);
                           setLinkGoods([]);
+                          setOutputDataList([]);
                         }}
                       >
                         <div id="overlay">
@@ -988,78 +1132,143 @@ const Top = () => {
                             </div>
                             <br />
                             成果物:
-                            <table>
+                            <table style={{ padding: 8, tableLayout: "fixe" }}>
                               <thead>
                                 <tr className="table">
-                                  <th scope="col" className="Button_col">
+                                  <th
+                                    scope="col"
+                                    style={{ textAlign: "left" }}
+                                    className="Button_col"
+                                  >
                                     アドレス
                                   </th>
-                                  <th scope="col" className="Button_col">
+                                  <th
+                                    scope="col"
+                                    style={{ textAlign: "left" }}
+                                    className="Button_col"
+                                  >
                                     成果物
                                   </th>
-                                  {/* <th scope="col" className="Button_col">いいね</th> */}
+                                  <th
+                                    scope="col"
+                                    style={{ textAlign: "left" }}
+                                    className="Button_col"
+                                  >
+                                    コメント
+                                  </th>
+                                  {/* <th scope="col" style={{textAlign: "left",}} className="Button_col">いいね</th> */}
                                   {currentAccount ==
                                     allTasks[indexValue].user.toLowerCase() && (
-                                      <th scope="col" className="Button_col">
+                                      <th
+                                        scope="col"
+                                        style={{ textAlign: "left" }}
+                                        className="Button_col"
+                                      >
                                         報酬
                                       </th>
                                     )}
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr className="">
-                                  <td data-label="アドレス" className="">
-                                    {allLinkHolders.map((userid, i) => (
+                                {outputDataList.map((data, i) => (
+                                  <tr
+                                    style={{
+                                      marginBottom: 24,
+                                      padddingBottom: 24,
+                                    }}
+                                  >
+                                    <td
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                        paddingRight: 24,
+                                      }}
+                                      data-label="アドレス"
+                                    >
                                       <a
                                         key={i}
                                         className=""
-                                        href={`https://etherscan.io/address/${userid}`}
+                                        href={`https://etherscan.io/address/${data.userid}`}
                                         target="_blank"
                                       >
-                                        {userid.slice(0, 5)}...
+                                        {data.userid.slice(0, 5)}...
                                         <br />
                                         <br />
                                       </a>
-                                    ))}
-                                  </td>
-                                  <td data-label="成果物" className="">
-                                    {allLinks.map((link, i) => (
-                                      <div>
-                                        <a
-                                          key={i}
-                                          className=""
-                                          href={link}
-                                          target="_blank"
-                                        >
-                                          {" "}
-                                          {link.slice(0, 15)}...
-                                          <br />
-                                          <br />
-                                        </a>
+                                    </td>
+                                    <td
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                        paddingRight: 24,
+                                      }}
+                                      data-label="成果物"
+                                    >
+                                      <a
+                                        key={i}
+                                        className=""
+                                        href={data.link}
+                                        target="_blank"
+                                      >
+                                        {" "}
+                                        {data.link.slice(0, 15)}...
+                                      </a>
+                                    </td>
+                                    <td
+                                      data-label="コメント"
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                        paddingRight: 24,
+                                        width: 320,
+                                      }}
+                                    >
+                                      {/* TODO: mapで実装 */}
+                                      <p style={{ fontSize: 16 }}>
+                                        Lorem Ipsum is simply dummy text of the
+                                        printing and typesetting industry.
+                                      </p>
+                                      <div
+                                        style={{
+                                          marginTop: 24,
+                                          marginBottom: 12,
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <TextField
+                                          style={{ marginRight: 12 }}
+                                          id="outlined-error"
+                                          label="コメント内容"
+                                          defaultValue=""
+                                          variant="standard"
+                                        />
+                                        <Button variant="contained">
+                                          送信する
+                                        </Button>
                                       </div>
-                                    ))}
-                                  </td>
-                                  {/* <td data-label="いいね" className="">
-                                                            {allLinkGoods.map((like, i) => <a key={i} className=""> {like}<br /><br /></a>)}
+                                    </td>
+                                    <td
+                                      style={{ verticalAlign: "top" }}
+                                      data-label="いいね"
+                                      className=""
+                                    >
+                                      {currentAccount ==
+                                        allTasks[indexValue].user.toLowerCase() &&
 
-                                                        </td> */}
-                                  <td data-label="いいね" className="">
-                                    {currentAccount ==
-                                      allTasks[indexValue].user.toLowerCase() &&
-                                      allLinkHolders.map((userid, i) => (
                                         <div>
                                           <button
                                             key={i}
                                             className="submitButton"
-                                            onClick={() => done(index, userid)}
+                                            onClick={() => done(indexValue, data)}
                                           >
                                             報酬を送付
                                           </button>
                                           <br></br>
                                         </div>
-                                      ))}
-                                  </td>
-                                </tr>
+                                      }
+                                    </td>
+                                  </tr>
+                                ))}
                               </tbody>
                             </table>
                           </div>
@@ -1081,7 +1290,7 @@ const Top = () => {
                               output(indexValue);
                               console.log("id value", idValue);
                               addLink(idValue);
-                              setOutput(index);
+                              setOutput(indexValue);
                               setOutputValue("");
                             }}
                           >
@@ -1094,9 +1303,9 @@ const Top = () => {
                 </div>
               );
             })}
-        </div>
-      </div>
-    </div>
+        </div >
+      </div >
+    </div >
   );
 };
 
