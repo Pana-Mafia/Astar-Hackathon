@@ -24,6 +24,8 @@ import { Link, useNavigate } from "react-router-dom";
 // MUI
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
 import Eyecatch from "./components/Eyecatch";
 import { width } from "@mui/system";
@@ -891,10 +893,24 @@ const Top = () => {
                                       Lorem Ipsum is simply dummy text of the
                                       printing and typesetting industry.
                                     </p>
-                                    <p style={{ fontSize: 16 }}>
-                                      Lorem Ipsum is simply dummy text of the
-                                      printing and typesetting industry.
-                                    </p>
+                                    <div
+                                      style={{
+                                        marginTop: 24,
+                                        marginBottom: 12,
+                                        display: "flex",
+                                      }}
+                                    >
+                                      <TextField
+                                        style={{ marginRight: 12 }}
+                                        id="outlined-error"
+                                        label="コメント内容"
+                                        defaultValue=""
+                                        variant="standard"
+                                      />
+                                      <Button variant="contained">
+                                        送信する
+                                      </Button>
+                                    </div>
                                   </td>
                                   <td
                                     style={{ verticalAlign: "top" }}
@@ -1128,6 +1144,24 @@ const Top = () => {
                                       Lorem Ipsum is simply dummy text of the
                                       printing and typesetting industry.
                                     </p>
+                                    <div
+                                      style={{
+                                        marginTop: 24,
+                                        marginBottom: 12,
+                                        display: "flex",
+                                      }}
+                                    >
+                                      <TextField
+                                        style={{ marginRight: 12 }}
+                                        id="outlined-error"
+                                        label="コメント内容"
+                                        defaultValue=""
+                                        variant="standard"
+                                      />
+                                      <Button variant="contained">
+                                        送信する
+                                      </Button>
+                                    </div>
                                   </td>
                                   <td
                                     style={{ verticalAlign: "top" }}
