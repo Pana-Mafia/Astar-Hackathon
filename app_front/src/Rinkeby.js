@@ -919,18 +919,16 @@ const Top = () => {
                                   >
                                     {currentAccount ==
                                       allTasks[indexValue].user.toLowerCase() &&
-                                      allLinkHolders.map((data, i) => (
                                         <div>
                                           <button
                                             key={i}
                                             className="submitButton"
-                                            onClick={() => done(index, data)}
+                                            onClick={() => done(indexValue, data)}
                                           >
                                             報酬を送付
                                           </button>
                                           <br></br>
-                                        </div>
-                                      ))}
+                                        </div>}
                                   </td>
                                 </tr>
                               ))}
@@ -1170,18 +1168,16 @@ const Top = () => {
                                   >
                                     {currentAccount ==
                                       allTasks[indexValue].user.toLowerCase() &&
-                                      allLinkHolders.map((data, i) => (
                                         <div>
                                           <button
                                             key={i}
                                             className="submitButton"
-                                            onClick={() => done(index, data)}
+                                            onClick={() => done(indexValue, data)}
                                           >
                                             報酬を送付
                                           </button>
                                           <br></br>
-                                        </div>
-                                      ))}
+                                        </div>}
                                   </td>
                                 </tr>
                               ))}
