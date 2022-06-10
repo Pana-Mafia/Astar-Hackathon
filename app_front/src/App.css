@@ -34,10 +34,17 @@
 }
 
 .waveButton {
+  width: 240px;
+  text-align: center;
   background: -webkit-linear-gradient(-70deg, #a2facf, #64acff);
   background-size: 200% 200%;
   animation: gradient-animation 4s ease infinite;
   color: #0d1116;
+  cursor: pointer;
+  margin-top: 16px;
+  padding: 8px;
+  border: 0;
+  border-radius: 5px;
 }
 
 .card {
@@ -93,14 +100,6 @@
   text-align: center;
   color: white;
   margin-top: 16px;
-}
-
-.waveButton {
-  cursor: pointer;
-  margin-top: 16px;
-  padding: 8px;
-  border: 0;
-  border-radius: 5px;
 }
 
 body {
@@ -261,7 +260,7 @@ h2 {
 }
 
 .mining span {
-  color: #FBD34D;
+  color: #fbd34d;
 }
 
 .success,
@@ -285,8 +284,7 @@ h2 {
 }
 
 .success p {
-  color: #34D399;
-
+  color: #34d399;
 }
 
 .error p {
@@ -296,7 +294,7 @@ h2 {
 .loader {
   border: 5px solid #f3f3f3;
   /* Light grey */
-  border-top: 5px solid #FBD34D;
+  border-top: 5px solid #fbd34d;
   /* Yellow */
   border-radius: 50%;
   width: 30px;
@@ -328,6 +326,7 @@ h2 {
   padding: 15px;
   text-align: center;
 }
+
 
 /* ハンバーガー用 */
 /* Position and sizing of burger button */

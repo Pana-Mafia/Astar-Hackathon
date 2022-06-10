@@ -2,15 +2,20 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { slide as Menu } from "react-burger-menu";
 
-// import { Alpha, currentAccount } from '/Users/gtyuki/Desktop/web3/Astar_Hackathon/app_front/src/Alpha';
+import { useEffect, useState } from "react";
+
+import { ethers } from "ethers";
+
+import CurrentAccount from './CurrentAccount'
 
 export default props => {
   return (
     <Menu {...props}>
       <Link to="/Sample" className="menu-item" >
         ホームページ
-        {/* {currentAccount} */}
       </Link>
+
+      {/* <CurrentAccount /> */}
 
       <br />
 
