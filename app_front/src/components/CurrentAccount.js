@@ -10,7 +10,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { firebaseFirestore } from "/Users/gtyuki/Desktop/web3/Astar_Hackathon/app_front/src/firebase";
+import { firebaseFirestore } from "../firebase";
 
 export const CurrentAccount = async (address) => {
   // ニックネームの格納
