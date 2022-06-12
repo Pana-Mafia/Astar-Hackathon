@@ -947,6 +947,7 @@ const Top = () => {
                                       }}
                                       data-label="成果物"
                                     >
+
                                       <a
                                         key={i}
                                         className=""
@@ -1003,6 +1004,7 @@ const Top = () => {
                                     >
                                       {currentAccount ==
                                         allTasks[indexValue].user.toLowerCase() &&
+                                   
                                         <div>
                                           <button
                                             key={i}
@@ -1012,6 +1014,7 @@ const Top = () => {
                                             報酬を送付
                                           </button>
                                           <br></br>
+
                                         </div>
                                       }
                                     </td>
@@ -1020,6 +1023,7 @@ const Top = () => {
                               </tbody>
                             </table>
                           </div>
+
 
                           {/* タスク提出 */}
                           <textarea
@@ -1185,6 +1189,7 @@ const Top = () => {
                                       }}
                                       data-label="アドレス"
                                     >
+
                                       <a
                                         key={i}
                                         className=""
@@ -1254,7 +1259,7 @@ const Top = () => {
                                     >
                                       {currentAccount ==
                                         allTasks[indexValue].user.toLowerCase() &&
-
+             
                                         <div>
                                           <button
                                             key={i}
@@ -1264,6 +1269,7 @@ const Top = () => {
                                             報酬を送付
                                           </button>
                                           <br></br>
+
                                         </div>
                                       }
                                     </td>
@@ -1272,6 +1278,7 @@ const Top = () => {
                               </tbody>
                             </table>
                           </div>
+
 
                           {/* タスク提出 */}
                           <textarea
