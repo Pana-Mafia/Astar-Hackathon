@@ -30,6 +30,9 @@ import Button from "@mui/material/Button";
 import Eyecatch from "./components/Eyecatch";
 import { width } from "@mui/system";
 
+// ハンバーガーメニュー
+import Menu from "./components/Menu";
+
 Modal.setAppElement("#root");
 const Top = () => {
   // チェックボックスの実装
@@ -106,6 +109,16 @@ const Top = () => {
 
   // Firebase表示用
   const [users, setUsers] = useState([]);
+
+  // タスクへのコメント保存用状態変数
+  const [d, setData] = useState("");
+  const comment = (e) => {
+    const value = e.target.value;
+    const name = e.target.name;
+    setData({ ...d, [name]: value });
+  }
+  // コメント用のID保管場所
+  const [saveId, setSaveId] = useState([]);
 
   // モーダルスタイル
   const modalStyle = {
@@ -535,6 +548,69 @@ const Top = () => {
     }
   };
 
+  // 成果物へのコメント追加
+  const addComment = async (userid, link, text) => {
+    // どの成果物に対してコメントしようとしているかを特定(userid,linkから検索、成果物idを変数に格納)
+    console.log(userid)
+    console.log(link)
+    console.log(allTasks[indexValue].user)
+    console.log(allTasks[indexValue].content)
+    console.log(allTasks[indexValue].due.toString())
+    console.log(text)
+
+    const linkRef = collection(firebaseFirestore, "task");
+
+    // タスクidを特定
+    await getDocs(
+      query(
+        linkRef,
+        where("user", "==", allTasks[indexValue].user.toLowerCase()),
+        where("content", "==", allTasks[indexValue].content),
+        where("due", "==", allTasks[indexValue].due.toString())
+      )
+    ).then((snapshot) => {
+      snapshot.forEach(async (doc1) => {
+        console.log(snapshot);
+        // idを文字列に保存
+        console.log(doc1.data().id);
+        // 特定したidからoutputidを特定
+        const outputRef = await collection(firebaseFirestore, `task/${doc1.data().id}/output`);
+        console.log(`task/${doc1.data().id}/output`)
+        await getDocs(
+          query(
+            outputRef,
+            where("userid", "==", userid),
+            where("link", "==", link)
+          )
+        ).then((snapshot) => {
+          snapshot.forEach(async (doc2) => {
+            // output/(id)/commentコレクションを作成
+            const usersCommentRef = await collection(
+              firebaseFirestore,
+              `task/${doc1.data().id}/output/${doc2.data().id}/comment`
+            );
+            console.log(`task/${doc1.data().id}/output/${doc2.data().id}/comment`)
+            // コレクション内にコメントを登録
+            try {
+              const newDoc = doc(usersCommentRef).id;
+              console.log(newDoc);
+              const documentRef = await setDoc(doc(usersCommentRef, newDoc), {
+                id: newDoc,
+                userid: currentAccount,
+                comment: text
+              });
+            } catch (error) {
+              console.log("エラーです")
+            }
+          });
+        });
+      });
+    });
+
+  };
+
+  // コメントの内容をDBに追加
+
   useEffect(() => {
     checkIfWalletIsConnected();
 
@@ -550,624 +626,385 @@ const Top = () => {
     e.target.checked ? navigate("/") : navigate("/fuji");
   }
   return (
-    <div className="mainContainer">
-      <div className="dataContainer">
-        {metamaskError && (
-          <div className="metamask-error">
-            Rinkeby Testnetに <br></br>接続してください!
-          </div>
-        )}
-        <Eyecatch version="Rinkeby" unit="$ETH" checked={true} />
-
-        <br />
-
-        <FormControlLabel
-          label="完了済のタスクを非表示"
-          value="ribbon"
-          control={
-            <Checkbox
-              color="info"
-              checked={isChecked}
-              onChange={changeIsChecked}
-              name="toggleDisplayAll"
-            />
-          }
-        />
-
-        <br />
-
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          {!currentAccount && mineStatus !== "connecting" && (
-            <button className="waveButton" onClick={connectWallet}>
-              Connect Wallet
-            </button>
+    <div>
+      {/* <Menu width={250} /> */}
+      <div className="mainContainer">
+        <div className="dataContainer">
+          {metamaskError && (
+            <div className="metamask-error">
+              Rinkeby Testnetに <br></br>接続してください!
+            </div>
           )}
-          {/* ウォレット接続時のローディング */}
+          <Eyecatch version="Rinkeby" unit="$ETH" checked={true} />
+
+          <br />
+
+          <FormControlLabel
+            label="完了済のタスクを非表示"
+            value="ribbon"
+            control={
+              <Checkbox
+                color="info"
+                checked={isChecked}
+                onChange={changeIsChecked}
+                name="toggleDisplayAll"
+              />
+            }
+          />
+
+          <br />
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            {!currentAccount && mineStatus !== "connecting" && (
+              <button className="waveButton" onClick={connectWallet}>
+                Connect Wallet
+              </button>
+            )}
+            {/* ウォレット接続時のローディング */}
+            <br></br>
+            <div className="mine-submission">
+              {mineStatus === "ok" && (
+                <div className={mineStatus}>{window.location.reload()}</div>
+              )}
+              {mineStatus === "connecting" && (
+                <div className="mining">
+                  <div className="loader" />
+                  <span>Transaction is mining</span>
+                </div>
+              )}
+              {mineStatus === "e" && (
+                <div className="error">
+                  <p>Transaction failed. Please try again.</p>
+                </div>
+              )}
+            </div>
+            {currentAccount && (
+              <button className="waveButton" onClick={null}>
+                Wallet Connected
+              </button>
+            )}
+            {currentAccount && mineStatus !== "mining" && (
+              <button
+                className="waveButton"
+                onClick={() => {
+                  setSelectedItem("create");
+                }}
+              >
+                タスクを作成する
+              </button>
+            )}
+          </div>
+
+          {/* mining時にロード画面にする実装 */}
           <br></br>
           <div className="mine-submission">
-            {mineStatus === "ok" && (
-              <div className={mineStatus}>{window.location.reload()}</div>
+            {mineStatus === "success" && (
+              <div className={mineStatus}>
+                <p>success!</p>
+              </div>
             )}
-            {mineStatus === "connecting" && (
-              <div className="mining">
+            {mineStatus === "mining" && (
+              <div className={mineStatus}>
                 <div className="loader" />
                 <span>Transaction is mining</span>
               </div>
             )}
-            {mineStatus === "e" && (
-              <div className="error">
-                <p>Transaction failed. Please try again.</p>
+            {mineStatus === "error" && (
+              <div className={mineStatus}>
+                <p>
+                  Transaction failed. Make sure you have $ETH in your Metamask
+                  wallet and try again.
+                </p>
               </div>
             )}
           </div>
-          {currentAccount && (
-            <button className="waveButton" onClick={null}>
-              Wallet Connected
-            </button>
-          )}
-          {currentAccount && mineStatus !== "mining" && (
-            <button
-              className="waveButton"
-              onClick={() => {
-                setSelectedItem("create");
-              }}
-            >
-              タスクを作成する
-            </button>
-          )}
-        </div>
 
-        {/* mining時にロード画面にする実装 */}
-        <br></br>
-        <div className="mine-submission">
-          {mineStatus === "success" && (
-            <div className={mineStatus}>
-              <p>success!</p>
-            </div>
-          )}
-          {mineStatus === "mining" && (
-            <div className={mineStatus}>
-              <div className="loader" />
-              <span>Transaction is mining</span>
-            </div>
-          )}
-          {mineStatus === "error" && (
-            <div className={mineStatus}>
-              <p>
-                Transaction failed. Make sure you have $ETH in your Metamask
-                wallet and try again.
-              </p>
-            </div>
-          )}
-        </div>
+          {/* モーダルにするテスト */}
+          <Modal
+            isOpen={"create" === selectedItem}
+            style={modalStyle}
+            onRequestClose={() => setSelectedItem("")}
+          >
+            <h2>タスクの作成</h2>
 
-        {/* モーダルにするテスト */}
-        <Modal
-          isOpen={"create" === selectedItem}
-          style={modalStyle}
-          onRequestClose={() => setSelectedItem("")}
-        >
-          <h2>タスクの作成</h2>
+            {currentAccount && (
+              <textarea
+                name="messageArea"
+                className="form"
+                placeholder="タスクを記入してください(例：コントラクトアドレスの変更)"
+                type="text"
+                id="message"
+                value={contentValue}
+                onChange={(e) => setContentValue(e.target.value)}
+              />
+            )}
+            <br></br>
 
-          {currentAccount && (
+            {currentAccount && (
+              <textarea
+                name="messageArea"
+                className="form"
+                placeholder="期日を記入してください(例：20220507)"
+                type="text"
+                id="message"
+                value={dueValue}
+                onChange={(e) => setDueValue(e.target.value)}
+              />
+            )}
+            <br></br>
+
+            {currentAccount && (
+              <textarea
+                name="messageArea"
+                placeholder="タスクの報酬額を記入してください(単位:ETH)"
+                className="form"
+                type="text"
+                id="message"
+                value={bountyValue}
+                onChange={(e) => setBountyValue(e.target.value)}
+              />
+            )}
+            <br></br>
+
             <textarea
               name="messageArea"
-              className="form"
-              placeholder="タスクを記入してください(例：コントラクトアドレスの変更)"
-              type="text"
-              id="message"
-              value={contentValue}
-              onChange={(e) => setContentValue(e.target.value)}
-            />
-          )}
-          <br></br>
-
-          {currentAccount && (
-            <textarea
-              name="messageArea"
-              className="form"
-              placeholder="期日を記入してください(例：20220507)"
-              type="text"
-              id="message"
-              value={dueValue}
-              onChange={(e) => setDueValue(e.target.value)}
-            />
-          )}
-          <br></br>
-
-          {currentAccount && (
-            <textarea
-              name="messageArea"
-              placeholder="タスクの報酬額を記入してください(単位:ETH)"
+              placeholder="タスクの説明を記入してください(例：コントラクトを新たにデプロイし、アドレスを取得してください。提出時には新たなコントラクトアドレスの送付をお願いします)"
               className="form"
               type="text"
-              id="message"
-              value={bountyValue}
-              onChange={(e) => setBountyValue(e.target.value)}
+              id="expression"
+              value={expressionValue}
+              onChange={(e) => setExpressionValue(e.target.value)}
             />
-          )}
-          <br></br>
+            <br></br>
+            {currentAccount && (
+              <button
+                className="submitButton"
+                onClick={() => {
+                  handleTask();
+                  task();
+                  setSelectedItem("");
+                }}
+              >
+                タスクを作成する
+              </button>
+            )}
+          </Modal>
 
-          <textarea
-            name="messageArea"
-            placeholder="タスクの説明を記入してください(例：コントラクトを新たにデプロイし、アドレスを取得してください。提出時には新たなコントラクトアドレスの送付をお願いします)"
-            className="form"
-            type="text"
-            id="expression"
-            value={expressionValue}
-            onChange={(e) => setExpressionValue(e.target.value)}
-          />
-          <br></br>
-          {currentAccount && (
-            <button
-              className="submitButton"
-              onClick={() => {
-                handleTask();
-                task();
-                setSelectedItem("");
-              }}
-            >
-              タスクを作成する
-            </button>
-          )}
-        </Modal>
+          {currentAccount &&
+            allTasks.slice(0).map((task, index) => {
+              return (
+                <div key={index} className="cover">
+                  {/* setispenと合わせて別の関数を策定、idを渡す。このidをベースにtaskを特定して表示する関数を書く */}
 
-        {currentAccount &&
-          allTasks.slice(0).map((task, index) => {
-            return (
-              <div key={index} className="cover">
-                {/* setispenと合わせて別の関数を策定、idを渡す。このidをベースにtaskを特定して表示する関数を書く */}
-
-                {/* チェックされている場合、完了済のタスクは表示しない */}
-                {isChecked == true && task.done.toString() == "false" && (
-                  <div>
-                    <button
-                      className="taskCard"
-                      onClick={() => {
-                        setIndexValue(index);
-                        setText(index);
-                        setOutput(index);
-                        // setIsOpen(true);
-                        setSelectedItem("task");
-                        // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
-                        output(index);
-                      }}
-                    >
-                      投稿者: {task.user}
-                      <br></br>
-                      期日: {task.due.toString()}
-                      <br></br>
-                      タスク: {task.content}
-                      <br></br>
-                      報酬: {ethers.utils.formatEther(task.bounty)}ETH<br></br>
-                      完了: {task.done.toString()}
-                      <br></br>
-                      {/* ボタンの中 */}
-                    </button>
-                    {/* 詳細を押した際の挙動 */}
-                    <Modal
-                      isOpen={"task" === selectedItem}
-                      style={modalStyle}
-                      onRequestClose={() => {
-                        setSelectedItem("");
-                        setRiwarderValue("");
-                        setLinks([]);
-                        setLinkHolders([]);
-                        setLinkGoods([]);
-                      }}
-                    >
-                      <div id="overlay">
-                        {/* <div className="mainContainer">
-                                        <div className="dataContainer">
-                                            <div className="body"> */}
-                        <h2>
-                          タスク詳細
-                          <br />
-                        </h2>
-                        <div className="modal">
-                          タスク登録者▼
-                          <br />
-                          <div className="card">
-                            {" "}
-                            {allTasks[indexValue].user}
-                          </div>
-                          <br />
-                          期日▼
-                          <br />{" "}
-                          <div className="card">
-                            {allTasks[indexValue].due.toString()}
-                          </div>
-                          <br />
-                          タスク▼
-                          <div className="card">
-                            {" "}
-                            {allTasks[indexValue].content}
-                          </div>
-                          <br />
-                          詳細説明▼<div className="card"> {textValue}</div>
-                          <br />
-                          報酬▼
-                          <div className="card">
-                            {" "}
-                            {ethers.utils.formatEther(
-                              allTasks[indexValue].bounty
-                            )}
-                            ETH
-                          </div>
-                          <br />
-                          完了▼{" "}
-                          <div className="card">
-                            {allTasks[indexValue].done.toString()}
-                          </div>
-                          <br />
-                          成果物:
-                          <table style={{ tableLayout: "fixe" }}>
-                            <thead>
-                              <tr className="table">
-                                <th
-                                  scope="col"
-                                  style={{ textAlign: "left" }}
-                                  className="Button_col"
-                                >
-                                  アドレス
-                                </th>
-                                <th
-                                  scope="col"
-                                  style={{ textAlign: "left" }}
-                                  className="Button_col"
-                                >
-                                  成果物
-                                </th>
-                                <th
-                                  scope="col"
-                                  style={{ textAlign: "left" }}
-                                  className="Button_col"
-                                >
-                                  コメント
-                                </th>
-                                {/* <th scope="col" className="Button_col">いいね</th> */}
-                                {currentAccount ==
-                                  allTasks[indexValue].user.toLowerCase() && (
-                                  <th scope="col" className="Button_col">
-                                    報酬
-                                  </th>
-                                )}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {outputDataList.map((data, i) => (
-                                <tr>
-                                  <td
-                                    style={{
-                                      textAlign: "left",
-                                      verticalAlign: "top",
-                                    }}
-                                    data-label="アドレス"
-                                  >
-                                    <a
-                                      key={i}
-                                      className=""
-                                      href={`https://etherscan.io/address/${data.userid}`}
-                                      target="_blank"
-                                    >
-                                      {data.userid.slice(0, 5)}...
-                                      <br />
-                                      <br />
-                                    </a>
-                                  </td>
-                                  <td
-                                    style={{
-                                      textAlign: "left",
-                                      verticalAlign: "top",
-                                    }}
-                                    data-label="成果物"
-                                  >
-                                    <a
-                                      key={i}
-                                      className=""
-                                      href={data.link}
-                                      target="_blank"
-                                    >
-                                      {" "}
-                                      {data.link.slice(0, 15)}...
-                                    </a>
-                                  </td>
-                                  <td
-                                    data-label="コメント"
-                                    style={{
-                                      textAlign: "left",
-                                      verticalAlign: "top",
-                                    }}
-                                  >
-                                    <p style={{ fontSize: 16 }}>
-                                      Lorem Ipsum is simply dummy text of the
-                                      printing and typesetting industry.
-                                    </p>
-                                    <p style={{ fontSize: 16 }}>
-                                      Lorem Ipsum is simply dummy text of the
-                                      printing and typesetting industry.
-                                    </p>
-                                    <div
-                                      style={{
-                                        marginTop: 24,
-                                        marginBottom: 12,
-                                        display: "flex",
-                                      }}
-                                    >
-                                      <TextField
-                                        style={{ marginRight: 12 }}
-                                        id="outlined-error"
-                                        label="コメント内容"
-                                        defaultValue=""
-                                        variant="standard"
-                                      />
-                                      <Button variant="contained">
-                                        送信する
-                                      </Button>
-                                    </div>
-                                  </td>
-                                  <td
-                                    style={{ verticalAlign: "top" }}
-                                    data-label="いいね"
-                                    className=""
-                                  >
-                                    {currentAccount ==
-                                      allTasks[indexValue].user.toLowerCase() &&
-                                        <div>
-                                          <button
-                                            key={i}
-                                            className="submitButton"
-                                            onClick={() => done(indexValue, data)}
-                                          >
-                                            報酬を送付
-                                          </button>
-                                          <br></br>
-                                        </div>}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-
-                        {/* タスク提出 */}
-                        <textarea
-                          name="messageArea"
-                          className="form"
-                          placeholder="成果物のリンクを添付"
-                          type="text"
-                          id="riward"
-                          value={outputValue}
-                          onChange={(e) => setOutputValue(e.target.value)}
-                        />
+                  {/* チェックされている場合、完了済のタスクは表示しない */}
+                  {isChecked == true && task.done.toString() == "false" && (
+                    <div>
+                      <button
+                        className="taskCard"
+                        onClick={() => {
+                          setIndexValue(index);
+                          setText(index);
+                          setOutput(index);
+                          // setIsOpen(true);
+                          setSelectedItem("task");
+                          // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
+                          output(index);
+                        }}
+                      >
+                        投稿者: {task.user}
                         <br></br>
-                        <button
-                          className="submitButton"
-                          onClick={(e) => {
-                            output(indexValue);
-                            console.log("id value", idValue);
-                            addLink(idValue);
-                            setOutput(index);
-                            setOutputValue("");
-                          }}
-                        >
-                          成果物を提出
-                        </button>
-                      </div>
-                    </Modal>
-                  </div>
-                )}
-
-                {isChecked == false && (
-                  <div>
-                    <button
-                      className="taskCard"
-                      onClick={() => {
-                        setIndexValue(index);
-                        setText(index);
-                        setOutput(index);
-                        // setIsOpen(true);
-                        setSelectedItem("task");
-                        // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
-                        output(index);
-                      }}
-                    >
-                      投稿者: {task.user}
-                      <br></br>
-                      期日: {task.due.toString()}
-                      <br></br>
-                      タスク: {task.content}
-                      <br></br>
-                      報酬: {ethers.utils.formatEther(task.bounty)}ETH<br></br>
-                      完了: {task.done.toString()}
-                      <br></br>
-                      {/* ボタンの中 */}
-                    </button>
-                    {/* 詳細を押した際の挙動 */}
-                    <Modal
-                      isOpen={"task" === selectedItem}
-                      style={modalStyle}
-                      onRequestClose={() => {
-                        setSelectedItem("");
-                        setRiwarderValue("");
-                        setLinks([]);
-                        setLinkHolders([]);
-                        setLinkGoods([]);
-                      }}
-                    >
-                      <div id="overlay">
-                        {/* <div className="mainContainer">
+                        期日: {task.due.toString()}
+                        <br></br>
+                        タスク: {task.content}
+                        <br></br>
+                        報酬: {ethers.utils.formatEther(task.bounty)}ETH<br></br>
+                        完了: {task.done.toString()}
+                        <br></br>
+                        {/* ボタンの中 */}
+                      </button>
+                      {/* 詳細を押した際の挙動 */}
+                      <Modal
+                        isOpen={"task" === selectedItem}
+                        style={modalStyle}
+                        onRequestClose={() => {
+                          setSelectedItem("");
+                          setRiwarderValue("");
+                          setLinks([]);
+                          setLinkHolders([]);
+                          setLinkGoods([]);
+                          setOutputDataList([]);
+                        }}
+                      >
+                        <div id="overlay">
+                          {/* <div className="mainContainer">
                                         <div className="dataContainer">
                                             <div className="body"> */}
-                        <h2>
-                          タスク詳細
-                          <br />
-                        </h2>
-                        <div className="modal">
-                          タスク登録者▼
-                          <br />
-                          <div className="card">
-                            {" "}
-                            {allTasks[indexValue].user}
-                          </div>
-                          <br />
-                          期日▼
-                          <br />{" "}
-                          <div className="card">
-                            {allTasks[indexValue].due.toString()}
-                          </div>
-                          <br />
-                          タスク▼
-                          <div className="card">
-                            {" "}
-                            {allTasks[indexValue].content}
-                          </div>
-                          <br />
-                          詳細説明▼<div className="card"> {textValue}</div>
-                          <br />
-                          報酬▼
-                          <div className="card">
-                            {" "}
-                            {ethers.utils.formatEther(
-                              allTasks[indexValue].bounty
-                            )}
-                            ETH
-                          </div>
-                          <br />
-                          完了▼{" "}
-                          <div className="card">
-                            {allTasks[indexValue].done.toString()}
-                          </div>
-                          <br />
-                          成果物:
-                          <table style={{ padding: 8, tableLayout: "fixe" }}>
-                            <thead>
-                              <tr className="table">
-                                <th
-                                  scope="col"
-                                  style={{ textAlign: "left" }}
-                                  className="Button_col"
-                                >
-                                  アドレス
-                                </th>
-                                <th
-                                  scope="col"
-                                  style={{ textAlign: "left" }}
-                                  className="Button_col"
-                                >
-                                  成果物
-                                </th>
-                                <th
-                                  scope="col"
-                                  style={{ textAlign: "left" }}
-                                  className="Button_col"
-                                >
-                                  コメント
-                                </th>
-                                {/* <th scope="col" style={{textAlign: "left",}} className="Button_col">いいね</th> */}
-                                {currentAccount ==
-                                  allTasks[indexValue].user.toLowerCase() && (
+                          <h2>
+                            タスク詳細
+                            <br />
+                          </h2>
+                          <div className="modal">
+                            タスク登録者▼
+                            <br />
+                            <div className="card">
+                              {" "}
+                              {allTasks[indexValue].user}
+                            </div>
+                            <br />
+                            期日▼
+                            <br />{" "}
+                            <div className="card">
+                              {allTasks[indexValue].due.toString()}
+                            </div>
+                            <br />
+                            タスク▼
+                            <div className="card">
+                              {" "}
+                              {allTasks[indexValue].content}
+                            </div>
+                            <br />
+                            詳細説明▼<div className="card"> {textValue}</div>
+                            <br />
+                            報酬▼
+                            <div className="card">
+                              {" "}
+                              {ethers.utils.formatEther(
+                                allTasks[indexValue].bounty
+                              )}
+                              ETH
+                            </div>
+                            <br />
+                            完了▼{" "}
+                            <div className="card">
+                              {allTasks[indexValue].done.toString()}
+                            </div>
+                            <br />
+                            成果物:
+                            <table style={{ tableLayout: "fixe" }}>
+                              <thead>
+                                <tr className="table">
                                   <th
                                     scope="col"
                                     style={{ textAlign: "left" }}
                                     className="Button_col"
                                   >
-                                    報酬
+                                    アドレス
                                   </th>
-                                )}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {outputDataList.map((data, i) => (
-                                <tr
-                                  style={{
-                                    marginBottom: 24,
-                                    padddingBottom: 24,
-                                  }}
-                                >
-                                  <td
-                                    style={{
-                                      textAlign: "left",
-                                      verticalAlign: "top",
-                                      paddingRight: 24,
-                                    }}
-                                    data-label="アドレス"
+                                  <th
+                                    scope="col"
+                                    style={{ textAlign: "left" }}
+                                    className="Button_col"
                                   >
-                                    <a
-                                      key={i}
-                                      className=""
-                                      href={`https://etherscan.io/address/${data.userid}`}
-                                      target="_blank"
-                                    >
-                                      {data.userid.slice(0, 5)}...
-                                      <br />
-                                      <br />
-                                    </a>
-                                  </td>
-                                  <td
-                                    style={{
-                                      textAlign: "left",
-                                      verticalAlign: "top",
-                                      paddingRight: 24,
-                                    }}
-                                    data-label="成果物"
+                                    成果物
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    style={{ textAlign: "left" }}
+                                    className="Button_col"
                                   >
-                                    <a
-                                      key={i}
-                                      className=""
-                                      href={data.link}
-                                      target="_blank"
-                                    >
-                                      {" "}
-                                      {data.link.slice(0, 15)}...
-                                    </a>
-                                  </td>
-                                  <td
-                                    data-label="コメント"
-                                    style={{
-                                      textAlign: "left",
-                                      verticalAlign: "top",
-                                      paddingRight: 24,
-                                      width: 320,
-                                    }}
-                                  >
-                                    {/* TODO: mapで実装 */}
-                                    <p style={{ fontSize: 16 }}>
-                                      Lorem Ipsum is simply dummy text of the
-                                      printing and typesetting industry.
-                                    </p>
-                                    <div
+                                    コメント
+                                  </th>
+                                  {/* <th scope="col" className="Button_col">いいね</th> */}
+                                  {currentAccount ==
+                                    allTasks[indexValue].user.toLowerCase() && (
+                                      <th scope="col" className="Button_col">
+                                        アドレス
+                                      </th>
+                                    )}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {outputDataList.map((data, i) => (
+                                  <tr>
+                                    <td
                                       style={{
-                                        marginTop: 24,
-                                        marginBottom: 12,
-                                        display: "flex",
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                      }}
+                                      data-label="アドレス"
+                                    >
+                                      <a
+                                        key={i}
+                                        className=""
+                                        href={`https://etherscan.io/address/${data.userid}`}
+                                        target="_blank"
+                                      >
+                                        {data.userid.slice(0, 5)}...
+                                        <br />
+                                        <br />
+                                      </a>
+                                    </td>
+                                    <td
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                      }}
+                                      data-label="成果物"
+                                    >
+
+                                      <a
+                                        key={i}
+                                        className=""
+                                        href={data.link}
+                                        target="_blank"
+                                      >
+                                        {" "}
+                                        {data.link.slice(0, 15)}...
+                                      </a>
+                                    </td>
+                                    <td
+                                      data-label="コメント"
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
                                       }}
                                     >
-                                      <TextField
-                                        style={{ marginRight: 12 }}
-                                        id="outlined-error"
-                                        label="コメント内容"
-                                        defaultValue=""
-                                        variant="standard"
-                                      />
-                                      <Button variant="contained">
-                                        送信する
-                                      </Button>
-                                    </div>
-                                  </td>
-                                  <td
-                                    style={{ verticalAlign: "top" }}
-                                    data-label="いいね"
-                                    className=""
-                                  >
-                                    {currentAccount ==
-                                      allTasks[indexValue].user.toLowerCase() &&
+                                      <p style={{ fontSize: 16 }}>
+                                        Lorem Ipsum is simply dummy text of the
+                                        printing and typesetting industry.
+                                      </p>
+                                      <p style={{ fontSize: 16 }}>
+                                        Lorem Ipsum is simply dummy text of the
+                                        printing and typesetting industry.
+                                      </p>
+                                      <div
+                                        style={{
+                                          marginTop: 24,
+                                          marginBottom: 12,
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <TextField
+                                          style={{ marginRight: 12 }}
+                                          id="outlined-error"
+                                          label="コメント内容"
+                                          defaultValue=""
+                                          variant="standard"
+                                          name={i.toString()}
+                                          value={data.username}
+                                          onChange={comment}
+                                        />
+                                        <Button variant="contained" onClick={(e) => {
+                                          addComment(data.userid, data.link, d[i])
+                                        }}>
+                                          送信する
+                                        </Button>
+                                      </div>
+                                    </td>
+                                    <td
+                                      style={{ verticalAlign: "top" }}
+                                      data-label="いいね"
+                                      className=""
+                                    >
+                                      {currentAccount ==
+                                        allTasks[indexValue].user.toLowerCase() &&
+                                   
                                         <div>
                                           <button
                                             key={i}
@@ -1177,46 +1014,305 @@ const Top = () => {
                                             報酬を送付
                                           </button>
                                           <br></br>
-                                        </div>}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
 
-                        {/* タスク提出 */}
-                        <textarea
-                          name="messageArea"
-                          className="form"
-                          placeholder="成果物のリンクを添付"
-                          type="text"
-                          id="riward"
-                          value={outputValue}
-                          onChange={(e) => setOutputValue(e.target.value)}
-                        />
+                                        </div>
+                                      }
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+
+
+                          {/* タスク提出 */}
+                          <textarea
+                            name="messageArea"
+                            className="form"
+                            placeholder="成果物のリンクを添付"
+                            type="text"
+                            id="riward"
+                            value={outputValue}
+                            onChange={(e) => setOutputValue(e.target.value)}
+                          />
+                          <br></br>
+                          <button
+                            className="submitButton"
+                            onClick={(e) => {
+                              output(indexValue);
+                              console.log("id value", idValue);
+                              addLink(idValue);
+                              setOutput(index);
+                              setOutputValue("");
+                            }}
+                          >
+                            成果物を提出
+                          </button>
+                        </div>
+                      </Modal>
+                    </div>
+                  )}
+
+                  {isChecked == false && (
+                    <div>
+                      <button
+                        className="taskCard"
+                        onClick={() => {
+                          setIndexValue(index);
+                          setText(index);
+                          setOutput(index);
+                          // setIsOpen(true);
+                          setSelectedItem("task");
+                          // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
+                          output(index);
+                        }}
+                      >
+                        投稿者: {task.user}
                         <br></br>
-                        <button
-                          className="submitButton"
-                          onClick={(e) => {
-                            output(indexValue);
-                            console.log("id value", idValue);
-                            addLink(idValue);
-                            setOutput(index);
-                            setOutputValue("");
-                          }}
-                        >
-                          成果物を提出
-                        </button>
-                      </div>
-                    </Modal>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-      </div>
-    </div>
+                        期日: {task.due.toString()}
+                        <br></br>
+                        タスク: {task.content}
+                        <br></br>
+                        報酬: {ethers.utils.formatEther(task.bounty)}ETH<br></br>
+                        完了: {task.done.toString()}
+                        <br></br>
+                        {/* ボタンの中 */}
+                      </button>
+                      {/* 詳細を押した際の挙動 */}
+                      <Modal
+                        isOpen={"task" === selectedItem}
+                        style={modalStyle}
+                        onRequestClose={() => {
+                          setSelectedItem("");
+                          setRiwarderValue("");
+                          setLinks([]);
+                          setLinkHolders([]);
+                          setLinkGoods([]);
+                          setOutputDataList([]);
+                        }}
+                      >
+                        <div id="overlay">
+                          {/* <div className="mainContainer">
+                                        <div className="dataContainer">
+                                            <div className="body"> */}
+                          <h2>
+                            タスク詳細
+                            <br />
+                          </h2>
+                          <div className="modal">
+                            タスク登録者▼
+                            <br />
+                            <div className="card">
+                              {" "}
+                              {allTasks[indexValue].user}
+                            </div>
+                            <br />
+                            期日▼
+                            <br />{" "}
+                            <div className="card">
+                              {allTasks[indexValue].due.toString()}
+                            </div>
+                            <br />
+                            タスク▼
+                            <div className="card">
+                              {" "}
+                              {allTasks[indexValue].content}
+                            </div>
+                            <br />
+                            詳細説明▼<div className="card"> {textValue}</div>
+                            <br />
+                            報酬▼
+                            <div className="card">
+                              {" "}
+                              {ethers.utils.formatEther(
+                                allTasks[indexValue].bounty
+                              )}
+                              ETH
+                            </div>
+                            <br />
+                            完了▼{" "}
+                            <div className="card">
+                              {allTasks[indexValue].done.toString()}
+                            </div>
+                            <br />
+                            成果物:
+                            <table style={{ padding: 8, tableLayout: "fixe" }}>
+                              <thead>
+                                <tr className="table">
+                                  <th
+                                    scope="col"
+                                    style={{ textAlign: "left" }}
+                                    className="Button_col"
+                                  >
+                                    アドレス
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    style={{ textAlign: "left" }}
+                                    className="Button_col"
+                                  >
+                                    成果物
+                                  </th>
+                                  <th
+                                    scope="col"
+                                    style={{ textAlign: "left" }}
+                                    className="Button_col"
+                                  >
+                                    コメント
+                                  </th>
+                                  {/* <th scope="col" style={{textAlign: "left",}} className="Button_col">いいね</th> */}
+                                  {currentAccount ==
+                                    allTasks[indexValue].user.toLowerCase() && (
+                                      <th
+                                        scope="col"
+                                        style={{ textAlign: "left" }}
+                                        className="Button_col"
+                                      >
+                                        報酬
+                                      </th>
+                                    )}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {outputDataList.map((data, i) => (
+                                  <tr
+                                    style={{
+                                      marginBottom: 24,
+                                      padddingBottom: 24,
+                                    }}
+                                  >
+                                    <td
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                        paddingRight: 24,
+                                      }}
+                                      data-label="アドレス"
+                                    >
+
+                                      <a
+                                        key={i}
+                                        className=""
+                                        href={`https://etherscan.io/address/${data.userid}`}
+                                        target="_blank"
+                                      >
+                                        {data.userid.slice(0, 5)}...
+                                        <br />
+                                        <br />
+                                      </a>
+                                    </td>
+                                    <td
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                        paddingRight: 24,
+                                      }}
+                                      data-label="成果物"
+                                    >
+                                      <a
+                                        key={i}
+                                        className=""
+                                        href={data.link}
+                                        target="_blank"
+                                      >
+                                        {" "}
+                                        {data.link.slice(0, 15)}...
+                                      </a>
+                                    </td>
+                                    <td
+                                      data-label="コメント"
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                        paddingRight: 24,
+                                        width: 320,
+                                      }}
+                                    >
+                                      {/* TODO: mapで実装 */}
+                                      <p style={{ fontSize: 16 }}>
+                                        Lorem Ipsum is simply dummy text of the
+                                        printing and typesetting industry.
+                                      </p>
+                                      <div
+                                        style={{
+                                          marginTop: 24,
+                                          marginBottom: 12,
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <TextField
+                                          style={{ marginRight: 12 }}
+                                          id="outlined-error"
+                                          label="コメント内容"
+                                          defaultValue=""
+                                          variant="standard"
+                                        />
+                                        <Button variant="contained">
+                                          送信する
+                                        </Button>
+                                      </div>
+                                    </td>
+                                    <td
+                                      style={{ verticalAlign: "top" }}
+                                      data-label="いいね"
+                                      className=""
+                                    >
+                                      {currentAccount ==
+                                        allTasks[indexValue].user.toLowerCase() &&
+             
+                                        <div>
+                                          <button
+                                            key={i}
+                                            className="submitButton"
+                                            onClick={() => done(indexValue, data)}
+                                          >
+                                            報酬を送付
+                                          </button>
+                                          <br></br>
+
+                                        </div>
+                                      }
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+
+
+                          {/* タスク提出 */}
+                          <textarea
+                            name="messageArea"
+                            className="form"
+                            placeholder="成果物のリンクを添付"
+                            type="text"
+                            id="riward"
+                            value={outputValue}
+                            onChange={(e) => setOutputValue(e.target.value)}
+                          />
+                          <br></br>
+                          <button
+                            className="submitButton"
+                            onClick={(e) => {
+                              output(indexValue);
+                              console.log("id value", idValue);
+                              addLink(idValue);
+                              setOutput(indexValue);
+                              setOutputValue("");
+                            }}
+                          >
+                            成果物を提出
+                          </button>
+                        </div>
+                      </Modal>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+        </div >
+      </div >
+    </div >
   );
 };
 
