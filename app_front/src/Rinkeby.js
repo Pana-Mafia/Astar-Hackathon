@@ -117,8 +117,6 @@ const Top = () => {
     const name = e.target.name;
     setData({ ...d, [name]: value });
   }
-  // コメント用のID保管場所
-  const [saveId, setSaveId] = useState([]);
 
   // モーダルスタイル
   const modalStyle = {
@@ -205,12 +203,30 @@ const Top = () => {
     });
 
     const usersLinkRef = collection(firebaseFirestore, `task/${taskId}/output`);
+    var num = 0
+    var comments = []
     await getDocs(query(usersLinkRef)).then((snapshot) => {
-      snapshot.forEach((doc) => {
-        outputDataList.push(doc.data());
+      snapshot.forEach(async (doc) => {
+        await outputDataList.push(doc.data());
         setLinks(outputDataList);
+        // コメント表示のため、outputに紐づくコメントを配列に追加
+        const usersCommentsRef = collection(firebaseFirestore, `task/${taskId}/output/${doc.id}/comment`);
+        await getDocs(query(usersCommentsRef)).then((snapshot1) => {
+          snapshot1.forEach((doc1) => {
+            comments.push(doc1.data());
+          });
+        });
+        // 確定：outputdatalistにコメント欄を追加
+        outputDataList[num]['comment'] = comments
+        console.log(num)
+        console.log(outputDataList[num]['comment'])
+        console.log(outputDataList[num])
+        num += 1
+        // 配列を初期化
+        comments = []
       });
     });
+
     // 成果物を全て配列に入れる
     await getDocs(query(usersLinkRef)).then((snapshot) => {
       snapshot.forEach((doc) => {
@@ -551,61 +567,60 @@ const Top = () => {
   // 成果物へのコメント追加
   const addComment = async (userid, link, text) => {
     // どの成果物に対してコメントしようとしているかを特定(userid,linkから検索、成果物idを変数に格納)
-    console.log(userid)
-    console.log(link)
-    console.log(allTasks[indexValue].user)
-    console.log(allTasks[indexValue].content)
-    console.log(allTasks[indexValue].due.toString())
-    console.log(text)
-
     const linkRef = collection(firebaseFirestore, "task");
 
-    // タスクidを特定
-    await getDocs(
-      query(
-        linkRef,
-        where("user", "==", allTasks[indexValue].user.toLowerCase()),
-        where("content", "==", allTasks[indexValue].content),
-        where("due", "==", allTasks[indexValue].due.toString())
-      )
-    ).then((snapshot) => {
-      snapshot.forEach(async (doc1) => {
-        console.log(snapshot);
-        // idを文字列に保存
-        console.log(doc1.data().id);
-        // 特定したidからoutputidを特定
-        const outputRef = await collection(firebaseFirestore, `task/${doc1.data().id}/output`);
-        console.log(`task/${doc1.data().id}/output`)
-        await getDocs(
-          query(
-            outputRef,
-            where("userid", "==", userid),
-            where("link", "==", link)
-          )
-        ).then((snapshot) => {
-          snapshot.forEach(async (doc2) => {
-            // output/(id)/commentコレクションを作成
-            const usersCommentRef = await collection(
-              firebaseFirestore,
-              `task/${doc1.data().id}/output/${doc2.data().id}/comment`
-            );
-            console.log(`task/${doc1.data().id}/output/${doc2.data().id}/comment`)
-            // コレクション内にコメントを登録
-            try {
-              const newDoc = doc(usersCommentRef).id;
-              console.log(newDoc);
-              const documentRef = await setDoc(doc(usersCommentRef, newDoc), {
-                id: newDoc,
-                userid: currentAccount,
-                comment: text
-              });
-            } catch (error) {
-              console.log("エラーです")
-            }
+    // コメントが空白であればアラートを出して終了、空白でなければ登録処理を行う
+    if (text != null) {
+      // タスクidを特定
+      await getDocs(
+        query(
+          linkRef,
+          where("user", "==", allTasks[indexValue].user.toLowerCase()),
+          where("content", "==", allTasks[indexValue].content),
+          where("due", "==", allTasks[indexValue].due.toString())
+        )
+      ).then((snapshot) => {
+        snapshot.forEach(async (doc1) => {
+          console.log(snapshot);
+          // idを文字列に保存
+          console.log(doc1.data().id);
+          // 特定したidからoutputidを特定
+          const outputRef = await collection(firebaseFirestore, `task/${doc1.data().id}/output`);
+          console.log(`task/${doc1.data().id}/output`)
+          await getDocs(
+            query(
+              outputRef,
+              where("userid", "==", userid),
+              where("link", "==", link)
+            )
+          ).then((snapshot) => {
+            snapshot.forEach(async (doc2) => {
+              // output/(id)/commentコレクションを作成
+              const usersCommentRef = await collection(
+                firebaseFirestore,
+                `task/${doc1.data().id}/output/${doc2.data().id}/comment`
+              );
+              console.log(`task/${doc1.data().id}/output/${doc2.data().id}/comment`)
+              // コレクション内にコメントを登録
+              try {
+                const newDoc = doc(usersCommentRef).id;
+                console.log(newDoc);
+                const documentRef = await setDoc(doc(usersCommentRef, newDoc), {
+                  id: newDoc,
+                  userid: currentAccount,
+                  comment: text
+                });
+              } catch (error) {
+                console.log("エラーです")
+              }
+            });
           });
         });
       });
-    });
+      alert(`「${text}」をコメントとして登録しました！`)
+    } else {
+      alert("コメントが記入されていません🥺")
+    }
 
   };
 
@@ -807,10 +822,10 @@ const Top = () => {
                     <div>
                       <button
                         className="taskCard"
-                        onClick={() => {
+                        onClick={async () => {
                           setIndexValue(index);
                           setText(index);
-                          setOutput(index);
+                          await setOutput(index);
                           // setIsOpen(true);
                           setSelectedItem("task");
                           // outputの適切な挙動のため、ここで一度タスクIDを拾うための処理を入れる
@@ -921,7 +936,7 @@ const Top = () => {
                               </thead>
                               <tbody>
                                 {outputDataList.map((data, i) => (
-                                  <tr>
+                                  < tr >
                                     <td
                                       style={{
                                         textAlign: "left",
@@ -965,14 +980,18 @@ const Top = () => {
                                         verticalAlign: "top",
                                       }}
                                     >
-                                      <p style={{ fontSize: 16 }}>
-                                        Lorem Ipsum is simply dummy text of the
-                                        printing and typesetting industry.
-                                      </p>
-                                      <p style={{ fontSize: 16 }}>
-                                        Lorem Ipsum is simply dummy text of the
-                                        printing and typesetting industry.
-                                      </p>
+                                      {(data.comment != null) &&
+                                        data.comment.map((com) => (
+                                          <div>
+                                            <p style={{ fontSize: 16 }}>
+                                              {com.comment}
+                                              <br />
+                                              by <a href={`https://etherscan.io/address/${com.userid}`}>{com.userid.slice(0, 5)}...</a>
+                                            </p>
+                                          </div>
+                                        ))
+                                      }
+
                                       <div
                                         style={{
                                           marginTop: 24,
@@ -1224,15 +1243,20 @@ const Top = () => {
                                       style={{
                                         textAlign: "left",
                                         verticalAlign: "top",
-                                        paddingRight: 24,
-                                        width: 320,
                                       }}
                                     >
-                                      {/* TODO: mapで実装 */}
-                                      <p style={{ fontSize: 16 }}>
-                                        Lorem Ipsum is simply dummy text of the
-                                        printing and typesetting industry.
-                                      </p>
+                                      {(data.comment != null) &&
+                                        data.comment.map((com) => (
+                                          <div>
+                                            <p style={{ fontSize: 16 }}>
+                                              {com.comment}
+                                              <br />
+                                              by <a href={`https://etherscan.io/address/${com.userid}`}>{com.userid.slice(0, 5)}...</a>
+                                            </p>
+                                          </div>
+                                        ))
+                                      }
+
                                       <div
                                         style={{
                                           marginTop: 24,
@@ -1246,8 +1270,13 @@ const Top = () => {
                                           label="コメント内容"
                                           defaultValue=""
                                           variant="standard"
+                                          name={i.toString()}
+                                          value={data.username}
+                                          onChange={comment}
                                         />
-                                        <Button variant="contained">
+                                        <Button variant="contained" onClick={(e) => {
+                                          addComment(data.userid, data.link, d[i]);
+                                        }}>
                                           送信する
                                         </Button>
                                       </div>
