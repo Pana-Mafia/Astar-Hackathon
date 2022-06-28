@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { onSnapshot } from "firebase/firestore";
-import "./App.css";
+import "./styles/app.css";
 import { ethers } from "ethers";
 // ABIのインポート
 import abi from "./utils/CreateTask.json";

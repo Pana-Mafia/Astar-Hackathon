@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { onSnapshot } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
-import "./App.css";
+import "./styles/app.css";
 import { ethers } from "ethers";
 // ABIのインポート
 import abi from "./utils/CreateTask.json";
@@ -681,31 +681,31 @@ const Top = () => {
                     <br></br>
                     {currentAccount ==
                       allTasks[indexValue].user.toLowerCase() && (
-                        <div>
-                          <textarea
-                            name="messageArea"
-                            className="form"
-                            placeholder="報酬を送りたいアカウントのアドレスを記入してください"
-                            type="text"
-                            id="riward"
-                            value={riwarderValue}
-                            onChange={(e) => setRiwarderValue(e.target.value)}
-                          />
-                          <br></br>
-                          <button
-                            className="submitButton"
-                            onClick={() => done(index, riwarderValue)}
-                          >
-                            報酬を送付
-                          </button>
-                          <br></br>
-                          <br></br>
-                          {/* <button onClick={() => {
+                      <div>
+                        <textarea
+                          name="messageArea"
+                          className="form"
+                          placeholder="報酬を送りたいアカウントのアドレスを記入してください"
+                          type="text"
+                          id="riward"
+                          value={riwarderValue}
+                          onChange={(e) => setRiwarderValue(e.target.value)}
+                        />
+                        <br></br>
+                        <button
+                          className="submitButton"
+                          onClick={() => done(index, riwarderValue)}
+                        >
+                          報酬を送付
+                        </button>
+                        <br></br>
+                        <br></br>
+                        {/* <button onClick={() => {
                                             setSelectedItem("")
                                             setLinks([]);
                                         }}>Close Modal</button> */}
-                        </div>
-                      )}
+                      </div>
+                    )}
                   </div>
                 </Modal>
               </div>
