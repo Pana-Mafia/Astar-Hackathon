@@ -911,7 +911,7 @@ const Top = () => {
                             <br />
                             成果物:
                             <div style={{ overflowX: "auto" }}>
-                              <table style={{ tableLayout: "fix" }}>
+                              <table style={{ padding: 8, tableLayout: "fix" }}>
                                 <thead>
                                   <tr className="table">
                                     <th
@@ -930,12 +930,17 @@ const Top = () => {
                                     </th>
                                     <th
                                       scope="col"
-                                      style={{ textAlign: "left" }}
+                                      style={{
+                                        textAlign: "left",
+                                        minWidth: "240px",
+                                      }}
                                       className="Button_col"
                                     >
                                       コメント
                                     </th>
+
                                     {/* <th scope="col" className="Button_col">いいね</th> */}
+
                                     {currentAccount ==
                                       allTasks[
                                         indexValue
@@ -1026,6 +1031,7 @@ const Top = () => {
                                           />
                                           <Button
                                             variant="contained"
+                                            style={{ minWidth: "100px" }}
                                             onClick={(e) => {
                                               addComment(
                                                 data.userid,
@@ -1200,12 +1206,17 @@ const Top = () => {
                                     </th>
                                     <th
                                       scope="col"
-                                      style={{ textAlign: "left" }}
+                                      style={{
+                                        textAlign: "left",
+                                        minWidth: "240px",
+                                      }}
                                       className="Button_col"
                                     >
                                       コメント
                                     </th>
+
                                     {/* <th scope="col" style={{textAlign: "left",}} className="Button_col">いいね</th> */}
+
                                     {currentAccount ==
                                       allTasks[
                                         indexValue
@@ -1307,6 +1318,7 @@ const Top = () => {
                                           />
                                           <Button
                                             variant="contained"
+                                            style={{ minWidth: "100px" }}
                                             onClick={(e) => {
                                               addComment(
                                                 data.userid,
