@@ -1,13 +1,14 @@
-import createTask from './utils/CreateTask.json';
+import createTask from "./utils/CreateTask.json";
 import { Contract, ethers } from "ethers";
 import React, { useEffect, useState } from "react";
-import './styles/App.css';
-import twitterLogo from './assets/twitter-logo.svg';
+import "./styles/app.css";
+import twitterLogo from "./assets/twitter-logo.svg";
 
 // Constantsを宣言する: constとは値書き換えを禁止した変数を宣言する方法です。
-const TWITTER_HANDLE = '0x0Yuki';
+const TWITTER_HANDLE = "0x0Yuki";
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
-const COLLECTION_LINK = 'https://rinkeby.rarible.com/collection/0xf9e69d26cc68b3eea15727f2cec3a432260ff293/items';
+const COLLECTION_LINK =
+  "https://rinkeby.rarible.com/collection/0xf9e69d26cc68b3eea15727f2cec3a432260ff293/items";
 const TOTAL_MINT_COUNT = 10;
 
 const App = () => {
@@ -22,26 +23,26 @@ const App = () => {
       console.log("We have the ethereum object", ethereum);
     }
 
-    const accounts = await ethereum.request({ method: 'eth_accounts' });
+    const accounts = await ethereum.request({ method: "eth_accounts" });
 
     if (accounts.length !== 0) {
       const account = accounts[0];
       console.log("Found an authorized account:", account);
       setCurrentAccount(account);
-      setupEventListener()
+      setupEventListener();
     } else {
       console.log("No authorized account found");
     }
 
     // アラーと
-    let chainId = await ethereum.request({ method: 'eth_chainId' });
+    let chainId = await ethereum.request({ method: "eth_chainId" });
     console.log("Connected to chain " + chainId);
     // 0x4 は　Rinkeby の ID です。
     const rinkebyChainId = "0x4";
     if (chainId !== rinkebyChainId) {
       alert("You are not connected to the Rinkeby Test Network!");
     }
-  }
+  };
 
   // めたますく
   const connectWallet = async () => {
@@ -52,20 +53,22 @@ const App = () => {
         return;
       }
       /*
-      * ウォレットアドレスに対してアクセスをリクエストしています。
-      */
-      const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+       * ウォレットアドレスに対してアクセスをリクエストしています。
+       */
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
       console.log("Connected", accounts[0]);
       /*
-      * ウォレットアドレスを currentAccount に紐付けます。
-      */
+       * ウォレットアドレスを currentAccount に紐付けます。
+       */
       setCurrentAccount(accounts[0]);
 
-      setupEventListener()
+      setupEventListener();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   // イベントリスナー定義
   const setupEventListener = async () => {
@@ -96,8 +99,7 @@ const App = () => {
     } catch (error) {
       console.log(error);
     }
-  }
-
+  };
 
   const askContractToCreateTask = async () => {
     const CONTRACT_ADDRESS = "0x238b18A37BfB4922460fD1f46fe3b16BB503C512";
@@ -106,25 +108,34 @@ const App = () => {
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
-        const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, myEpicNft.abi, signer);
-        console.log("Going to pop wallet now to pay gas...")
+        const connectedContract = new ethers.Contract(
+          CONTRACT_ADDRESS,
+          myEpicNft.abi,
+          signer
+        );
+        console.log("Going to pop wallet now to pay gas...");
         let nftTxn = await connectedContract.makeAnEpicNFT();
-        console.log("Mining...please wait.")
+        console.log("Mining...please wait.");
 
         await nftTxn.wait();
 
-        console.log(`Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`);
+        console.log(
+          `Mined, see transaction: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`
+        );
       } else {
         console.log("Ethereum object doesn't exist!");
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   // renderNotConnectedContainer メソッドを定義します。
   const renderNotConnectedContainer = () => (
-    <button onClick={connectWallet} className="cta-button connect-wallet-button">
+    <button
+      onClick={connectWallet}
+      className="cta-button connect-wallet-button"
+    >
       Connect to Wallet
     </button>
   );
@@ -153,7 +164,11 @@ const App = () => {
     const { ethereum } = window;
     const provider = new ethers.providers.Web3Provider(ethereum);
     const signer = provider.getSigner();
-    const connectedContract = new ethers.Contract(CONTRACT_ADDRESS, myEpicNft.abi, signer);
+    const connectedContract = new ethers.Contract(
+      CONTRACT_ADDRESS,
+      myEpicNft.abi,
+      signer
+    );
     const handleEmitEvent = (_from, tokenId) => {
       const latestMintCount = tokenId.toNumber();
       // ✅ ここで state を更新させる(大事)
@@ -165,8 +180,7 @@ const App = () => {
     return () => {
       connectedContract.off("NewEpicNFTMinted", handleEmitEvent);
     };
-
-  }, [])
+  }, []);
   return (
     <div className="App">
       <div className="container">
@@ -174,16 +188,13 @@ const App = () => {
           <p className="header gradient-text">My NFT Collection</p>
           <p className="sub-text">
             あなただけの特別な NFT を Mint しよう💫
-            <p>
-              コレクションの総数：{TOTAL_MINT_COUNT}
-            </p>
+            <p>コレクションの総数：{TOTAL_MINT_COUNT}</p>
             {/* <p>
               残り：{mintNum}
             </p> */}
             <p>
               現在のミント数：{mintCount} / {TOTAL_MINT_COUNT}
             </p>
-
           </p>
           {/*条件付きレンダリングを追加しました
           // すでに接続されている場合は、
@@ -191,7 +202,10 @@ const App = () => {
           {currentAccount === "" ? (
             renderNotConnectedContainer()
           ) : (
-            <button onClick={askContractToCreateTask} className="cta-button connect-wallet-button">
+            <button
+              onClick={askContractToCreateTask}
+              className="cta-button connect-wallet-button"
+            >
               Create Task
             </button>
           )}
@@ -202,7 +216,9 @@ const App = () => {
               href={COLLECTION_LINK}
               target="_blank"
               rel="noreferrer"
-            >raribleでコレクションを表示</a>
+            >
+              raribleでコレクションを表示
+            </a>
           </button>
         </div>
 
@@ -216,7 +232,7 @@ const App = () => {
           >{`built on @${TWITTER_HANDLE}`}</a>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 
