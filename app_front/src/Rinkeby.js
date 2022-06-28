@@ -910,158 +910,162 @@ const Top = () => {
                             </div>
                             <br />
                             成果物:
-                            <table style={{ tableLayout: "fixe" }}>
-                              <thead>
-                                <tr className="table">
-                                  <th
-                                    scope="col"
-                                    style={{ textAlign: "left" }}
-                                    className="Button_col"
-                                  >
-                                    アドレス
-                                  </th>
-                                  <th
-                                    scope="col"
-                                    style={{ textAlign: "left" }}
-                                    className="Button_col"
-                                  >
-                                    成果物
-                                  </th>
-                                  <th
-                                    scope="col"
-                                    style={{ textAlign: "left" }}
-                                    className="Button_col"
-                                  >
-                                    コメント
-                                  </th>
-                                  {/* <th scope="col" className="Button_col">いいね</th> */}
-                                  {currentAccount ==
-                                    allTasks[indexValue].user.toLowerCase() && (
-                                    <th scope="col" className="Button_col">
+                            <div style={{ overflowX: "auto" }}>
+                              <table style={{ tableLayout: "fix" }}>
+                                <thead>
+                                  <tr className="table">
+                                    <th
+                                      scope="col"
+                                      style={{ textAlign: "left" }}
+                                      className="Button_col"
+                                    >
                                       アドレス
                                     </th>
-                                  )}
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {outputDataList.map((data, i) => (
-                                  <tr>
-                                    <td
-                                      style={{
-                                        textAlign: "left",
-                                        verticalAlign: "top",
-                                      }}
-                                      data-label="アドレス"
+                                    <th
+                                      scope="col"
+                                      style={{ textAlign: "left" }}
+                                      className="Button_col"
                                     >
-                                      <a
-                                        key={i}
-                                        className=""
-                                        href={`https://etherscan.io/address/${data.userid}`}
-                                        target="_blank"
-                                      >
-                                        {data.userid.slice(0, 5)}...
-                                        <br />
-                                        <br />
-                                      </a>
-                                    </td>
-                                    <td
-                                      style={{
-                                        textAlign: "left",
-                                        verticalAlign: "top",
-                                      }}
-                                      data-label="成果物"
+                                      成果物
+                                    </th>
+                                    <th
+                                      scope="col"
+                                      style={{ textAlign: "left" }}
+                                      className="Button_col"
                                     >
-                                      <a
-                                        key={i}
-                                        className=""
-                                        href={data.link}
-                                        target="_blank"
-                                      >
-                                        {" "}
-                                        {data.link.slice(0, 15)}...
-                                      </a>
-                                    </td>
-                                    <td
-                                      data-label="コメント"
-                                      style={{
-                                        textAlign: "left",
-                                        verticalAlign: "top",
-                                      }}
-                                    >
-                                      {data.comment != null &&
-                                        data.comment.map((com) => (
-                                          <div>
-                                            <p style={{ fontSize: 16 }}>
-                                              {com.comment}
-                                              <br />
-                                              by{" "}
-                                              <a
-                                                href={`https://etherscan.io/address/${com.userid}`}
-                                              >
-                                                {com.userid.slice(0, 5)}...
-                                              </a>
-                                            </p>
-                                          </div>
-                                        ))}
-
-                                      <div
+                                      コメント
+                                    </th>
+                                    {/* <th scope="col" className="Button_col">いいね</th> */}
+                                    {currentAccount ==
+                                      allTasks[
+                                        indexValue
+                                      ].user.toLowerCase() && (
+                                      <th scope="col" className="Button_col">
+                                        アドレス
+                                      </th>
+                                    )}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {outputDataList.map((data, i) => (
+                                    <tr>
+                                      <td
                                         style={{
-                                          marginTop: 24,
-                                          marginBottom: 12,
-                                          display: "flex",
+                                          textAlign: "left",
+                                          verticalAlign: "top",
+                                        }}
+                                        data-label="アドレス"
+                                      >
+                                        <a
+                                          key={i}
+                                          className=""
+                                          href={`https://etherscan.io/address/${data.userid}`}
+                                          target="_blank"
+                                        >
+                                          {data.userid.slice(0, 5)}...
+                                          <br />
+                                          <br />
+                                        </a>
+                                      </td>
+                                      <td
+                                        style={{
+                                          textAlign: "left",
+                                          verticalAlign: "top",
+                                        }}
+                                        data-label="成果物"
+                                      >
+                                        <a
+                                          key={i}
+                                          className=""
+                                          href={data.link}
+                                          target="_blank"
+                                        >
+                                          {" "}
+                                          {data.link.slice(0, 15)}...
+                                        </a>
+                                      </td>
+                                      <td
+                                        data-label="コメント"
+                                        style={{
+                                          textAlign: "left",
+                                          verticalAlign: "top",
                                         }}
                                       >
-                                        <TextField
-                                          style={{ marginRight: 12 }}
-                                          id="outlined-error"
-                                          label="コメント内容"
-                                          defaultValue=""
-                                          variant="standard"
-                                          name={i.toString()}
-                                          value={data.username}
-                                          onChange={comment}
-                                        />
-                                        <Button
-                                          variant="contained"
-                                          onClick={(e) => {
-                                            addComment(
-                                              data.userid,
-                                              data.link,
-                                              d[i]
-                                            );
+                                        {data.comment != null &&
+                                          data.comment.map((com) => (
+                                            <div>
+                                              <p style={{ fontSize: 16 }}>
+                                                {com.comment}
+                                                <br />
+                                                by{" "}
+                                                <a
+                                                  href={`https://etherscan.io/address/${com.userid}`}
+                                                >
+                                                  {com.userid.slice(0, 5)}...
+                                                </a>
+                                              </p>
+                                            </div>
+                                          ))}
+
+                                        <div
+                                          style={{
+                                            marginTop: 24,
+                                            marginBottom: 12,
+                                            display: "flex",
                                           }}
                                         >
-                                          送信する
-                                        </Button>
-                                      </div>
-                                    </td>
-                                    <td
-                                      style={{ verticalAlign: "top" }}
-                                      data-label="いいね"
-                                      className=""
-                                    >
-                                      {currentAccount ==
-                                        allTasks[
-                                          indexValue
-                                        ].user.toLowerCase() && (
-                                        <div>
-                                          <button
-                                            key={i}
-                                            className="submitButton"
-                                            onClick={() =>
-                                              done(indexValue, data)
-                                            }
+                                          <TextField
+                                            style={{ marginRight: 12 }}
+                                            id="outlined-error"
+                                            label="コメント内容"
+                                            defaultValue=""
+                                            variant="standard"
+                                            name={i.toString()}
+                                            value={data.username}
+                                            onChange={comment}
+                                          />
+                                          <Button
+                                            variant="contained"
+                                            onClick={(e) => {
+                                              addComment(
+                                                data.userid,
+                                                data.link,
+                                                d[i]
+                                              );
+                                            }}
                                           >
-                                            報酬を送付
-                                          </button>
-                                          <br></br>
+                                            送信する
+                                          </Button>
                                         </div>
-                                      )}
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
+                                      </td>
+                                      <td
+                                        style={{ verticalAlign: "top" }}
+                                        data-label="いいね"
+                                        className=""
+                                      >
+                                        {currentAccount ==
+                                          allTasks[
+                                            indexValue
+                                          ].user.toLowerCase() && (
+                                          <div>
+                                            <button
+                                              key={i}
+                                              className="submitButton"
+                                              onClick={() =>
+                                                done(indexValue, data)
+                                              }
+                                            >
+                                              報酬を送付
+                                            </button>
+                                            <br></br>
+                                          </div>
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
 
                           {/* タスク提出 */}
@@ -1176,169 +1180,173 @@ const Top = () => {
                             </div>
                             <br />
                             成果物:
-                            <table style={{ padding: 8, tableLayout: "fixe" }}>
-                              <thead>
-                                <tr className="table">
-                                  <th
-                                    scope="col"
-                                    style={{ textAlign: "left" }}
-                                    className="Button_col"
-                                  >
-                                    アドレス
-                                  </th>
-                                  <th
-                                    scope="col"
-                                    style={{ textAlign: "left" }}
-                                    className="Button_col"
-                                  >
-                                    成果物
-                                  </th>
-                                  <th
-                                    scope="col"
-                                    style={{ textAlign: "left" }}
-                                    className="Button_col"
-                                  >
-                                    コメント
-                                  </th>
-                                  {/* <th scope="col" style={{textAlign: "left",}} className="Button_col">いいね</th> */}
-                                  {currentAccount ==
-                                    allTasks[indexValue].user.toLowerCase() && (
+                            <div style={{ overflowX: "auto" }}>
+                              <table style={{ padding: 8, tableLayout: "fix" }}>
+                                <thead>
+                                  <tr className="table">
                                     <th
                                       scope="col"
                                       style={{ textAlign: "left" }}
                                       className="Button_col"
                                     >
-                                      報酬
+                                      アドレス
                                     </th>
-                                  )}
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {outputDataList.map((data, i) => (
-                                  <tr
-                                    style={{
-                                      marginBottom: 24,
-                                      padddingBottom: 24,
-                                    }}
-                                  >
-                                    <td
-                                      style={{
-                                        textAlign: "left",
-                                        verticalAlign: "top",
-                                        paddingRight: 24,
-                                      }}
-                                      data-label="アドレス"
+                                    <th
+                                      scope="col"
+                                      style={{ textAlign: "left" }}
+                                      className="Button_col"
                                     >
-                                      <a
-                                        key={i}
-                                        className=""
-                                        href={`https://etherscan.io/address/${data.userid}`}
-                                        target="_blank"
+                                      成果物
+                                    </th>
+                                    <th
+                                      scope="col"
+                                      style={{ textAlign: "left" }}
+                                      className="Button_col"
+                                    >
+                                      コメント
+                                    </th>
+                                    {/* <th scope="col" style={{textAlign: "left",}} className="Button_col">いいね</th> */}
+                                    {currentAccount ==
+                                      allTasks[
+                                        indexValue
+                                      ].user.toLowerCase() && (
+                                      <th
+                                        scope="col"
+                                        style={{ textAlign: "left" }}
+                                        className="Button_col"
                                       >
-                                        {data.userid.slice(0, 5)}...
-                                        <br />
-                                        <br />
-                                      </a>
-                                    </td>
-                                    <td
+                                        報酬
+                                      </th>
+                                    )}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {outputDataList.map((data, i) => (
+                                    <tr
                                       style={{
-                                        textAlign: "left",
-                                        verticalAlign: "top",
-                                        paddingRight: 24,
-                                      }}
-                                      data-label="成果物"
-                                    >
-                                      <a
-                                        key={i}
-                                        className=""
-                                        href={data.link}
-                                        target="_blank"
-                                      >
-                                        {" "}
-                                        {data.link.slice(0, 15)}...
-                                      </a>
-                                    </td>
-                                    <td
-                                      data-label="コメント"
-                                      style={{
-                                        textAlign: "left",
-                                        verticalAlign: "top",
+                                        marginBottom: 24,
+                                        padddingBottom: 24,
                                       }}
                                     >
-                                      {data.comment != null &&
-                                        data.comment.map((com) => (
-                                          <div>
-                                            <p style={{ fontSize: 16 }}>
-                                              {com.comment}
-                                              <br />
-                                              by{" "}
-                                              <a
-                                                href={`https://etherscan.io/address/${com.userid}`}
-                                              >
-                                                {com.userid.slice(0, 5)}...
-                                              </a>
-                                            </p>
-                                          </div>
-                                        ))}
-
-                                      <div
+                                      <td
                                         style={{
-                                          marginTop: 24,
-                                          marginBottom: 12,
-                                          display: "flex",
+                                          textAlign: "left",
+                                          verticalAlign: "top",
+                                          paddingRight: 24,
+                                        }}
+                                        data-label="アドレス"
+                                      >
+                                        <a
+                                          key={i}
+                                          className=""
+                                          href={`https://etherscan.io/address/${data.userid}`}
+                                          target="_blank"
+                                        >
+                                          {data.userid.slice(0, 5)}...
+                                          <br />
+                                          <br />
+                                        </a>
+                                      </td>
+                                      <td
+                                        style={{
+                                          textAlign: "left",
+                                          verticalAlign: "top",
+                                          paddingRight: 24,
+                                        }}
+                                        data-label="成果物"
+                                      >
+                                        <a
+                                          key={i}
+                                          className=""
+                                          href={data.link}
+                                          target="_blank"
+                                        >
+                                          {" "}
+                                          {data.link.slice(0, 15)}...
+                                        </a>
+                                      </td>
+                                      <td
+                                        data-label="コメント"
+                                        style={{
+                                          textAlign: "left",
+                                          verticalAlign: "top",
                                         }}
                                       >
-                                        <TextField
-                                          style={{ marginRight: 12 }}
-                                          id="outlined-error"
-                                          label="コメント内容"
-                                          defaultValue=""
-                                          variant="standard"
-                                          name={i.toString()}
-                                          value={data.username}
-                                          onChange={comment}
-                                        />
-                                        <Button
-                                          variant="contained"
-                                          onClick={(e) => {
-                                            addComment(
-                                              data.userid,
-                                              data.link,
-                                              d[i]
-                                            );
+                                        {data.comment != null &&
+                                          data.comment.map((com) => (
+                                            <div>
+                                              <p style={{ fontSize: 16 }}>
+                                                {com.comment}
+                                                <br />
+                                                by{" "}
+                                                <a
+                                                  href={`https://etherscan.io/address/${com.userid}`}
+                                                >
+                                                  {com.userid.slice(0, 5)}...
+                                                </a>
+                                              </p>
+                                            </div>
+                                          ))}
+
+                                        <div
+                                          style={{
+                                            marginTop: 24,
+                                            marginBottom: 12,
+                                            display: "flex",
                                           }}
                                         >
-                                          送信する
-                                        </Button>
-                                      </div>
-                                    </td>
-                                    <td
-                                      style={{ verticalAlign: "top" }}
-                                      data-label="いいね"
-                                      className=""
-                                    >
-                                      {currentAccount ==
-                                        allTasks[
-                                          indexValue
-                                        ].user.toLowerCase() && (
-                                        <div>
-                                          <button
-                                            key={i}
-                                            className="submitButton"
-                                            onClick={() =>
-                                              done(indexValue, data)
-                                            }
+                                          <TextField
+                                            style={{ marginRight: 12 }}
+                                            id="outlined-error"
+                                            label="コメント内容"
+                                            defaultValue=""
+                                            variant="standard"
+                                            name={i.toString()}
+                                            value={data.username}
+                                            onChange={comment}
+                                          />
+                                          <Button
+                                            variant="contained"
+                                            onClick={(e) => {
+                                              addComment(
+                                                data.userid,
+                                                data.link,
+                                                d[i]
+                                              );
+                                            }}
                                           >
-                                            報酬を送付
-                                          </button>
-                                          <br></br>
+                                            送信する
+                                          </Button>
                                         </div>
-                                      )}
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
+                                      </td>
+                                      <td
+                                        style={{ verticalAlign: "top" }}
+                                        data-label="いいね"
+                                        className=""
+                                      >
+                                        {currentAccount ==
+                                          allTasks[
+                                            indexValue
+                                          ].user.toLowerCase() && (
+                                          <div>
+                                            <button
+                                              key={i}
+                                              className="submitButton"
+                                              onClick={() =>
+                                                done(indexValue, data)
+                                              }
+                                            >
+                                              報酬を送付
+                                            </button>
+                                            <br></br>
+                                          </div>
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
 
                           {/* タスク提出 */}
