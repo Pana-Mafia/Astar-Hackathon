@@ -9,7 +9,7 @@ import Fuji from "./Fuji";
 import Sample from "./Sample";
 import Team from "./Team";
 import Rinkeby from "./Rinkeby";
-import "./styles/app.css";
+import "./styles/App.css";
 
 // import { ethers } from "ethers";
 // ABIのインポート
