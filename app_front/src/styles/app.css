@@ -62,6 +62,7 @@ p {
   padding: 8px;
   border: 0;
   border-radius: 5px;
+  word-break: break-all;
 }
 
 .taskCard {
@@ -82,9 +83,11 @@ p {
 }
 
 .taskCard :hover {
-  background: -webkit-linear-gradient(-70deg,
-      rgb(243, 116, 255) 0%,
-      rgb(255, 159, 100) 100%);
+  background: -webkit-linear-gradient(
+    -70deg,
+    rgb(243, 116, 255) 0%,
+    rgb(255, 159, 100) 100%
+  );
 }
 
 .dataContainer {
@@ -160,9 +163,11 @@ h2 {
   border: 0;
   border-radius: 5px;
   color: white;
-  background: -webkit-linear-gradient(-70deg,
-      rgb(243, 116, 255) 0%,
-      rgb(255, 159, 100) 60%);
+  background: -webkit-linear-gradient(
+    -70deg,
+    rgb(243, 116, 255) 0%,
+    rgb(255, 159, 100) 60%
+  );
 }
 
 .form placeholder {
@@ -170,9 +175,11 @@ h2 {
 }
 
 .submitButton {
-  background: -webkit-linear-gradient(-70deg,
-      rgb(243, 116, 255) 0%,
-      rgb(255, 159, 100) 60%);
+  background: -webkit-linear-gradient(
+    -70deg,
+    rgb(243, 116, 255) 0%,
+    rgb(255, 159, 100) 60%
+  );
   background-size: 200% 200%;
   animation: gradient-animation 4s ease infinite;
   color: #0d1116;
@@ -322,15 +329,16 @@ h2 {
   top: 0;
   left: 0;
   right: 0;
-  background: -webkit-linear-gradient(-70deg,
-      rgb(243, 116, 255) 0%,
-      rgb(255, 159, 100) 60%);
+  background: -webkit-linear-gradient(
+    -70deg,
+    rgb(243, 116, 255) 0%,
+    rgb(255, 159, 100) 60%
+  );
   color: black;
   width: 88%;
   padding: 15px;
   text-align: center;
 }
-
 
 /* ハンバーガー用 */
 /* Position and sizing of burger button */
@@ -393,7 +401,11 @@ Note: Beware of modifying this element as it can break the animations - you shou
 .bm-item-list {
   color: white;
   padding: 0.8em;
-  background: -webkit-linear-gradient(-70deg, rgb(243, 116, 255) 0%, rgb(255, 159, 100) 100%);
+  background: -webkit-linear-gradient(
+    -70deg,
+    rgb(243, 116, 255) 0%,
+    rgb(255, 159, 100) 100%
+  );
   background-clip: text;
   /* -webkit-background-clip: text; */
   -webkit-text-fill-color: transparent;
@@ -404,9 +416,11 @@ Note: Beware of modifying this element as it can break the animations - you shou
   display: inline-block;
   text-decoration: none;
   outline: none;
-  color: -webkit-linear-gradient(-70deg,
-      rgb(243, 116, 255) 0%,
-      rgb(255, 159, 100) 100%);
+  color: -webkit-linear-gradient(
+    -70deg,
+    rgb(243, 116, 255) 0%,
+    rgb(255, 159, 100) 100%
+  );
 }
 
 /* Styling of overlay */

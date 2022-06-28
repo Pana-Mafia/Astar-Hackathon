@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { onSnapshot } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
-import "./App.css";
+import "./styles/app.css";
 import { ethers } from "ethers";
 // ABIのインポート
 import abi from "./utils/CreateTask.json";
@@ -27,6 +27,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 
 Modal.setAppElement("#root");
+
 const Top = () => {
   // チェックボックスの実装
   const [isChecked, setIsChecked] = React.useState(false);
@@ -116,8 +117,8 @@ const Top = () => {
       textAlign: "center",
       position: "absolute",
       top: "5rem",
-      left: "5rem",
-      right: "5rem",
+      left: "10%",
+      right: "10%",
       bottom: "5rem",
       backgroundColor: "paleturquoise",
       borderRadius: "1rem",
@@ -795,80 +796,82 @@ const Top = () => {
                           {/* <div>
                                                 {allLinks.map((link, i) => <div key={i} className="card">{link}</div>)}
                                             </div> */}
-                          <table>
-                            <thead>
-                              <tr className="table">
-                                <th scope="col" className="Button_col">
-                                  アドレス
-                                </th>
-                                <th scope="col" className="Button_col">
-                                  成果物
-                                </th>
-                                {/* <th scope="col" className="Button_col">いいね</th> */}
-                                {currentAccount ==
-                                  allTasks[indexValue].user.toLowerCase() && (
+                          <div style={{ overflowX: "auto" }}>
+                            <table>
+                              <thead>
+                                <tr className="table">
                                   <th scope="col" className="Button_col">
-                                    報酬
+                                    アドレス
                                   </th>
-                                )}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr className="">
-                                <td data-label="アドレス" className="">
-                                  {allLinkHolders.map((userid, i) => (
-                                    <a
-                                      key={i}
-                                      className=""
-                                      href={`https://etherscan.io/address/${userid}`}
-                                      target="_blank"
-                                    >
-                                      {userid.slice(0, 5)}...
-                                      <br />
-                                      <br />
-                                    </a>
-                                  ))}
-                                </td>
-                                <td data-label="成果物" className="">
-                                  {allLinks.map((link, i) => (
-                                    <div>
+                                  <th scope="col" className="Button_col">
+                                    成果物
+                                  </th>
+                                  {/* <th scope="col" className="Button_col">いいね</th> */}
+                                  {currentAccount ==
+                                    allTasks[indexValue].user.toLowerCase() && (
+                                    <th scope="col" className="Button_col">
+                                      報酬
+                                    </th>
+                                  )}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr className="">
+                                  <td data-label="アドレス" className="">
+                                    {allLinkHolders.map((userid, i) => (
                                       <a
                                         key={i}
                                         className=""
-                                        href={link}
+                                        href={`https://etherscan.io/address/${userid}`}
                                         target="_blank"
                                       >
-                                        {" "}
-                                        {link.slice(0, 15)}...
+                                        {userid.slice(0, 5)}...
                                         <br />
                                         <br />
                                       </a>
-                                    </div>
-                                  ))}
-                                </td>
-                                {/* <td data-label="いいね" className="">
+                                    ))}
+                                  </td>
+                                  <td data-label="成果物" className="">
+                                    {allLinks.map((link, i) => (
+                                      <div>
+                                        <a
+                                          key={i}
+                                          className=""
+                                          href={link}
+                                          target="_blank"
+                                        >
+                                          {" "}
+                                          {link.slice(0, 15)}...
+                                          <br />
+                                          <br />
+                                        </a>
+                                      </div>
+                                    ))}
+                                  </td>
+                                  {/* <td data-label="いいね" className="">
                                                             {allLinkGoods.map((like, i) => <a key={i} className=""> {like}<br /><br /></a>)}
 
                                                         </td> */}
-                                <td data-label="いいね" className="">
-                                  {currentAccount ==
-                                    allTasks[indexValue].user.toLowerCase() &&
-                                    allLinkHolders.map((userid, i) => (
-                                      <div>
-                                        <button
-                                          key={i}
-                                          className="submitButton"
-                                          onClick={() => done(index, userid)}
-                                        >
-                                          報酬を送付
-                                        </button>
-                                        <br></br>
-                                      </div>
-                                    ))}
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
+                                  <td data-label="いいね" className="">
+                                    {currentAccount ==
+                                      allTasks[indexValue].user.toLowerCase() &&
+                                      allLinkHolders.map((userid, i) => (
+                                        <div>
+                                          <button
+                                            key={i}
+                                            className="submitButton"
+                                            onClick={() => done(index, userid)}
+                                          >
+                                            報酬を送付
+                                          </button>
+                                          <br></br>
+                                        </div>
+                                      ))}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
 
                         {/* タスク提出 */}
@@ -983,80 +986,82 @@ const Top = () => {
                           {/* <div>
                                                 {allLinks.map((link, i) => <div key={i} className="card">{link}</div>)}
                                             </div> */}
-                          <table>
-                            <thead>
-                              <tr className="table">
-                                <th scope="col" className="Button_col">
-                                  アドレス
-                                </th>
-                                <th scope="col" className="Button_col">
-                                  成果物
-                                </th>
-                                {/* <th scope="col" className="Button_col">いいね</th> */}
-                                {currentAccount ==
-                                  allTasks[indexValue].user.toLowerCase() && (
+                          <div style={{ overflowX: "auto" }}>
+                            <table>
+                              <thead>
+                                <tr className="table">
                                   <th scope="col" className="Button_col">
-                                    報酬
+                                    アドレス
                                   </th>
-                                )}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr className="">
-                                <td data-label="アドレス" className="">
-                                  {allLinkHolders.map((userid, i) => (
-                                    <a
-                                      key={i}
-                                      className=""
-                                      href={`https://etherscan.io/address/${userid}`}
-                                      target="_blank"
-                                    >
-                                      {userid.slice(0, 5)}...
-                                      <br />
-                                      <br />
-                                    </a>
-                                  ))}
-                                </td>
-                                <td data-label="成果物" className="">
-                                  {allLinks.map((link, i) => (
-                                    <div>
+                                  <th scope="col" className="Button_col">
+                                    成果物
+                                  </th>
+                                  {/* <th scope="col" className="Button_col">いいね</th> */}
+                                  {currentAccount ==
+                                    allTasks[indexValue].user.toLowerCase() && (
+                                    <th scope="col" className="Button_col">
+                                      報酬
+                                    </th>
+                                  )}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr className="">
+                                  <td data-label="アドレス" className="">
+                                    {allLinkHolders.map((userid, i) => (
                                       <a
                                         key={i}
                                         className=""
-                                        href={link}
+                                        href={`https://etherscan.io/address/${userid}`}
                                         target="_blank"
                                       >
-                                        {" "}
-                                        {link.slice(0, 15)}...
+                                        {userid.slice(0, 5)}...
                                         <br />
                                         <br />
                                       </a>
-                                    </div>
-                                  ))}
-                                </td>
-                                {/* <td data-label="いいね" className="">
+                                    ))}
+                                  </td>
+                                  <td data-label="成果物" className="">
+                                    {allLinks.map((link, i) => (
+                                      <div>
+                                        <a
+                                          key={i}
+                                          className=""
+                                          href={link}
+                                          target="_blank"
+                                        >
+                                          {" "}
+                                          {link.slice(0, 15)}...
+                                          <br />
+                                          <br />
+                                        </a>
+                                      </div>
+                                    ))}
+                                  </td>
+                                  {/* <td data-label="いいね" className="">
                                                             {allLinkGoods.map((like, i) => <a key={i} className=""> {like}<br /><br /></a>)}
 
                                                         </td> */}
-                                <td data-label="いいね" className="">
-                                  {currentAccount ==
-                                    allTasks[indexValue].user.toLowerCase() &&
-                                    allLinkHolders.map((userid, i) => (
-                                      <div>
-                                        <button
-                                          key={i}
-                                          className="submitButton"
-                                          onClick={() => done(index, userid)}
-                                        >
-                                          報酬を送付
-                                        </button>
-                                        <br></br>
-                                      </div>
-                                    ))}
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
+                                  <td data-label="いいね" className="">
+                                    {currentAccount ==
+                                      allTasks[indexValue].user.toLowerCase() &&
+                                      allLinkHolders.map((userid, i) => (
+                                        <div>
+                                          <button
+                                            key={i}
+                                            className="submitButton"
+                                            onClick={() => done(index, userid)}
+                                          >
+                                            報酬を送付
+                                          </button>
+                                          <br></br>
+                                        </div>
+                                      ))}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
 
                         {/* タスク提出 */}

@@ -9,7 +9,8 @@ import Fuji from "./Fuji";
 import Sample from "./Sample";
 import Team from "./Team";
 import Rinkeby from "./Rinkeby";
-// import "./App.css";
+import "./styles/app.css";
+
 // import { ethers } from "ethers";
 // ABIのインポート
 // import abi from './utils/CreateTask.json';
