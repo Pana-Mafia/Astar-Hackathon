@@ -34,6 +34,7 @@ import { width } from "@mui/system";
 import Menu from "./components/Menu";
 
 Modal.setAppElement("#root");
+
 const Top = () => {
   // チェックボックスの実装
   const [isChecked, setIsChecked] = React.useState(false);
@@ -116,7 +117,7 @@ const Top = () => {
     const value = e.target.value;
     const name = e.target.name;
     setData({ ...d, [name]: value });
-  }
+  };
 
   // モーダルスタイル
   const modalStyle = {
@@ -132,8 +133,8 @@ const Top = () => {
       textAlign: "center",
       position: "absolute",
       top: "5rem",
-      left: "5rem",
-      right: "5rem",
+      left: "10%",
+      right: "10%",
       bottom: "5rem",
       backgroundColor: "paleturquoise",
       borderRadius: "1rem",
@@ -203,27 +204,30 @@ const Top = () => {
     });
 
     const usersLinkRef = collection(firebaseFirestore, `task/${taskId}/output`);
-    var num = 0
-    var comments = []
+    var num = 0;
+    var comments = [];
     await getDocs(query(usersLinkRef)).then((snapshot) => {
       snapshot.forEach(async (doc) => {
         await outputDataList.push(doc.data());
         setLinks(outputDataList);
         // コメント表示のため、outputに紐づくコメントを配列に追加
-        const usersCommentsRef = collection(firebaseFirestore, `task/${taskId}/output/${doc.id}/comment`);
+        const usersCommentsRef = collection(
+          firebaseFirestore,
+          `task/${taskId}/output/${doc.id}/comment`
+        );
         await getDocs(query(usersCommentsRef)).then((snapshot1) => {
           snapshot1.forEach((doc1) => {
             comments.push(doc1.data());
           });
         });
         // 確定：outputdatalistにコメント欄を追加
-        outputDataList[num]['comment'] = comments
-        console.log(num)
-        console.log(outputDataList[num]['comment'])
-        console.log(outputDataList[num])
-        num += 1
+        outputDataList[num]["comment"] = comments;
+        console.log(num);
+        console.log(outputDataList[num]["comment"]);
+        console.log(outputDataList[num]);
+        num += 1;
         // 配列を初期化
-        comments = []
+        comments = [];
       });
     });
 
@@ -585,8 +589,11 @@ const Top = () => {
           // idを文字列に保存
           console.log(doc1.data().id);
           // 特定したidからoutputidを特定
-          const outputRef = await collection(firebaseFirestore, `task/${doc1.data().id}/output`);
-          console.log(`task/${doc1.data().id}/output`)
+          const outputRef = await collection(
+            firebaseFirestore,
+            `task/${doc1.data().id}/output`
+          );
+          console.log(`task/${doc1.data().id}/output`);
           await getDocs(
             query(
               outputRef,
@@ -600,7 +607,9 @@ const Top = () => {
                 firebaseFirestore,
                 `task/${doc1.data().id}/output/${doc2.data().id}/comment`
               );
-              console.log(`task/${doc1.data().id}/output/${doc2.data().id}/comment`)
+              console.log(
+                `task/${doc1.data().id}/output/${doc2.data().id}/comment`
+              );
               // コレクション内にコメントを登録
               try {
                 const newDoc = doc(usersCommentRef).id;
@@ -608,20 +617,19 @@ const Top = () => {
                 const documentRef = await setDoc(doc(usersCommentRef, newDoc), {
                   id: newDoc,
                   userid: currentAccount,
-                  comment: text
+                  comment: text,
                 });
               } catch (error) {
-                console.log("エラーです")
+                console.log("エラーです");
               }
             });
           });
         });
       });
-      alert(`「${text}」をコメントとして登録しました！`)
+      alert(`「${text}」をコメントとして登録しました！`);
     } else {
-      alert("コメントが記入されていません🥺")
+      alert("コメントが記入されていません🥺");
     }
-
   };
 
   // コメントの内容をDBに追加
@@ -838,7 +846,8 @@ const Top = () => {
                         <br></br>
                         タスク: {task.content}
                         <br></br>
-                        報酬: {ethers.utils.formatEther(task.bounty)}ETH<br></br>
+                        報酬: {ethers.utils.formatEther(task.bounty)}ETH
+                        <br></br>
                         完了: {task.done.toString()}
                         <br></br>
                         {/* ボタンの中 */}
@@ -928,15 +937,15 @@ const Top = () => {
                                   {/* <th scope="col" className="Button_col">いいね</th> */}
                                   {currentAccount ==
                                     allTasks[indexValue].user.toLowerCase() && (
-                                      <th scope="col" className="Button_col">
-                                        アドレス
-                                      </th>
-                                    )}
+                                    <th scope="col" className="Button_col">
+                                      アドレス
+                                    </th>
+                                  )}
                                 </tr>
                               </thead>
                               <tbody>
                                 {outputDataList.map((data, i) => (
-                                  < tr >
+                                  <tr>
                                     <td
                                       style={{
                                         textAlign: "left",
@@ -962,7 +971,6 @@ const Top = () => {
                                       }}
                                       data-label="成果物"
                                     >
-
                                       <a
                                         key={i}
                                         className=""
@@ -980,17 +988,21 @@ const Top = () => {
                                         verticalAlign: "top",
                                       }}
                                     >
-                                      {(data.comment != null) &&
+                                      {data.comment != null &&
                                         data.comment.map((com) => (
                                           <div>
                                             <p style={{ fontSize: 16 }}>
                                               {com.comment}
                                               <br />
-                                              by <a href={`https://etherscan.io/address/${com.userid}`}>{com.userid.slice(0, 5)}...</a>
+                                              by{" "}
+                                              <a
+                                                href={`https://etherscan.io/address/${com.userid}`}
+                                              >
+                                                {com.userid.slice(0, 5)}...
+                                              </a>
                                             </p>
                                           </div>
-                                        ))
-                                      }
+                                        ))}
 
                                       <div
                                         style={{
@@ -1009,9 +1021,16 @@ const Top = () => {
                                           value={data.username}
                                           onChange={comment}
                                         />
-                                        <Button variant="contained" onClick={(e) => {
-                                          addComment(data.userid, data.link, d[i])
-                                        }}>
+                                        <Button
+                                          variant="contained"
+                                          onClick={(e) => {
+                                            addComment(
+                                              data.userid,
+                                              data.link,
+                                              d[i]
+                                            );
+                                          }}
+                                        >
                                           送信する
                                         </Button>
                                       </div>
@@ -1022,27 +1041,28 @@ const Top = () => {
                                       className=""
                                     >
                                       {currentAccount ==
-                                        allTasks[indexValue].user.toLowerCase() &&
-                                   
+                                        allTasks[
+                                          indexValue
+                                        ].user.toLowerCase() && (
                                         <div>
                                           <button
                                             key={i}
                                             className="submitButton"
-                                            onClick={() => done(indexValue, data)}
+                                            onClick={() =>
+                                              done(indexValue, data)
+                                            }
                                           >
                                             報酬を送付
                                           </button>
                                           <br></br>
-
                                         </div>
-                                      }
+                                      )}
                                     </td>
                                   </tr>
                                 ))}
                               </tbody>
                             </table>
                           </div>
-
 
                           {/* タスク提出 */}
                           <textarea
@@ -1092,7 +1112,8 @@ const Top = () => {
                         <br></br>
                         タスク: {task.content}
                         <br></br>
-                        報酬: {ethers.utils.formatEther(task.bounty)}ETH<br></br>
+                        報酬: {ethers.utils.formatEther(task.bounty)}ETH
+                        <br></br>
                         完了: {task.done.toString()}
                         <br></br>
                         {/* ボタンの中 */}
@@ -1182,14 +1203,14 @@ const Top = () => {
                                   {/* <th scope="col" style={{textAlign: "left",}} className="Button_col">いいね</th> */}
                                   {currentAccount ==
                                     allTasks[indexValue].user.toLowerCase() && (
-                                      <th
-                                        scope="col"
-                                        style={{ textAlign: "left" }}
-                                        className="Button_col"
-                                      >
-                                        報酬
-                                      </th>
-                                    )}
+                                    <th
+                                      scope="col"
+                                      style={{ textAlign: "left" }}
+                                      className="Button_col"
+                                    >
+                                      報酬
+                                    </th>
+                                  )}
                                 </tr>
                               </thead>
                               <tbody>
@@ -1208,7 +1229,6 @@ const Top = () => {
                                       }}
                                       data-label="アドレス"
                                     >
-
                                       <a
                                         key={i}
                                         className=""
@@ -1245,17 +1265,21 @@ const Top = () => {
                                         verticalAlign: "top",
                                       }}
                                     >
-                                      {(data.comment != null) &&
+                                      {data.comment != null &&
                                         data.comment.map((com) => (
                                           <div>
                                             <p style={{ fontSize: 16 }}>
                                               {com.comment}
                                               <br />
-                                              by <a href={`https://etherscan.io/address/${com.userid}`}>{com.userid.slice(0, 5)}...</a>
+                                              by{" "}
+                                              <a
+                                                href={`https://etherscan.io/address/${com.userid}`}
+                                              >
+                                                {com.userid.slice(0, 5)}...
+                                              </a>
                                             </p>
                                           </div>
-                                        ))
-                                      }
+                                        ))}
 
                                       <div
                                         style={{
@@ -1274,9 +1298,16 @@ const Top = () => {
                                           value={data.username}
                                           onChange={comment}
                                         />
-                                        <Button variant="contained" onClick={(e) => {
-                                          addComment(data.userid, data.link, d[i]);
-                                        }}>
+                                        <Button
+                                          variant="contained"
+                                          onClick={(e) => {
+                                            addComment(
+                                              data.userid,
+                                              data.link,
+                                              d[i]
+                                            );
+                                          }}
+                                        >
                                           送信する
                                         </Button>
                                       </div>
@@ -1287,27 +1318,28 @@ const Top = () => {
                                       className=""
                                     >
                                       {currentAccount ==
-                                        allTasks[indexValue].user.toLowerCase() &&
-             
+                                        allTasks[
+                                          indexValue
+                                        ].user.toLowerCase() && (
                                         <div>
                                           <button
                                             key={i}
                                             className="submitButton"
-                                            onClick={() => done(indexValue, data)}
+                                            onClick={() =>
+                                              done(indexValue, data)
+                                            }
                                           >
                                             報酬を送付
                                           </button>
                                           <br></br>
-
                                         </div>
-                                      }
+                                      )}
                                     </td>
                                   </tr>
                                 ))}
                               </tbody>
                             </table>
                           </div>
-
 
                           {/* タスク提出 */}
                           <textarea
@@ -1339,9 +1371,9 @@ const Top = () => {
                 </div>
               );
             })}
-        </div >
-      </div >
-    </div >
+        </div>
+      </div>
+    </div>
   );
 };
 

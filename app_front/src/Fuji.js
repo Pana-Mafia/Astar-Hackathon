@@ -27,6 +27,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 
 Modal.setAppElement("#root");
+
 const Top = () => {
   // チェックボックスの実装
   const [isChecked, setIsChecked] = React.useState(false);
@@ -116,8 +117,8 @@ const Top = () => {
       textAlign: "center",
       position: "absolute",
       top: "5rem",
-      left: "5rem",
-      right: "5rem",
+      left: "10%",
+      right: "10%",
       bottom: "5rem",
       backgroundColor: "paleturquoise",
       borderRadius: "1rem",
