@@ -746,6 +746,9 @@ const Top = () => {
                         setSelectedItem("");
                         setRiwarderValue("");
                         setLinks([]);
+                        setLinkHolders([]);
+                        setLinkGoods([]);
+                        setOutputDataList([]);
                       }}
                     >
                       <div id="overlay">
@@ -784,7 +787,7 @@ const Top = () => {
                             {ethers.utils.formatEther(
                               allTasks[indexValue].bounty
                             )}
-                            AVAX
+                            ETH
                           </div>
                           <br />
                           完了▼{" "}
@@ -793,82 +796,163 @@ const Top = () => {
                           </div>
                           <br />
                           成果物:
-                          {/* <div>
-                                                {allLinks.map((link, i) => <div key={i} className="card">{link}</div>)}
-                                            </div> */}
                           <div style={{ overflowX: "auto" }}>
-                            <table>
+                            <table style={{ padding: 8, tableLayout: "fix" }}>
                               <thead>
                                 <tr className="table">
-                                  <th scope="col" className="Button_col">
+                                  <th
+                                    scope="col"
+                                    style={{ textAlign: "left" }}
+                                    className="Button_col"
+                                  >
                                     アドレス
                                   </th>
-                                  <th scope="col" className="Button_col">
+                                  <th
+                                    scope="col"
+                                    style={{ textAlign: "left" }}
+                                    className="Button_col"
+                                  >
                                     成果物
                                   </th>
+                                  <th
+                                    scope="col"
+                                    style={{
+                                      textAlign: "left",
+                                      minWidth: "240px",
+                                    }}
+                                    className="Button_col"
+                                  >
+                                    コメント
+                                  </th>
+
                                   {/* <th scope="col" className="Button_col">いいね</th> */}
+
                                   {currentAccount ==
                                     allTasks[indexValue].user.toLowerCase() && (
                                     <th scope="col" className="Button_col">
-                                      報酬
+                                      アドレス
                                     </th>
                                   )}
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr className="">
-                                  <td data-label="アドレス" className="">
-                                    {allLinkHolders.map((userid, i) => (
+                                {outputDataList.map((data, i) => (
+                                  <tr>
+                                    <td
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                      }}
+                                      data-label="アドレス"
+                                    >
                                       <a
                                         key={i}
                                         className=""
-                                        href={`https://etherscan.io/address/${userid}`}
+                                        href={`https://etherscan.io/address/${data.userid}`}
                                         target="_blank"
                                       >
-                                        {userid.slice(0, 5)}...
+                                        {data.userid.slice(0, 5)}...
                                         <br />
                                         <br />
                                       </a>
-                                    ))}
-                                  </td>
-                                  <td data-label="成果物" className="">
-                                    {allLinks.map((link, i) => (
-                                      <div>
-                                        <a
-                                          key={i}
-                                          className=""
-                                          href={link}
-                                          target="_blank"
-                                        >
-                                          {" "}
-                                          {link.slice(0, 15)}...
-                                          <br />
-                                          <br />
-                                        </a>
-                                      </div>
-                                    ))}
-                                  </td>
-                                  {/* <td data-label="いいね" className="">
-                                                            {allLinkGoods.map((like, i) => <a key={i} className=""> {like}<br /><br /></a>)}
+                                    </td>
+                                    <td
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                      }}
+                                      data-label="成果物"
+                                    >
+                                      <a
+                                        key={i}
+                                        className=""
+                                        href={data.link}
+                                        target="_blank"
+                                      >
+                                        {" "}
+                                        {data.link.slice(0, 15)}...
+                                      </a>
+                                    </td>
+                                    <td
+                                      data-label="コメント"
+                                      style={{
+                                        textAlign: "left",
+                                        verticalAlign: "top",
+                                      }}
+                                    >
+                                      {data.comment != null &&
+                                        data.comment.map((com) => (
+                                          <div>
+                                            <p style={{ fontSize: 16 }}>
+                                              {com.comment}
+                                              <br />
+                                              by{" "}
+                                              <a
+                                                href={`https://etherscan.io/address/${com.userid}`}
+                                              >
+                                                {com.userid.slice(0, 5)}...
+                                              </a>
+                                            </p>
+                                          </div>
+                                        ))}
 
-                                                        </td> */}
-                                  <td data-label="いいね" className="">
-                                    {currentAccount ==
-                                      allTasks[indexValue].user.toLowerCase() &&
-                                      allLinkHolders.map((userid, i) => (
+                                      <div
+                                        style={{
+                                          marginTop: 24,
+                                          marginBottom: 12,
+                                          display: "flex",
+                                        }}
+                                      >
+                                        <TextField
+                                          style={{ marginRight: 12 }}
+                                          id="outlined-error"
+                                          label="コメント内容"
+                                          defaultValue=""
+                                          variant="standard"
+                                          name={i.toString()}
+                                          value={data.username}
+                                          onChange={comment}
+                                        />
+                                        <Button
+                                          variant="contained"
+                                          style={{ minWidth: "100px" }}
+                                          onClick={(e) => {
+                                            addComment(
+                                              data.userid,
+                                              data.link,
+                                              d[i]
+                                            );
+                                          }}
+                                        >
+                                          送信する
+                                        </Button>
+                                      </div>
+                                    </td>
+                                    <td
+                                      style={{ verticalAlign: "top" }}
+                                      data-label="いいね"
+                                      className=""
+                                    >
+                                      {currentAccount ==
+                                        allTasks[
+                                          indexValue
+                                        ].user.toLowerCase() && (
                                         <div>
                                           <button
                                             key={i}
                                             className="submitButton"
-                                            onClick={() => done(index, userid)}
+                                            onClick={() =>
+                                              done(indexValue, data)
+                                            }
                                           >
                                             報酬を送付
                                           </button>
                                           <br></br>
                                         </div>
-                                      ))}
-                                  </td>
-                                </tr>
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
                               </tbody>
                             </table>
                           </div>
@@ -887,17 +971,16 @@ const Top = () => {
                         <br></br>
                         <button
                           className="submitButton"
-                          onClick={() => {
+                          onClick={(e) => {
                             output(indexValue);
                             console.log("id value", idValue);
                             addLink(idValue);
+                            setOutput(index);
+                            setOutputValue("");
                           }}
                         >
                           成果物を提出
                         </button>
-
-                        {/* 報酬送付 */}
-                        <br></br>
                       </div>
                     </Modal>
                   </div>
@@ -930,166 +1013,262 @@ const Top = () => {
                     </button>
                     {/* 詳細を押した際の挙動 */}
                     <Modal
-                      isOpen={"task" === selectedItem}
-                      style={modalStyle}
-                      onRequestClose={() => {
-                        setSelectedItem("");
-                        setRiwarderValue("");
-                        setLinks([]);
-                      }}
-                    >
-                      <div id="overlay">
-                        {/* <div className="mainContainer">
+                        isOpen={"task" === selectedItem}
+                        style={modalStyle}
+                        onRequestClose={() => {
+                          setSelectedItem("");
+                          setRiwarderValue("");
+                          setLinks([]);
+                          setLinkHolders([]);
+                          setLinkGoods([]);
+                          setOutputDataList([]);
+                        }}
+                      >
+                        <div id="overlay">
+                          {/* <div className="mainContainer">
                                         <div className="dataContainer">
                                             <div className="body"> */}
-                        <h2>
-                          タスク詳細
-                          <br />
-                        </h2>
-                        <div className="modal">
-                          タスク登録者▼
-                          <br />
-                          <div className="card">
-                            {" "}
-                            {allTasks[indexValue].user}
-                          </div>
-                          <br />
-                          期日▼
-                          <br />{" "}
-                          <div className="card">
-                            {allTasks[indexValue].due.toString()}
-                          </div>
-                          <br />
-                          タスク▼
-                          <div className="card">
-                            {" "}
-                            {allTasks[indexValue].content}
-                          </div>
-                          <br />
-                          詳細説明▼<div className="card"> {textValue}</div>
-                          <br />
-                          報酬▼
-                          <div className="card">
-                            {" "}
-                            {ethers.utils.formatEther(
-                              allTasks[indexValue].bounty
-                            )}
-                            AVAX
-                          </div>
-                          <br />
-                          完了▼{" "}
-                          <div className="card">
-                            {allTasks[indexValue].done.toString()}
-                          </div>
-                          <br />
-                          成果物:
-                          {/* <div>
-                                                {allLinks.map((link, i) => <div key={i} className="card">{link}</div>)}
-                                            </div> */}
-                          <div style={{ overflowX: "auto" }}>
-                            <table>
-                              <thead>
-                                <tr className="table">
-                                  <th scope="col" className="Button_col">
-                                    アドレス
-                                  </th>
-                                  <th scope="col" className="Button_col">
-                                    成果物
-                                  </th>
-                                  {/* <th scope="col" className="Button_col">いいね</th> */}
-                                  {currentAccount ==
-                                    allTasks[indexValue].user.toLowerCase() && (
-                                    <th scope="col" className="Button_col">
-                                      報酬
+                          <h2>
+                            タスク詳細
+                            <br />
+                          </h2>
+                          <div className="modal">
+                            タスク登録者▼
+                            <br />
+                            <div className="card">
+                              {" "}
+                              {allTasks[indexValue].user}
+                            </div>
+                            <br />
+                            期日▼
+                            <br />{" "}
+                            <div className="card">
+                              {allTasks[indexValue].due.toString()}
+                            </div>
+                            <br />
+                            タスク▼
+                            <div className="card">
+                              {" "}
+                              {allTasks[indexValue].content}
+                            </div>
+                            <br />
+                            詳細説明▼<div className="card"> {textValue}</div>
+                            <br />
+                            報酬▼
+                            <div className="card">
+                              {" "}
+                              {ethers.utils.formatEther(
+                                allTasks[indexValue].bounty
+                              )}
+                              ETH
+                            </div>
+                            <br />
+                            完了▼{" "}
+                            <div className="card">
+                              {allTasks[indexValue].done.toString()}
+                            </div>
+                            <br />
+                            成果物:
+                            <div style={{ overflowX: "auto" }}>
+                              <table style={{ padding: 8, tableLayout: "fix" }}>
+                                <thead>
+                                  <tr className="table">
+                                    <th
+                                      scope="col"
+                                      style={{ textAlign: "left" }}
+                                      className="Button_col"
+                                    >
+                                      アドレス
                                     </th>
-                                  )}
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr className="">
-                                  <td data-label="アドレス" className="">
-                                    {allLinkHolders.map((userid, i) => (
-                                      <a
-                                        key={i}
-                                        className=""
-                                        href={`https://etherscan.io/address/${userid}`}
-                                        target="_blank"
+                                    <th
+                                      scope="col"
+                                      style={{ textAlign: "left" }}
+                                      className="Button_col"
+                                    >
+                                      成果物
+                                    </th>
+                                    <th
+                                      scope="col"
+                                      style={{
+                                        textAlign: "left",
+                                        minWidth: "240px",
+                                      }}
+                                      className="Button_col"
+                                    >
+                                      コメント
+                                    </th>
+
+                                    {/* <th scope="col" style={{textAlign: "left",}} className="Button_col">いいね</th> */}
+
+                                    {currentAccount ==
+                                      allTasks[
+                                        indexValue
+                                      ].user.toLowerCase() && (
+                                      <th
+                                        scope="col"
+                                        style={{ textAlign: "left" }}
+                                        className="Button_col"
                                       >
-                                        {userid.slice(0, 5)}...
-                                        <br />
-                                        <br />
-                                      </a>
-                                    ))}
-                                  </td>
-                                  <td data-label="成果物" className="">
-                                    {allLinks.map((link, i) => (
-                                      <div>
+                                        報酬
+                                      </th>
+                                    )}
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {outputDataList.map((data, i) => (
+                                    <tr
+                                      style={{
+                                        marginBottom: 24,
+                                        padddingBottom: 24,
+                                      }}
+                                    >
+                                      <td
+                                        style={{
+                                          textAlign: "left",
+                                          verticalAlign: "top",
+                                          paddingRight: 24,
+                                        }}
+                                        data-label="アドレス"
+                                      >
                                         <a
                                           key={i}
                                           className=""
-                                          href={link}
+                                          href={`https://etherscan.io/address/${data.userid}`}
                                           target="_blank"
                                         >
-                                          {" "}
-                                          {link.slice(0, 15)}...
+                                          {data.userid.slice(0, 5)}...
                                           <br />
                                           <br />
                                         </a>
-                                      </div>
-                                    ))}
-                                  </td>
-                                  {/* <td data-label="いいね" className="">
-                                                            {allLinkGoods.map((like, i) => <a key={i} className=""> {like}<br /><br /></a>)}
+                                      </td>
+                                      <td
+                                        style={{
+                                          textAlign: "left",
+                                          verticalAlign: "top",
+                                          paddingRight: 24,
+                                        }}
+                                        data-label="成果物"
+                                      >
+                                        <a
+                                          key={i}
+                                          className=""
+                                          href={data.link}
+                                          target="_blank"
+                                        >
+                                          {" "}
+                                          {data.link.slice(0, 15)}...
+                                        </a>
+                                      </td>
+                                      <td
+                                        data-label="コメント"
+                                        style={{
+                                          textAlign: "left",
+                                          verticalAlign: "top",
+                                        }}
+                                      >
+                                        {data.comment != null &&
+                                          data.comment.map((com) => (
+                                            <div>
+                                              <p style={{ fontSize: 16 }}>
+                                                {com.comment}
+                                                <br />
+                                                by{" "}
+                                                <a
+                                                  href={`https://etherscan.io/address/${com.userid}`}
+                                                >
+                                                  {com.userid.slice(0, 5)}...
+                                                </a>
+                                              </p>
+                                            </div>
+                                          ))}
 
-                                                        </td> */}
-                                  <td data-label="いいね" className="">
-                                    {currentAccount ==
-                                      allTasks[indexValue].user.toLowerCase() &&
-                                      allLinkHolders.map((userid, i) => (
-                                        <div>
-                                          <button
-                                            key={i}
-                                            className="submitButton"
-                                            onClick={() => done(index, userid)}
+                                        <div
+                                          style={{
+                                            marginTop: 24,
+                                            marginBottom: 12,
+                                            display: "flex",
+                                          }}
+                                        >
+                                          <TextField
+                                            style={{ marginRight: 12 }}
+                                            id="outlined-error"
+                                            label="コメント内容"
+                                            defaultValue=""
+                                            variant="standard"
+                                            name={i.toString()}
+                                            value={data.username}
+                                            onChange={comment}
+                                          />
+                                          <Button
+                                            variant="contained"
+                                            style={{ minWidth: "100px" }}
+                                            onClick={(e) => {
+                                              addComment(
+                                                data.userid,
+                                                data.link,
+                                                d[i]
+                                              );
+                                            }}
                                           >
-                                            報酬を送付
-                                          </button>
-                                          <br></br>
+                                            送信する
+                                          </Button>
                                         </div>
-                                      ))}
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
+                                      </td>
+                                      <td
+                                        style={{ verticalAlign: "top" }}
+                                        data-label="いいね"
+                                        className=""
+                                      >
+                                        {currentAccount ==
+                                          allTasks[
+                                            indexValue
+                                          ].user.toLowerCase() && (
+                                          <div>
+                                            <button
+                                              key={i}
+                                              className="submitButton"
+                                              onClick={() =>
+                                                done(indexValue, data)
+                                              }
+                                            >
+                                              報酬を送付
+                                            </button>
+                                            <br></br>
+                                          </div>
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
+
+                          {/* タスク提出 */}
+                          <textarea
+                            name="messageArea"
+                            className="form"
+                            placeholder="成果物のリンクを添付"
+                            type="text"
+                            id="riward"
+                            value={outputValue}
+                            onChange={(e) => setOutputValue(e.target.value)}
+                          />
+                          <br></br>
+                          <button
+                            className="submitButton"
+                            onClick={(e) => {
+                              output(indexValue);
+                              console.log("id value", idValue);
+                              addLink(idValue);
+                              setOutput(indexValue);
+                              setOutputValue("");
+                            }}
+                          >
+                            成果物を提出
+                          </button>
                         </div>
-
-                        {/* タスク提出 */}
-                        <textarea
-                          name="messageArea"
-                          className="form"
-                          placeholder="成果物のリンクを添付"
-                          type="text"
-                          id="riward"
-                          value={outputValue}
-                          onChange={(e) => setOutputValue(e.target.value)}
-                        />
-                        <br></br>
-                        <button
-                          className="submitButton"
-                          onClick={() => {
-                            output(indexValue);
-                            console.log("id value", idValue);
-                            addLink(idValue);
-                          }}
-                        >
-                          成果物を提出
-                        </button>
-
-                        {/* 報酬送付 */}
-                        <br></br>
-                      </div>
-                    </Modal>
+                      </Modal>
                   </div>
                 )}
               </div>
