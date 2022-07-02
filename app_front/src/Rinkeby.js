@@ -1023,7 +1023,7 @@ const Top = () => {
                                     >
                                       {currentAccount ==
                                         allTasks[indexValue].user.toLowerCase() &&
-                                   
+
                                         <div>
                                           <button
                                             key={i}
@@ -1288,7 +1288,7 @@ const Top = () => {
                                     >
                                       {currentAccount ==
                                         allTasks[indexValue].user.toLowerCase() &&
-             
+
                                         <div>
                                           <button
                                             key={i}
