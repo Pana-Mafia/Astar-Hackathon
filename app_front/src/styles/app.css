@@ -433,7 +433,7 @@ Note: Beware of modifying this element as it can break the animations - you shou
   /* position: fixed; */
   /* height: 100%; */
   justify-content: right;
-  margin-top: -32px;
+  margin-top: -64px;
 
 }
 
