@@ -32,6 +32,7 @@ import { width } from "@mui/system";
 
 // ハンバーガーメニュー
 import Menu from "./components/Menu";
+import Wallet from "./components/Wallet";
 
 Modal.setAppElement("#root");
 
@@ -372,7 +373,24 @@ const Top = () => {
     }
   };
 
+  const connectWallet2 = async () => {
+    setCurrentAccount(Wallet)
+    if (currentAccount != null) {
+      console.log("成功です")
+      console.log(currentAccount)
+    } else {
+      console.log("失敗です")
+    }
+  }
+
   const connectWallet = async () => {
+    // if (currentAccount != null) {
+    //   console.log("成功です")
+    //   console.log(currentAccount)
+    // } else {
+    //   console.log("失敗です")
+    // }
+
     const { ethereum } = window;
     setMineStatus("connecting");
 
@@ -394,11 +412,35 @@ const Top = () => {
         setCurrentAccount(accounts[0]);
         setMineStatus("ok");
       } else {
-        alert(
-          "Rinkeby testnetとは異なるネットワークに接続されているようです🥺Metamaskアプリから、ネットワークをRinkeby testnetに切り替えてリトライしてください🙇‍♂️"
-        );
-        setMetamaskError(true);
-        setMineStatus("e");
+        // alert(
+        //   "Rinkeby testnetとは異なるネットワークに接続されているようです🥺Metamaskアプリから、ネットワークをRinkeby testnetに切り替えてリトライしてください🙇‍♂️"
+        // );
+        // setMetamaskError(true);
+        // setMineStatus("e");
+        // 追記開始
+        // console.log(0x + Number(4).toString(16))
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: `0x${Number(4).toString(16)}` }]
+          });
+        } catch (err) {
+          // This error code indicates that the chain has not been added to MetaMask
+          if (err.code === 4902) {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainName: 'Rinkeby Testnet',
+                  chainId: ethers.utils.hexlify(4),
+                  nativeCurrency: { name: 'RinkebyETH', decimals: 18, symbol: 'ETH' },
+                  rpcUrls: ['https://rinkeby.etherscan.io/']
+                }
+              ]
+            });
+          }
+        }
+        // 追記終わり
       }
     } catch (err) {
       console.log(err);
@@ -650,7 +692,19 @@ const Top = () => {
   }
   return (
     <div>
-      {/* <Menu width={250} /> */}
+      {/* <Menu width={250} ></Menu> */}
+      <div>
+        {currentAccount && (
+          <button className="account" onClick={null}>
+            {currentAccount.slice(0, 6)}...{currentAccount.slice(-6)}
+          </button>
+        )}
+        {!currentAccount && mineStatus !== "connecting" && (
+          <button className="account" onClick={connectWallet}>
+            Connect Wallet
+          </button>
+        )}
+      </div>
       <div className="mainContainer">
         <div className="dataContainer">
           {metamaskError && (
@@ -684,11 +738,6 @@ const Top = () => {
               alignItems: "center",
             }}
           >
-            {!currentAccount && mineStatus !== "connecting" && (
-              <button className="waveButton" onClick={connectWallet}>
-                Connect Wallet
-              </button>
-            )}
             {/* ウォレット接続時のローディング */}
             <br></br>
             <div className="mine-submission">
@@ -707,11 +756,6 @@ const Top = () => {
                 </div>
               )}
             </div>
-            {currentAccount && (
-              <button className="waveButton" onClick={null}>
-                Wallet Connected
-              </button>
-            )}
             {currentAccount && mineStatus !== "mining" && (
               <button
                 className="waveButton"
@@ -945,10 +989,10 @@ const Top = () => {
                                       allTasks[
                                         indexValue
                                       ].user.toLowerCase() && (
-                                      <th scope="col" className="Button_col">
-                                        アドレス
-                                      </th>
-                                    )}
+                                        <th scope="col" className="Button_col">
+                                          アドレス
+                                        </th>
+                                      )}
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -1053,19 +1097,19 @@ const Top = () => {
                                           allTasks[
                                             indexValue
                                           ].user.toLowerCase() && (
-                                          <div>
-                                            <button
-                                              key={i}
-                                              className="submitButton"
-                                              onClick={() =>
-                                                done(indexValue, data)
-                                              }
-                                            >
-                                              報酬を送付
-                                            </button>
-                                            <br></br>
-                                          </div>
-                                        )}
+                                            <div>
+                                              <button
+                                                key={i}
+                                                className="submitButton"
+                                                onClick={() =>
+                                                  done(indexValue, data)
+                                                }
+                                              >
+                                                報酬を送付
+                                              </button>
+                                              <br></br>
+                                            </div>
+                                          )}
                                       </td>
                                     </tr>
                                   ))}
@@ -1221,14 +1265,14 @@ const Top = () => {
                                       allTasks[
                                         indexValue
                                       ].user.toLowerCase() && (
-                                      <th
-                                        scope="col"
-                                        style={{ textAlign: "left" }}
-                                        className="Button_col"
-                                      >
-                                        報酬
-                                      </th>
-                                    )}
+                                        <th
+                                          scope="col"
+                                          style={{ textAlign: "left" }}
+                                          className="Button_col"
+                                        >
+                                          報酬
+                                        </th>
+                                      )}
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -1340,19 +1384,19 @@ const Top = () => {
                                           allTasks[
                                             indexValue
                                           ].user.toLowerCase() && (
-                                          <div>
-                                            <button
-                                              key={i}
-                                              className="submitButton"
-                                              onClick={() =>
-                                                done(indexValue, data)
-                                              }
-                                            >
-                                              報酬を送付
-                                            </button>
-                                            <br></br>
-                                          </div>
-                                        )}
+                                            <div>
+                                              <button
+                                                key={i}
+                                                className="submitButton"
+                                                onClick={() =>
+                                                  done(indexValue, data)
+                                                }
+                                              >
+                                                報酬を送付
+                                              </button>
+                                              <br></br>
+                                            </div>
+                                          )}
                                       </td>
                                     </tr>
                                   ))}

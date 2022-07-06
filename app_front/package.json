@@ -9,6 +9,8 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "@walletconnect/client": "^1.7.8",
+    "@walletconnect/qrcode-modal": "^1.7.8",
     "ethers": "^5.4.7",
     "firebase": "^9.0.0-beta.2",
     "firebase-admin": "^10.2.0",

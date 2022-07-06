@@ -83,11 +83,9 @@ p {
 }
 
 .taskCard :hover {
-  background: -webkit-linear-gradient(
-    -70deg,
-    rgb(243, 116, 255) 0%,
-    rgb(255, 159, 100) 100%
-  );
+  background: -webkit-linear-gradient(-70deg,
+      rgb(243, 116, 255) 0%,
+      rgb(255, 159, 100) 100%);
 }
 
 .dataContainer {
@@ -163,11 +161,9 @@ h2 {
   border: 0;
   border-radius: 5px;
   color: white;
-  background: -webkit-linear-gradient(
-    -70deg,
-    rgb(243, 116, 255) 0%,
-    rgb(255, 159, 100) 60%
-  );
+  background: -webkit-linear-gradient(-70deg,
+      rgb(243, 116, 255) 0%,
+      rgb(255, 159, 100) 60%);
 }
 
 .form placeholder {
@@ -175,11 +171,9 @@ h2 {
 }
 
 .submitButton {
-  background: -webkit-linear-gradient(
-    -70deg,
-    rgb(243, 116, 255) 0%,
-    rgb(255, 159, 100) 60%
-  );
+  background: -webkit-linear-gradient(-70deg,
+      rgb(243, 116, 255) 0%,
+      rgb(255, 159, 100) 60%);
   background-size: 200% 200%;
   animation: gradient-animation 4s ease infinite;
   color: #0d1116;
@@ -329,11 +323,9 @@ h2 {
   top: 0;
   left: 0;
   right: 0;
-  background: -webkit-linear-gradient(
-    -70deg,
-    rgb(243, 116, 255) 0%,
-    rgb(255, 159, 100) 60%
-  );
+  background: -webkit-linear-gradient(-70deg,
+      rgb(243, 116, 255) 0%,
+      rgb(255, 159, 100) 60%);
   color: black;
   width: 88%;
   padding: 15px;
@@ -401,11 +393,9 @@ Note: Beware of modifying this element as it can break the animations - you shou
 .bm-item-list {
   color: white;
   padding: 0.8em;
-  background: -webkit-linear-gradient(
-    -70deg,
-    rgb(243, 116, 255) 0%,
-    rgb(255, 159, 100) 100%
-  );
+  background: -webkit-linear-gradient(-70deg,
+      rgb(243, 116, 255) 0%,
+      rgb(255, 159, 100) 100%);
   background-clip: text;
   /* -webkit-background-clip: text; */
   -webkit-text-fill-color: transparent;
@@ -416,14 +406,50 @@ Note: Beware of modifying this element as it can break the animations - you shou
   display: inline-block;
   text-decoration: none;
   outline: none;
-  color: -webkit-linear-gradient(
-    -70deg,
-    rgb(243, 116, 255) 0%,
-    rgb(255, 159, 100) 100%
-  );
+  color: -webkit-linear-gradient(-70deg,
+      rgb(243, 116, 255) 0%,
+      rgb(255, 159, 100) 100%);
 }
 
 /* Styling of overlay */
 .bm-overlay {
   background: rgba(0, 0, 0, 0.3);
+}
+
+.account {
+  position: absolute;
+  right: 0;
+  width: 240px;
+  text-align: center;
+  background: -webkit-linear-gradient(-70deg, #a2facf, #64acff);
+  /* background-size: 200% 200%; */
+  animation: gradient-animation 4s ease infinite;
+  color: #0d1116;
+  cursor: pointer;
+  padding: 8px;
+  border: 0;
+  border-radius: 5px;
+
+  /* position: fixed; */
+  /* height: 100%; */
+  justify-content: right;
+  margin-top: -32px;
+
+}
+
+/* General sidebar styles */
+.account {
+  /* background: white; */
+  /* padding: 2.5em 1.5em 0; */
+  font-size: 1.15em;
+  justify-content: right;
+  border-color: -webkit-linear-gradient(-70deg, #a2facf, #64acff);
+  background-color: #0d1116;
+}
+
+.account :hover {
+  /* background: -webkit-linear-gradient(-40deg, #a2facf, #64acff); */
+  background: -webkit-linear-gradient(-70deg, rgb(243, 116, 255) 0%, rgb(255, 159, 100) 100%);
+  background-size: 200% 200%;
+
 }
