@@ -21,8 +21,7 @@
     "react-native-switch-selector": "^2.2.1",
     "react-router-dom": "^6.3.0",
     "react-scripts": "4.0.3",
-    "web-vitals": "^1.1.2",
-    "web3.storage": "^4.3.0"
+    "web-vitals": "^1.1.2"
   },
   "scripts": {
     "start": "react-scripts --max_old_space_size=4096 start",
@@ -51,8 +50,5 @@
   "devDependencies": {
     "@babel/plugin-syntax-jsx": "^7.16.7",
     "@babel/preset-react": "^7.16.7"
-  },
-  "resolutions": {
-    "ipfs-unixfs": "6.0.6"
   }
 }
