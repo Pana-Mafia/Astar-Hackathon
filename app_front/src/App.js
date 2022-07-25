@@ -9,6 +9,7 @@ import Fuji from "./Fuji";
 import Sample from "./Sample";
 import Team from "./Team";
 import Rinkeby from "./Rinkeby";
+import Output from "./Output";
 import "./styles/app.css";
 
 // import { ethers } from "ethers";
@@ -25,6 +26,7 @@ const App = () => {
         <Route exact path="/fuji" element={<Fuji />} />
         <Route exact path="/sample" element={<Sample />} />
         <Route exact path="/team" element={<Team />} />
+        <Route exact path="/output" element={<Output />} />
       </Routes>
     </BrowserRouter>
   );
