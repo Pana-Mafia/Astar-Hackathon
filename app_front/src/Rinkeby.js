@@ -33,6 +33,7 @@ import { width } from "@mui/system";
 // ハンバーガーメニュー
 import Menu from "./components/Menu";
 import Wallet from "./components/Wallet";
+import Storage from "./components/Storage";
 
 Modal.setAppElement("#root");
 
@@ -692,7 +693,7 @@ const Top = () => {
   }
   return (
     <div>
-      {/* <Menu width={250} ></Menu> */}
+      <Menu width={250} ></Menu>
       <div>
         {currentAccount && (
           <button className="account" onClick={null}>
@@ -713,6 +714,8 @@ const Top = () => {
             </div>
           )}
           <Eyecatch version="Rinkeby" unit="$ETH" checked={true} />
+
+          {/* <Storage /> */}
 
           <br />
 

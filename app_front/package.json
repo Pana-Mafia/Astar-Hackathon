@@ -12,7 +12,7 @@
     "@walletconnect/client": "^1.7.8",
     "@walletconnect/qrcode-modal": "^1.7.8",
     "ethers": "^5.4.7",
-    "firebase": "^9.0.0-beta.2",
+    "firebase": "^9.9.1",
     "firebase-admin": "^10.2.0",
     "react": "^17.0.2",
     "react-burger-menu": "^3.0.8",
@@ -24,8 +24,8 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts --max_old_space_size=4096 start",
+    "build": "react-scripts --max_old_space_size=4096 build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -453,3 +453,42 @@ Note: Beware of modifying this element as it can break the animations - you shou
   background-size: 200% 200%;
 
 }
+
+.output {
+  text-align: left;
+  background: -webkit-linear-gradient(-70deg, #a2facf, #64acff);
+  /* background-size: 200% 200%; */
+  animation: gradient-animation 4s ease infinite;
+  color: #0d1116;
+
+  width: 256px;
+  cursor: pointer;
+  margin-top: 16px;
+  margin-left: 18px;
+  margin-right: 16px;
+  margin-bottom: 16px;
+  padding: 8px;
+  border: 0;
+  border-radius: 5px;
+}
+
+.comment {
+  text-align: left;
+  background: -webkit-linear-gradient(-70deg, #a2facf, #64acff);
+  /* background-size: 200% 200%; */
+  animation: gradient-animation 4s ease infinite;
+  color: #0d1116;
+
+  width: 256px;
+  cursor: pointer;
+  margin-top: 16px;
+  margin-left: 18px;
+  margin-right: 16px;
+  margin-bottom: 16px;
+  padding: 8px;
+  border: 0;
+  border-radius: 5px;
+  text-align: left;
+  background: white;
+  color: white;
+}
